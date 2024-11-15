@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:migrantworker/worker/screens/selectuser.dart';
+import 'package:migrantworker/selectuser.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -39,43 +39,47 @@ class _LogInState extends State<LogIn> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
             child: Form(
-              key: _formKey, // Link the form to the key
+              key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 80),
-                    child: Center(
-                      child: ClipOval(
-                        child: Image(
-                          image: AssetImage('assets/logo.png'),
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        ),
+                  SizedBox(height: screenHeight * 0.08),
+                  Center(
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/logo.png',
+                        width: screenWidth * 0.4,
+                        height: screenWidth * 0.4,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: screenHeight * 0.02),
                   Text(
                     'Migrant Connect',
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: screenWidth * 0.06,
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(183, 145, 62, 10),
                       fontFamily: 'Times New Roman',
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  SizedBox(height: screenHeight * 0.1),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        top: 150.0, left: 20.0, right: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                     child: TextFormField(
                       controller: EmailController,
                       decoration: InputDecoration(
@@ -83,25 +87,32 @@ class _LogInState extends State<LogIn> {
                         labelText: 'Email/Mobile',
                         border: OutlineInputBorder(),
                         labelStyle: TextStyle(
-                          fontSize: 20,
+                          fontSize: screenWidth * 0.05,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        } else if (!RegExp(
+                          return 'Please enter your email or mobile number';
+                        }
+                        // Email validation
+                        else if (RegExp(
                                 r"^[a-zA-Z0-9]+@([a-zA-Z0-9]+\.)+[a-zA-Z]{2,}$")
                             .hasMatch(value)) {
-                          return 'Please enter a valid email';
+                          return null; // Valid email
                         }
-                        return null;
+                        // Mobile number validation (e.g., 10 digits)
+                        else if (RegExp(r"^\d{10}$").hasMatch(value)) {
+                          return null; // Valid mobile number
+                        }
+                        return 'Please enter a valid email or 10-digit mobile number';
                       },
                     ),
                   ),
+                  SizedBox(height: screenHeight * 0.02),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        top: 23.0, left: 20.0, right: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                     child: TextFormField(
                       controller: PasswordController,
                       obscureText: ShowPass,
@@ -120,7 +131,7 @@ class _LogInState extends State<LogIn> {
                         ),
                         border: OutlineInputBorder(),
                         labelStyle: TextStyle(
-                          fontSize: 20,
+                          fontSize: screenWidth * 0.05,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -134,65 +145,61 @@ class _LogInState extends State<LogIn> {
                       },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        // Add your "Forgot Password" navigation or logic here
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 20,
-                          
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: LogInHandler,
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                          fontSize: 23,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(200, 60),
-                      ),
-                    ),
-                  ),
-                  Row(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0,left: 87.0),
+                  SizedBox(height: screenHeight * 0.02),
+                  GestureDetector(
+                    onTap: () {
+                      // Add your "Forgot Password" navigation or logic here
+                    },
                     child: Text(
-                      "Don't have an account?",
+                      'Forgot Password?',
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
+                        color: Colors.blue,
+                        fontSize: screenWidth * 0.05,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 5.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SelectUser(),));
-                      },
-                      child: Text(
-                        'Register Now',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 20,
-                          
-                        ),
+                  SizedBox(height: screenHeight * 0.02),
+                  ElevatedButton(
+                    onPressed: LogInHandler,
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.055,
                       ),
                     ),
-                  )
-                  ],
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(screenWidth * 0.5, screenHeight * 0.06),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account?",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: screenWidth * 0.045,
+                        ),
+                      ),
+                      SizedBox(width: screenWidth * 0.02),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return SelectUser();
+                            },
+                          ));
+                        },
+                        child: Text(
+                          'Register Now',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: screenWidth * 0.045,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
