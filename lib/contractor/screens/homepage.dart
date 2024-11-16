@@ -19,17 +19,25 @@ class _ContractorHomeState extends State<ContractorHome> {
 
   @override
   Widget build(BuildContext context) {
+    double widthFactor = MediaQuery.of(context).size.width;
+    double heightFactor = MediaQuery.of(context).size.height;
+
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(129.0), // Custom appbar height
+          preferredSize:
+              Size.fromHeight(heightFactor * 0.17), // Custom app bar height
           child: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
             elevation: 0,
             flexibleSpace: Padding(
-              padding:
-                  const EdgeInsets.only(top: 30.0, left: 16.0, right: 16.0),
+              padding: EdgeInsets.only(
+                top: heightFactor * 0.03,
+                left: widthFactor * 0.04,
+                right: widthFactor * 0.04,
+              ),
               child: Column(
                 children: [
                   Row(
@@ -40,7 +48,7 @@ class _ContractorHomeState extends State<ContractorHome> {
                           icon: Icon(
                             Icons.menu,
                             color: Colors.green,
-                            size: 50.0,
+                            size: widthFactor * 0.12,
                           ),
                           onPressed: () {
                             Scaffold.of(context).openDrawer();
@@ -52,35 +60,34 @@ class _ContractorHomeState extends State<ContractorHome> {
                         style: TextStyle(
                           color: Colors.lightGreen,
                           fontWeight: FontWeight.bold,
-                          fontSize: 26.0,
+                          fontSize: widthFactor * 0.07,
                         ),
                       ),
                       IconButton(
                         icon: Icon(
                           Icons.account_circle,
                           color: Colors.green,
-                          size: 60.0,
+                          size: widthFactor * 0.15,
                         ),
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return ContractorProfile();
+                              return const ContractorProfile();
                             },
                           ));
                         },
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: heightFactor * 0.02),
                   TextField(
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search,
-                          color: Colors.green), //add controller
+                      prefixIcon: const Icon(Icons.search, color: Colors.green),
                       hintText: "What are you looking for?",
                       filled: true,
                       fillColor: Colors.grey[200],
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(widthFactor * 0.03),
                         borderSide: BorderSide.none,
                       ),
                     ),
@@ -90,23 +97,23 @@ class _ContractorHomeState extends State<ContractorHome> {
             ),
           ),
         ),
-        drawer: ProfileMenu(), // Add the ProfileMenu here
+        drawer: ProfileMenu(widthFactor: widthFactor),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(widthFactor * 0.04),
           child: ListView.builder(
-            itemCount: 10, // Number of cards
+            itemCount: 10,
             itemBuilder: (context, index) {
               return Container(
-                height: 120.0, // Card height
-                margin: const EdgeInsets.only(bottom: 16.0),
+                height: heightFactor * 0.15,
+                margin: EdgeInsets.only(bottom: heightFactor * 0.02),
                 decoration: BoxDecoration(
                   color: Colors.lightGreen[100],
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(widthFactor * 0.03),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 5.0,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -115,14 +122,14 @@ class _ContractorHomeState extends State<ContractorHome> {
                   children: [
                     Icon(
                       Icons.category,
-                      size: 50.0,
+                      size: widthFactor * 0.12,
                       color: Colors.green,
                     ),
-                    SizedBox(width: 10.0),
+                    SizedBox(width: widthFactor * 0.02),
                     Text(
                       "Card ${index + 1}",
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: widthFactor * 0.04,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -138,7 +145,6 @@ class _ContractorHomeState extends State<ContractorHome> {
               icon: Icon(
                 Icons.search,
                 color: Colors.green,
-                size: 40.0,
               ),
               label: "Search",
             ),
@@ -146,7 +152,6 @@ class _ContractorHomeState extends State<ContractorHome> {
               icon: Icon(
                 Icons.search,
                 color: Colors.white,
-                size: 30.0,
               ),
               label: "Add Worker",
             ),
@@ -154,7 +159,6 @@ class _ContractorHomeState extends State<ContractorHome> {
               icon: Icon(
                 Icons.work,
                 color: Colors.green,
-                size: 35.0,
               ),
               label: "Working Status",
             ),
@@ -164,15 +168,17 @@ class _ContractorHomeState extends State<ContractorHome> {
           onTap: _onItemTapped,
         ),
         floatingActionButton: SizedBox(
-          height: 70, // Adjust height
-          width: 70, // Adjust width
+          height: widthFactor * 0.15,
+          width: widthFactor * 0.15,
           child: FloatingActionButton(
-            onPressed: () {
-              // Handle action here
-            },
-            child: Icon(Icons.add, size: 36, color: Colors.white,), // Increased icon size
-            shape: CircleBorder(),
-            backgroundColor: Colors.lightGreen, // Optional: Change color if needed
+            onPressed: () {},
+            child: Icon(
+              Icons.add,
+              size: widthFactor * 0.09,
+              color: Colors.white,
+            ),
+            shape: const CircleBorder(),
+            backgroundColor: Colors.lightGreen,
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -182,125 +188,113 @@ class _ContractorHomeState extends State<ContractorHome> {
 }
 
 class ProfileMenu extends StatelessWidget {
+  final double widthFactor;
+  const ProfileMenu({required this.widthFactor});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: widthFactor * 0.8,
       child: Container(
         color: Colors.green.shade100,
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: widthFactor * 0.05,
+          vertical: 20.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
               child: CircleAvatar(
-                radius: 50,
+                radius: widthFactor * 0.13,
                 backgroundColor: Colors.green,
                 child: Icon(
                   Icons.person,
-                  size: 50,
+                  size: widthFactor * 0.13,
                   color: Colors.white,
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Center(
               child: Text(
                 'Jais Roy',
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: widthFactor * 0.055,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Center(
               child: GestureDetector(
-                onTap: () {
-                  // Handle Sign Out logic
-                },
-                child: Text(
+                onTap: () {},
+                child: const Text(
                   'Sign Out',
                   style: TextStyle(color: Colors.red),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView(
                 children: [
                   ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text('My Account'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ContractorProfile(),
-                          ));
-                    },
+                    leading: const Icon(Icons.person),
+                    title: const Text('My Account'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
                   ),
                   ListTile(
-                    leading: Icon(Icons.work),
-                    title: Text('Worker Details'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Navigate to Contact Views
-                    },
+                    leading: const Icon(Icons.work),
+                    title: const Text('Worker Details'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
                   ),
                   ListTile(
-                    leading: Icon(Icons.thumb_up),
-                    title: Text('Responses'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Navigate to Responses
-                    },
+                    leading: const Icon(Icons.thumb_up),
+                    title: const Text('Responses'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
                   ),
                   ListTile(
-                    leading: Icon(Icons.notifications),
-                    title: Text('Notification Hub'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Navigate to Notification Hub
-                    },
+                    leading: const Icon(Icons.notifications),
+                    title: const Text('Notification Hub'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
                   ),
                   ListTile(
-                    leading: Icon(Icons.edit),
-                    title: Text('Edit Profile'),
-                    trailing: Icon(Icons.arrow_forward_ios),
+                    leading: const Icon(Icons.edit),
+                    title: const Text('Edit Profile'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {},
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Handle Post Property
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
               ),
-              child: Text('Search Job'),
+              child: const Text('Search Job'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             OutlinedButton(
-              onPressed: () {
-                // Handle Post Requirement
-              },
+              onPressed: () {},
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.green),
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                side: const BorderSide(color: Colors.green),
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
               ),
-              child: Text(
+              child: const Text(
                 'Add Worker',
                 style: TextStyle(color: Colors.green),
               ),
             ),
-            SizedBox(height: 20),
-            Center(
+            const SizedBox(height: 20),
+            const Center(
               child: Text(
                 'About\n~',
                 textAlign: TextAlign.center,
