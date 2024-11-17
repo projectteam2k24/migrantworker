@@ -8,27 +8,22 @@ class RegisterJobProvider extends StatefulWidget {
 }
 
 class _RegisterJobProviderState extends State<RegisterJobProvider> {
-  final _formKey = GlobalKey<FormState>(); // Key to manage the form state
-  TextEditingController FullNameController = TextEditingController();
-  TextEditingController CompanyController = TextEditingController();
-  TextEditingController PhoneController = TextEditingController();
-  TextEditingController EmailController = TextEditingController();
-  TextEditingController AddressController = TextEditingController();
-  TextEditingController PasswordController = TextEditingController();
-   String UserType = 'Personal';
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController FullNameController = TextEditingController();
+  final TextEditingController CompanyController = TextEditingController();
+  final TextEditingController PhoneController = TextEditingController();
+  final TextEditingController EmailController = TextEditingController();
+  final TextEditingController AddressController = TextEditingController();
+  final TextEditingController PasswordController = TextEditingController();
+  String UserType = 'Personal';
 
   bool ShowPass = true;
 
-  // Sign-up handler that checks if the form is valid before printing the email
   void RegisterJobProviderHandler() {
     if (_formKey.currentState?.validate() ?? false) {
       print('Email: ${EmailController.text}');
       print(UserType);
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) {
-          return const RegisterJobProvider();
-        },
-      )); // You can add further sign-up logic here, like calling an API
+      // Navigate or perform other actions here
     } else {
       print('Form is invalid');
     }
@@ -36,7 +31,6 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
 
   @override
   void dispose() {
-    // Dispose the controllers to prevent memory leaks
     FullNameController.dispose();
     CompanyController.dispose();
     PhoneController.dispose();
@@ -46,55 +40,47 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Form(
-              key: _formKey, // Link the form to the key
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Job Provider Registration',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                      fontFamily: 'Times New Roman',
-                    ),
-                    textAlign: TextAlign.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.green.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Personal Information',
-                    style: TextStyle(
-                        fontSize: 18,
+                ],
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Job Provider Registration',
+                      style: TextStyle(
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontFamily: 'Times New Roman',
-                        decoration: TextDecoration.underline),
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: FullNameController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person_2_outlined),
-                        labelText: 'Full Name',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        color: Colors.green,
                       ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    buildTextField(
+                      controller: FullNameController,
+                      label: 'Full Name',
+                      icon: Icons.person_2_outlined,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your full name';
@@ -104,22 +90,11 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
                         return null;
                       },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
+                    buildTextField(
                       controller: PhoneController,
+                      label: 'Phone Number',
+                      icon: Icons.phone,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.phone),
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number';
@@ -129,49 +104,26 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
                         return null;
                       },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
+                    buildTextField(
                       controller: EmailController,
+                      label: 'Email Address',
+                      icon: Icons.email,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email),
-                        labelText: 'Email Address',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
-                        } else if (!RegExp(
-                                r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$')
+                        } else if (!RegExp(r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$')
                             .hasMatch(value)) {
                           return 'Please enter a valid email address';
                         }
                         return null;
                       },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
+                    buildTextField(
                       controller: AddressController,
+                      label: 'Address',
+                      icon: Icons.home,
                       maxLines: 2,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.home),
-                        labelText: 'Address',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your address';
@@ -179,121 +131,177 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
                         return null;
                       },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black, // Border color
-                          width: 1.0, // Thickness of the border
+                    buildDropdownField(),
+                    buildPasswordField(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: RegisterJobProviderHandler,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 50),
+                          backgroundColor: Colors.green[700],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        borderRadius:
-                            BorderRadius.circular(8.0), // Rounded corners
-                        color: Colors.white, // Background color
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: UserType,
-                          items: <String>['Company', 'Personal']
-                              .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    value == 'Company'
-                                        ? Icons.business
-                                        : Icons.person,
-                                    color: Colors.black, // Icon color
-                                  ),
-                                  SizedBox(
-                                      width: 10), // Space between icon and text
-                                  Text(
-                                    value,
-                                    style: TextStyle(
-                                      fontWeight:
-                                          FontWeight.bold, // Makes text bold
-                                      fontSize:
-                                          16.0,
-                                          color: Colors.black // Optional: Adjusts font size
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              UserType = newValue!;
-                            });
-                          },
-                          isExpanded: true, // Makes the dropdown fill the width
+                        child: const Text(
+                          "Register",
                           style: TextStyle(
-                            fontWeight:
-                                FontWeight.bold, // Bold text for selected value
-                            fontSize: 16.0, // Optional: Adjusts font size
+                            fontSize: 20,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 4.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: PasswordController,
-                      obscureText: ShowPass,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.verified_user_outlined),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              ShowPass = !ShowPass;
-                            });
-                          },
-                          icon: Icon(ShowPass
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                        ),
-                        border: const OutlineInputBorder(),
-                        labelStyle: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters long';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: RegisterJobProviderHandler,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(200, 60),
-                      ),
-                      child: const Text(
-                        "Register",
-                        style: TextStyle(
-                          fontSize: 23,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
+        ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.1),
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: Colors.green),
+            labelText: label,
+            labelStyle: TextStyle(fontSize: 18, color: Colors.green[800]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          validator: validator,
+        ),
+      ),
+    );
+  }
+
+  Widget buildDropdownField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.1),
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: UserType,
+            items: ['Company', 'Personal'].map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Row(
+                  children: [
+                    Icon(
+                      value == 'Company' ? Icons.business : Icons.person,
+                      color: Colors.green,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(value, style: TextStyle(color: Colors.green[800])),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                UserType = newValue!;
+              });
+            },
+            isExpanded: true,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPasswordField() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.1),
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: TextFormField(
+          controller: PasswordController,
+          obscureText: ShowPass,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.lock_outline, color: Colors.green),
+            labelText: 'Password',
+            labelStyle: const TextStyle(fontSize: 18, color: Colors.green),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  ShowPass = !ShowPass;
+                });
+              },
+              icon: Icon(
+                ShowPass ? Icons.visibility : Icons.visibility_off,
+              ),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your password';
+            } else if (value.length < 6) {
+              return 'Password must be at least 6 characters long';
+            }
+            return null;
+          },
         ),
       ),
     );

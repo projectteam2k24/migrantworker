@@ -13,154 +13,111 @@ class SelectUser extends StatefulWidget {
 class _SelectUserState extends State<SelectUser> {
   @override
   Widget build(BuildContext context) {
-    
+    // Retrieve screen size
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Responsive padding and icon size
+    final double horizontalPadding = screenWidth * 0.1;
+    final double topPadding = screenHeight * 0.1;
+    final double buttonIconSize = screenWidth * 0.15;
+
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 150.0,
-              left: 50.0,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: topPadding),
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.person_2_outlined,
+                  size: buttonIconSize,
+                  color: Colors.green,
+                ),
+                label: SizedBox.shrink(), // No label, only the icon is shown
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(buttonIconSize, buttonIconSize),
+                  shape: CircleBorder(), // Makes the button circular
+                  padding: EdgeInsets.all(24), // Padding around the icon
+                  backgroundColor: Colors.green.shade100, // Change background color as needed
+                  elevation: 5, // Elevation for raised appearance
+                ),
+              ),
             ),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.person_2_outlined,
-                size: 100.0,
+            SizedBox(height: screenHeight * 0.05),
+            Text(
+              'Welcome Guest',
+              style: TextStyle(
+                fontSize: screenWidth * 0.08,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            Text(
+              'I am here as :)',
+              style: TextStyle(
+                fontSize: screenWidth * 0.08,
+                fontWeight: FontWeight.bold,
                 color: Colors.green,
               ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(150, 150),
+            ),
+            SizedBox(height: screenHeight * 0.05),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: (screenWidth < 600) ? 2 : 3,
+                  mainAxisSpacing: screenHeight * 0.02,
+                  crossAxisSpacing: screenWidth * 0.05,
+                ),
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  return buildGridItem(context, index);
+                },
               ),
             ),
-          ),
-          // Wrapping the text with Row to place next to the icons
-          Padding(
-            padding: const EdgeInsets.only(top: 50.0, left: 55.0),
-            child: Row(
-              //mainAxisAlignment: MainAxisAlignment.left,
-              children: [
-                Text(
-                  'Welcome Guest',
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey),
-                ),
-              ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildGridItem(BuildContext context, int index) {
+    final icons = [
+      Icons.construction,
+      Icons.business_center,
+      Icons.handyman,
+    ];
+    final titles = ["Worker", "Job Provider", "Contractor"];
+    final routes = [RegisterWorker(), RegisterJobProvider(), RegisterContractor()];
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => routes[index]));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.green),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icons[index], size: MediaQuery.of(context).size.width * 0.08, color: Colors.green),
+            SizedBox(height: 8),
+            Text(
+              titles[index],
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 40.0, left: 55.0),
-            child: Row(
-              //mainAxisAlignment: MainAxisAlignment.left,
-              children: [
-                Text(
-                  'I am here as :)',
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: GridView.count(
-              crossAxisCount: 2, // Display items in a grid of two columns
-              shrinkWrap: true,
-              physics:
-                  NeverScrollableScrollPhysics(), // Prevents scrolling issues
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              padding: EdgeInsets.symmetric(horizontal: 50),
-              children: [
-                // Worker Button
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterWorker(),));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.construction, size: 40, color: Colors.green),
-                        SizedBox(height: 8),
-                        Text(
-                          "Worker",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Job Provider Button
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const RegisterJobProvider();
-                    },));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.business_center,
-                            size: 40, color: Colors.green),
-                        SizedBox(height: 8),
-                        Text(
-                          "Job Provider",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Contractor Button
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return RegisterContractor();
-                    },));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.handyman, size: 40, color: Colors.green),
-                        SizedBox(height: 8),
-                        Text(
-                          "Contractor",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

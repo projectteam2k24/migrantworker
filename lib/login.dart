@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/selectuser.dart';
+import 'package:migrantworker/contractor/screens/homepage.dart';
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -21,7 +22,7 @@ class _LogInState extends State<LogIn> {
       print('Email: ${EmailController.text}');
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return LogIn();
+          return const ContractorHome();
         },
       )); // You can add further sign-up logic here, like calling an API
     } else {

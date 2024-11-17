@@ -478,6 +478,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                         if(value == null || value.isEmpty){
                           return "Enter a vaild amount";
                         }
+                        return null;
                       },
                     ),
                   ),
@@ -499,6 +500,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                         if(value == null || value.isEmpty){
                           return "Enter a valid Language";
                         }
+                        return null;
                       },
                     ),
                   ),
