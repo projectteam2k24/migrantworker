@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/job_provider/screens/homepage.dart';
 
 class RegisterJobProvider extends StatefulWidget {
   const RegisterJobProvider({super.key});
@@ -24,7 +25,13 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
       print('Email: ${EmailController.text}');
       print(UserType);
       // Navigate or perform other actions here
-    } else {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return const JobProviderHome();
+      },
+    )); // You can add further sign-up logic here, like calling an API
+  }
+ else {
       print('Form is invalid');
     }
   }
@@ -57,7 +64,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
                   BoxShadow(
                     color: Colors.green.withOpacity(0.3),
                     blurRadius: 10,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -182,7 +189,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
             BoxShadow(
               color: Colors.green.withOpacity(0.1),
               blurRadius: 4,
-              offset: Offset(2, 2),
+              offset: const Offset(2, 2),
             ),
           ],
         ),
@@ -200,7 +207,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
             ),
             filled: true,
             fillColor: Colors.white,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           validator: validator,
         ),
@@ -212,7 +219,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
           color: Colors.white,
@@ -220,7 +227,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
             BoxShadow(
               color: Colors.green.withOpacity(0.1),
               blurRadius: 4,
-              offset: Offset(2, 2),
+              offset: const Offset(2, 2),
             ),
           ],
         ),
@@ -265,7 +272,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
             BoxShadow(
               color: Colors.green.withOpacity(0.1),
               blurRadius: 4,
-              offset: Offset(2, 2),
+              offset: const Offset(2, 2),
             ),
           ],
         ),

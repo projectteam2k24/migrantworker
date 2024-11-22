@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 class RegisterContractor extends StatefulWidget {
   const RegisterContractor({super.key});
@@ -323,6 +324,47 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       print('Form is invalid');
     }
   }
+  //
+             String? govtIdFile;
+             String? CompRegFile;
+             String? AddressProofFile;
+
+  // Function to handle file selection
+  Future<void> selectGovtIdFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        govtIdFile = result.files.single.path;
+      });
+    }
+  }
+  // Function to handle file selection
+  Future<void> selectCompRegFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        CompRegFile = result.files.single.path;
+      });
+    }
+  }
+  // Function to handle file selection
+  Future<void> selectAddressProofFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        AddressProofFile = result.files.single.path;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -463,69 +505,56 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+       
+
+                 Padding(
+                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Government issued ID:",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        ElevatedButton(
+                          onPressed: selectGovtIdFile,
+                          child: Text(govtIdFile == null ? "Upload File" : "File Selected"),
+                        ),
+                      ],
+                    ),
+                  ),
+                 
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: GovtController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.home),
-                        labelText: 'Government issued ID',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Company Registration Certificate",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Government ID is required';
-                        }
-                        return null;
-                      },
+                        ElevatedButton(
+                          onPressed: selectCompRegFile,
+                          child: Text(CompRegFile == null ? "Upload File" : "File Selected"),
+                        ),
+                      ],
                     ),
                   ),
                  
-                 Padding(
+                  Padding(
                     padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: CompRegController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.home),
-                        labelText: 'Company Registration Certificate',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Proof of address :",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Company Registration Certificate is required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                 
-                 Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: AddressProofController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.home),
-                        labelText: 'Proof of Address',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        ElevatedButton(
+                          onPressed: selectAddressProofFile,
+                          child: Text(AddressProofFile == null ? "Upload File" : "File Selected"),
                         ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Proof of Address is required';
-                        }
-                        return null;
-                      },
+                      ],
                     ),
                   ),
                  

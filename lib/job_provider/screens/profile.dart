@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-class ContractorProfile extends StatefulWidget {
-  const ContractorProfile({super.key});
+class JobProviderProfile extends StatefulWidget {
+  const JobProviderProfile({super.key});
 
   @override
-  State<ContractorProfile> createState() => _ContractorProfileState();
+  State<JobProviderProfile> createState() => _JobProviderProfileState();
 }
 
-class _ContractorProfileState extends State<ContractorProfile> {
+class _JobProviderProfileState extends State<JobProviderProfile> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Contractor Profile',
+      title: 'Job Provider Profile',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Contractor Profile'),
+          title: const Text('Job Provider Profile'),
           actions: [
             IconButton(
               icon: const Icon(Icons.edit),

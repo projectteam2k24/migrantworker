@@ -72,7 +72,7 @@ class _LogInState extends State<LogIn> {
                     style: TextStyle(
                       fontSize: screenWidth * 0.06,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(183, 145, 62, 10),
+                      color: const Color.fromRGBO(183, 145, 62, 10),
                       fontFamily: 'Times New Roman',
                     ),
                     textAlign: TextAlign.center,
@@ -84,9 +84,9 @@ class _LogInState extends State<LogIn> {
                     child: TextFormField(
                       controller: EmailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person_2_outlined),
+                        prefixIcon: const Icon(Icons.person_2_outlined),
                         labelText: 'Email/Mobile',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         labelStyle: TextStyle(
                           fontSize: screenWidth * 0.05,
                           fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class _LogInState extends State<LogIn> {
                       obscureText: ShowPass,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: Icon(Icons.verified_user_outlined),
+                        prefixIcon: const Icon(Icons.verified_user_outlined),
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
@@ -130,7 +130,7 @@ class _LogInState extends State<LogIn> {
                               ? Icons.visibility
                               : Icons.visibility_off),
                         ),
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         labelStyle: TextStyle(
                           fontSize: screenWidth * 0.05,
                           fontWeight: FontWeight.bold,
@@ -162,14 +162,14 @@ class _LogInState extends State<LogIn> {
                   SizedBox(height: screenHeight * 0.02),
                   ElevatedButton(
                     onPressed: LogInHandler,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(screenWidth * 0.5, screenHeight * 0.06),
+                    ),
                     child: Text(
                       "Login",
                       style: TextStyle(
                         fontSize: screenWidth * 0.055,
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(screenWidth * 0.5, screenHeight * 0.06),
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.02),
@@ -188,7 +188,7 @@ class _LogInState extends State<LogIn> {
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return SelectUser();
+                              return const SelectUser();
                             },
                           ));
                         },

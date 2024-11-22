@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:migrantworker/contractor/screens/profile.dart';
+import 'package:migrantworker/worker/screens/profile.dart';
 
-class ContractorHome extends StatefulWidget {
-  const ContractorHome({super.key});
+class WorkerHome extends StatefulWidget {
+  const WorkerHome({super.key});
 
   @override
-  State<ContractorHome> createState() => _ContractorHomeState();
+  State<WorkerHome> createState() => _WorkerHomeState();
 }
 
-class _ContractorHomeState extends State<ContractorHome> {
+class _WorkerHomeState extends State<WorkerHome> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -72,7 +72,7 @@ class _ContractorHomeState extends State<ContractorHome> {
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return const ContractorProfile();
+                              return const WorkerProfile();
                             },
                           ));
                         },
@@ -246,20 +246,20 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return const ContractorProfile();
+                              return const WorkerProfile();
                             },
                           ));
                         },
                   ),
                   ListTile(
                     leading: const Icon(Icons.work),
-                    title: const Text('Worker Details'),
+                    title: const Text('My Contractor'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {},
                   ),
                   ListTile(
                     leading: const Icon(Icons.thumb_up),
-                    title: const Text('Responses'),
+                    title: const Text('My Jobs'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {},
                   ),
@@ -285,7 +285,7 @@ class ProfileMenu extends StatelessWidget {
                 backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
               ),
-              child: const Text('Search Job'),
+              child: const Text('View Current Job'),
             ),
             const SizedBox(height: 10),
             OutlinedButton(
@@ -295,7 +295,7 @@ class ProfileMenu extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
               ),
               child: const Text(
-                'Add Worker',
+                'Contractor Change Request',
                 style: TextStyle(color: Colors.green),
               ),
             ),

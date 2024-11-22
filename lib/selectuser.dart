@@ -37,11 +37,11 @@ class _SelectUserState extends State<SelectUser> {
                   size: buttonIconSize,
                   color: Colors.green,
                 ),
-                label: SizedBox.shrink(), // No label, only the icon is shown
+                label: const SizedBox.shrink(), // No label, only the icon is shown
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(buttonIconSize, buttonIconSize),
-                  shape: CircleBorder(), // Makes the button circular
-                  padding: EdgeInsets.all(24), // Padding around the icon
+                  shape: const CircleBorder(), // Makes the button circular
+                  padding: const EdgeInsets.all(24), // Padding around the icon
                   backgroundColor: Colors.green.shade100, // Change background color as needed
                   elevation: 5, // Elevation for raised appearance
                 ),
@@ -92,7 +92,7 @@ class _SelectUserState extends State<SelectUser> {
       Icons.handyman,
     ];
     final titles = ["Worker", "Job Provider", "Contractor"];
-    final routes = [RegisterWorker(), RegisterJobProvider(), RegisterContractor()];
+    final routes = [const RegisterWorker(), const RegisterJobProvider(), const RegisterContractor()];
 
     return GestureDetector(
       onTap: () {
@@ -103,12 +103,12 @@ class _SelectUserState extends State<SelectUser> {
           border: Border.all(color: Colors.green),
           borderRadius: BorderRadius.circular(8),
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icons[index], size: MediaQuery.of(context).size.width * 0.08, color: Colors.green),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               titles[index],
               style: TextStyle(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/worker/screens/homepage.dart';
 
 class RegisterWorker extends StatefulWidget {
   const RegisterWorker({super.key});
@@ -365,7 +366,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
     if (_formKey.currentState?.validate() ?? false) {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return const RegisterWorker1();
+          return const WorkerHome();
         },
       )); // You can add further sign-up logic here, like calling an API
     } else {
