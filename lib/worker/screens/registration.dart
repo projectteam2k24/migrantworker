@@ -348,9 +348,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
   TextEditingController ExcperienceController = TextEditingController();
   TextEditingController SalaryController = TextEditingController();
   TextEditingController LanguageController = TextEditingController();
-  TextEditingController GovtController = TextEditingController();
-  TextEditingController CompRegController = TextEditingController();
-  TextEditingController AddressProofController = TextEditingController();
+  TextEditingController GovtController = TextEditingController();  TextEditingController AddressProofController = TextEditingController();
 
   bool ShowPass = true;
 
@@ -412,7 +410,6 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
     ExcperienceController.dispose();
     ExpertiseController.dispose();
     GovtController.dispose();
-    CompRegController.dispose();
     super.dispose();
   }
 

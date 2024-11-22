@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/profile.dart';
+import 'package:migrantworker/contractor/screens/edit_profile.dart';
+
 
 class ContractorHome extends StatefulWidget {
   const ContractorHome({super.key});
@@ -273,7 +275,12 @@ class ProfileMenu extends StatelessWidget {
                     leading: const Icon(Icons.edit),
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const EditContractorProfile();
+                      },)
+                      );
+                    },
                   ),
                 ],
               ),
