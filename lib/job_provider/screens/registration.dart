@@ -25,13 +25,15 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
       print('Email: ${EmailController.text}');
       print(UserType);
       // Navigate or perform other actions here
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) {
-        return const JobProviderHome();
-      },
-    )); // You can add further sign-up logic here, like calling an API
-  }
- else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return const JobProviderHome();
+          },
+        ),
+      ); // Add further sign-up logic here, like calling an API
+    } else {
       print('Form is invalid');
     }
   }
@@ -51,121 +53,130 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
+      body: Center(
         child: SingleChildScrollView(
-          child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.green.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 600,
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Job Provider Registration',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    buildTextField(
-                      controller: FullNameController,
-                      label: 'Full Name',
-                      icon: Icons.person_2_outlined,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
-                        } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                          return 'Name should contain only letters';
-                        }
-                        return null;
-                      },
-                    ),
-                    buildTextField(
-                      controller: PhoneController,
-                      label: 'Phone Number',
-                      icon: Icons.phone,
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone number';
-                        } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                          return 'Phone number must be 10 digits';
-                        }
-                        return null;
-                      },
-                    ),
-                    buildTextField(
-                      controller: EmailController,
-                      label: 'Email Address',
-                      icon: Icons.email,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        } else if (!RegExp(r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$')
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                    buildTextField(
-                      controller: AddressController,
-                      label: 'Address',
-                      icon: Icons.home,
-                      maxLines: 2,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your address';
-                        }
-                        return null;
-                      },
-                    ),
-                    buildDropdownField(),
-                    buildPasswordField(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: RegisterJobProviderHandler,
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(200, 50),
-                          backgroundColor: Colors.green[700],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          "Register",
+                  padding: const EdgeInsets.all(20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Job Provider Registration',
                           style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 5),
+                        buildTextField(
+                          controller: FullNameController,
+                          label: 'Full Name',
+                          icon: Icons.person_2_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your full name';
+                            } else if (!RegExp(r'^[a-zA-Z\s]+$')
+                                .hasMatch(value)) {
+                              return 'Name should contain only letters';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildTextField(
+                          controller: PhoneController,
+                          label: 'Phone Number',
+                          icon: Icons.phone,
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your phone number';
+                            } else if (!RegExp(r'^[0-9]{10}$')
+                                .hasMatch(value)) {
+                              return 'Phone number must be 10 digits';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildTextField(
+                          controller: EmailController,
+                          label: 'Email Address',
+                          icon: Icons.email,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            } else if (!RegExp(
+                                    r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$')
+                                .hasMatch(value)) {
+                              return 'Please enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildTextField(
+                          controller: AddressController,
+                          label: 'Address',
+                          icon: Icons.home,
+                          maxLines: 2,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your address';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildDropdownField(),
+                        buildPasswordField(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: ElevatedButton(
+                            onPressed: RegisterJobProviderHandler,
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 50),
+                              backgroundColor: Colors.green[700],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Register",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -207,7 +218,8 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
             ),
             filled: true,
             fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           validator: validator,
         ),
@@ -234,6 +246,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             value: UserType,
+            dropdownColor: Colors.white,
             items: ['Company', 'Personal'].map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -296,10 +309,12 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
               icon: Icon(
                 ShowPass ? Icons.visibility : Icons.visibility_off,
               ),
+              color: Colors.lightGreen,
             ),
             filled: true,
             fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {

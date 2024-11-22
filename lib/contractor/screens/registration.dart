@@ -22,7 +22,7 @@ class _RegisterContractorState extends State<RegisterContractor> {
 
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterContractorHandler() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (true) { // _formKey.currentState?.validate() ?? false -!!!repalce this condition after test
       print('Email: ${EmailController.text}');
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
