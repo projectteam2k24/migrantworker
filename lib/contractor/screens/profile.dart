@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:migrantworker/contractor/screens/edit_profile.dart';
 class ContractorProfile extends StatefulWidget {
   const ContractorProfile({super.key});
 
@@ -22,8 +22,11 @@ class _ContractorProfileState extends State<ContractorProfile> {
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
-                // Navigate to edit profile page or enable editing
-              },
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const EditContractorProfile();
+                      },)
+                      );
+                    },
             ),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/job_provider/screens/edit_profile.dart';
 
 class JobProviderProfile extends StatefulWidget {
   const JobProviderProfile({super.key});
@@ -22,6 +23,9 @@ class _JobProviderProfileState extends State<JobProviderProfile> {
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const EditJobProviderProfile();
+                },));
                 // Navigate to edit profile page or enable editing
               },
             ),
@@ -55,22 +59,10 @@ class _JobProviderProfileState extends State<JobProviderProfile> {
                 const SizedBox(height: 30),
                 _buildSectionTitle('Personal Information'),
                 _buildProfileItem('Full Name', 'John Doe'),
-                _buildProfileItem('Date of Birth', '12/12/1980'),
-                _buildProfileItem('Gender', 'Male'),
                 _buildProfileItem('Phone Number', '+1 234 567 8901'),
                 _buildProfileItem('Email Address', 'johndoe@example.com'),
                 _buildProfileItem('Address', '123 Main St, Springfield'),
                 const SizedBox(height: 20),
-                _buildSectionTitle('Professional Details'),
-                _buildProfileItem('Company Name', 'Doe Constructions'),
-                _buildProfileItem('Role/Position', 'Senior Contractor'),
-                _buildProfileItem('Experience', '15 Years'),
-                _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Uploaded Documents'),
-                _buildDocumentItem('Government-issued ID', 'Uploaded'),
-                _buildDocumentItem('Company Registration Certificate', 'Uploaded'),
-                _buildDocumentItem('Proof of Address', 'Uploaded'),
                 const SizedBox(height: 30),
                 Center(
                   child: ElevatedButton(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/worker/screens/edit_profile.dart';
 
 class WorkerProfile extends StatefulWidget {
   const WorkerProfile({super.key});
@@ -22,6 +23,9 @@ class _WorkerProfileState extends State<WorkerProfile> {
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const EditWorkerProfile();
+                },));
                 // Navigate to edit profile page or enable editing
               },
             ),
@@ -62,14 +66,13 @@ class _WorkerProfileState extends State<WorkerProfile> {
                 _buildProfileItem('Address', '123 Main St, Springfield'),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Professional Details'),
-                _buildProfileItem('Company Name', 'Doe Constructions'),
-                _buildProfileItem('Role/Position', 'Senior Contractor'),
-                _buildProfileItem('Experience', '15 Years'),
+                _buildProfileItem('Emergency Contact Number', '+1 234 567 8901'),
+                _buildProfileItem('Duration of stay at Current Location in Months', '14'),
+                _buildProfileItem('Skill', '15 Years'),
                 _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Uploaded Documents'),
                 _buildDocumentItem('Government-issued ID', 'Uploaded'),
-                _buildDocumentItem('Company Registration Certificate', 'Uploaded'),
                 _buildDocumentItem('Proof of Address', 'Uploaded'),
                 const SizedBox(height: 30),
                 Center(

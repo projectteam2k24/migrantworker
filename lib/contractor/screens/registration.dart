@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/contractor/screens/homepage.dart';
 import 'package:file_picker/file_picker.dart';
 
 class RegisterContractor extends StatefulWidget {
@@ -317,7 +318,7 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
     if (_formKey.currentState?.validate() ?? false) {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return const RegisterContractor1();
+          return const ContractorHome();
         },
       )); // You can add further sign-up logic here, like calling an API
     } else {

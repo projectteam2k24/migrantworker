@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
-
+import 'package:migrantworker/job_provider/screens/edit_profile.dart';
 class JobProviderHome extends StatefulWidget {
   const JobProviderHome({super.key});
 
@@ -267,7 +267,11 @@ class ProfileMenu extends StatelessWidget {
                     leading: const Icon(Icons.edit),
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const EditJobProviderProfile();
+                      },));
+                    },
                   ),
                 ],
               ),
