@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/profile.dart';
 import 'package:migrantworker/contractor/screens/edit_profile.dart';
-
+import 'package:migrantworker/contractor/screens/notification.dart';
+import 'package:migrantworker/contractor/screens/worker_detail.dart';
+import 'package:migrantworker/contractor/screens/search_jobs.dart';
 
 class ContractorHome extends StatefulWidget {
   const ContractorHome({super.key});
@@ -173,7 +175,13 @@ class _ContractorHomeState extends State<ContractorHome> {
           height: widthFactor * 0.15,
           width: widthFactor * 0.15,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return WorkerDetailsPage();
+                },
+              ));
+            },
             shape: const CircleBorder(),
             backgroundColor: Colors.lightGreen,
             child: Icon(
@@ -246,40 +254,63 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('My Account'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return const ContractorProfile();
-                            },
-                          ));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const ContractorProfile();
                         },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.work),
                     title: const Text('Worker Details'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return WorkerDetailsPage();
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.thumb_up),
                     title: const Text('Responses'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ContractorNotificationHub(
+                            toggle: true,
+                          );
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications),
                     title: const Text('Notification Hub'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ContractorNotificationHub(
+                            toggle: false,
+                          );
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.edit),
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const EditContractorProfile();
-                      },)
-                      );
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const EditContractorProfile();
+                        },
+                      ));
                     },
                   ),
                 ],
@@ -287,7 +318,13 @@ class ProfileMenu extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return SearchJobPage(); // Navigate to WorkerDetailsPage
+                  },
+                ));
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -296,7 +333,13 @@ class ProfileMenu extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return WorkerDetailsPage(); // Navigate to WorkerDetailsPage
+                  },
+                ));
+              },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.green),
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
