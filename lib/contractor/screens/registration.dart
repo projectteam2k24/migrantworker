@@ -431,215 +431,158 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Form(
-              key: _formKey, // Link the form to the key
+              key: _formKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Contractor Registration',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                      fontFamily: 'Times New Roman',
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Professional Information',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontFamily: 'Times New Roman',
-                        decoration: TextDecoration.underline),
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: CompanyController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person_2_outlined),
-                        labelText: 'Company Name',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  // Professional Information Section
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.withOpacity(0.4),
+                          blurRadius: 6,
                         ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Company Name is required';
-                        }
-                        return null;
-                      },
+                      ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: RoleController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.calendar_today),
-                        labelText: 'Role / Position',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Role/Position is required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: ExcperienceController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person_2_outlined),
-                        labelText: 'Experience',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Experience is required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: ExpertiseController,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.phone),
-                        labelText: 'Expertise/Specialization',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Document Upload',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontFamily: 'Times New Roman',
-                        decoration: TextDecoration.underline),
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
                       children: [
                         const Text(
-                          "Government issued ID:",
+                          'Professional Information',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                            fontFamily: 'Times New Roman',
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        ElevatedButton(
+                        const SizedBox(height: 5),
+                        buildTextField(
+                          controller: CompanyController,
+                          label: 'Company Name',
+                          icon: Icons.business_center,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Company Name is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildTextField(
+                          controller: RoleController,
+                          label: 'Role / Position',
+                          icon: Icons.work_outline,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Role/Position is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildTextField(
+                          controller: ExcperienceController,
+                          label: 'Experience',
+                          icon: Icons.timeline,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Experience is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        buildTextField(
+                          controller: ExpertiseController,
+                          label: 'Expertise/Specialization',
+                          icon: Icons.star_border,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Document Upload Section
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.withOpacity(0.4),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Document Upload',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                            fontFamily: 'Times New Roman',
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 5),
+                        buildUploadRow(
+                          title: "Government issued ID:",
                           onPressed: selectGovtIdFile,
-                          child: Text(govtIdFile == null
-                              ? "Upload File"
-                              : "File Selected"),
+                          isSelected: govtIdFile != null,
                         ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Company Reg. Certificate:",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        ElevatedButton(
+                        buildUploadRow(
+                          title: "Company Reg. Certificate:",
                           onPressed: selectCompRegFile,
-                          child: Text(CompRegFile == null
-                              ? "Upload File"
-                              : "File Selected"),
+                          isSelected: CompRegFile != null,
                         ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Proof of address :",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        ElevatedButton(
+                        buildUploadRow(
+                          title: "Proof of address:",
                           onPressed: selectAddressProofFile,
-                          child: Text(AddressProofFile == null
-                              ? "Upload File"
-                              : "File Selected"),
+                          isSelected: AddressProofFile != null,
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  // Buttons Row
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0, left: 55.0),
-                        child: ElevatedButton(
-                          onPressed: PrevHandler,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(120, 40),
+                      ElevatedButton(
+                        onPressed: PrevHandler,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(120, 40),
+                          backgroundColor: Colors.green[700],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            "Previous",
-                            style: TextStyle(
-                              fontSize: 23,
-                            ),
+                        ),
+                        child: const Text(
+                          "Previous",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: ElevatedButton(
-                          onPressed:
-                              RegisterContractorHandler, // Updated to call RegisterContractorHandler
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(120, 40),
+                      ElevatedButton(
+                        onPressed: RegisterContractorHandler,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(120, 40),
+                          backgroundColor: Colors.green[700],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            "Register",
-                            style: TextStyle(
-                              fontSize: 23,
-                            ),
+                        ),
+                        child: const Text(
+                          "Register",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -650,6 +593,84 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.1),
+              blurRadius: 2,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        child: TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: Colors.green),
+            labelText: label,
+            labelStyle: TextStyle(fontSize: 16, color: Colors.green[800]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          validator: validator,
+        ),
+      ),
+    );
+  }
+
+  Widget buildUploadRow({
+    required String title,
+    required VoidCallback onPressed,
+    required bool isSelected,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(120, 40),
+              backgroundColor: Colors.green[400],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              isSelected ? "File Selected" : "Upload File",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
