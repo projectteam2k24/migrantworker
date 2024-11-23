@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/edit_profile.dart';
+import 'package:migrantworker/login.dart';
+
 class ContractorProfile extends StatefulWidget {
   const ContractorProfile({super.key});
 
@@ -17,73 +19,86 @@ class _ContractorProfileState extends State<ContractorProfile> {
       ),
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: const Text('Contractor Profile'),
           actions: [
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const EditContractorProfile();
-                      },)
-                      );
-                    },
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const EditContractorProfile();
+                  },
+                ));
+              },
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage('assets/profile_placeholder.png'),
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Center(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          AssetImage('assets/profile_placeholder.png'),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                const Center(
-                  child: Text(
-                    'John Doe', // Contractor name
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      'John Doe', // Contractor name
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                const Center(
-                  child: Text(
-                    'Experienced Contractor', // Role or specialization
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  const Center(
+                    child: Text(
+                      'Experienced Contractor', // Role or specialization
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                _buildSectionTitle('Personal Information'),
-                _buildProfileItem('Full Name', 'John Doe'),
-                _buildProfileItem('Date of Birth', '12/12/1980'),
-                _buildProfileItem('Gender', 'Male'),
-                _buildProfileItem('Phone Number', '+1 234 567 8901'),
-                _buildProfileItem('Email Address', 'johndoe@example.com'),
-                _buildProfileItem('Address', '123 Main St, Springfield'),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Professional Details'),
-                _buildProfileItem('Company Name', 'Doe Constructions'),
-                _buildProfileItem('Role/Position', 'Senior Contractor'),
-                _buildProfileItem('Experience', '15 Years'),
-                _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Uploaded Documents'),
-                _buildDocumentItem('Government-issued ID', 'Uploaded'),
-                _buildDocumentItem('Company Registration Certificate', 'Uploaded'),
-                _buildDocumentItem('Proof of Address', 'Uploaded'),
-                const SizedBox(height: 30),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Log out functionality
-                    },
-                    child: const Text('Log Out'),
+                  const SizedBox(height: 30),
+                  _buildSectionTitle('Personal Information'),
+                  _buildProfileItem('Full Name', 'John Doe'),
+                  _buildProfileItem('Date of Birth', '12/12/1980'),
+                  _buildProfileItem('Gender', 'Male'),
+                  _buildProfileItem('Phone Number', '+1 234 567 8901'),
+                  _buildProfileItem('Email Address', 'johndoe@example.com'),
+                  _buildProfileItem('Address', '123 Main St, Springfield'),
+                  const SizedBox(height: 20),
+                  _buildSectionTitle('Professional Details'),
+                  _buildProfileItem('Company Name', 'Doe Constructions'),
+                  _buildProfileItem('Role/Position', 'Senior Contractor'),
+                  _buildProfileItem('Experience', '15 Years'),
+                  _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
+                  const SizedBox(height: 20),
+                  _buildSectionTitle('Uploaded Documents'),
+                  _buildDocumentItem('Government-issued ID', 'Uploaded'),
+                  _buildDocumentItem(
+                      'Company Registration Certificate', 'Uploaded'),
+                  _buildDocumentItem('Proof of Address', 'Uploaded'),
+                  const SizedBox(height: 30),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[700],
+                      ),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LogIn(),));
+                      },
+                      child: const Text('Log Out',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

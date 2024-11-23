@@ -102,48 +102,52 @@ class _ContractorHomeState extends State<ContractorHome> {
           ),
         ),
         drawer: ProfileMenu(widthFactor: widthFactor),
-        body: Padding(
-          padding: EdgeInsets.all(widthFactor * 0.04),
-          child: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return Container(
-                height: heightFactor * 0.15,
-                margin: EdgeInsets.only(bottom: heightFactor * 0.02),
-                decoration: BoxDecoration(
-                  color: Colors.lightGreen[100],
-                  borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5.0,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.category,
-                      size: widthFactor * 0.12,
-                      color: Colors.green,
-                    ),
-                    SizedBox(width: widthFactor * 0.02),
-                    Text(
-                      "Card ${index + 1}",
-                      style: TextStyle(
-                        fontSize: widthFactor * 0.04,
-                        fontWeight: FontWeight.bold,
+        body: Container(
+          color: Colors.white, // Set the background color to white
+          child: Padding(
+            padding: EdgeInsets.all(widthFactor * 0.04),
+            child: ListView.builder(
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return Container(
+                  height: heightFactor * 0.15,
+                  margin: EdgeInsets.only(bottom: heightFactor * 0.02),
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreen[100],
+                    borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5.0,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.category,
+                        size: widthFactor * 0.12,
+                        color: Colors.green,
+                      ),
+                      SizedBox(width: widthFactor * 0.02),
+                      Text(
+                        "Card ${index + 1}",
+                        style: TextStyle(
+                          fontSize: widthFactor * 0.04,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(

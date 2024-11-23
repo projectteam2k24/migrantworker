@@ -355,7 +355,7 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
 
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterContractorHandler() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (true) { // _formKey.currentState?.validate() ?? false -!!add this line after test
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
           return const ContractorHome();
