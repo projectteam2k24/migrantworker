@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
+import 'package:migrantworker/login.dart';
 
 class JobProviderProfile extends StatefulWidget {
   const JobProviderProfile({super.key});
@@ -18,61 +19,81 @@ class _JobProviderProfileState extends State<JobProviderProfile> {
       ),
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: const Text('Job Provider Profile'),
           actions: [
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const EditJobProviderProfile();
-                },));
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const EditJobProviderProfile();
+                  },
+                ));
                 // Navigate to edit profile page or enable editing
               },
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage('assets/profile_placeholder.png'),
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Center(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          AssetImage('assets/profile_placeholder.png'),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                const Center(
-                  child: Text(
-                    'John Doe', // Contractor name
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      'John Doe', // Contractor name
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                const Center(
-                  child: Text(
-                    'Experienced Contractor', // Role or specialization
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  const Center(
+                    child: Text(
+                      'Experienced Contractor', // Role or specialization
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                _buildSectionTitle('Personal Information'),
-                _buildProfileItem('Full Name', 'John Doe'),
-                _buildProfileItem('Phone Number', '+1 234 567 8901'),
-                _buildProfileItem('Email Address', 'johndoe@example.com'),
-                _buildProfileItem('Address', '123 Main St, Springfield'),
-                const SizedBox(height: 20),
-                const SizedBox(height: 30),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Log out functionality
-                    },
-                    child: const Text('Log Out'),
+                  const SizedBox(height: 30),
+                  _buildSectionTitle('Personal Information'),
+                  _buildProfileItem('Full Name', 'John Doe'),
+                  _buildProfileItem('Phone Number', '+1 234 567 8901'),
+                  _buildProfileItem('Email Address', 'johndoe@example.com'),
+                  _buildProfileItem('Address', '123 Main St, Springfield'),
+                  const SizedBox(height: 20),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.34),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[700],
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LogIn(),
+                            ));
+                      },
+                      child: const Text(
+                        'Log Out',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

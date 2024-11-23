@@ -21,7 +21,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
   bool ShowPass = true;
 
   void RegisterJobProviderHandler() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (true) { // _formKey.currentState?.validate() ?? false -!!add this line after test
       print('Email: ${EmailController.text}');
       print(UserType);
       // Navigate or perform other actions here

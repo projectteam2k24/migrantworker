@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
+
 class JobProviderHome extends StatefulWidget {
   const JobProviderHome({super.key});
 
@@ -98,48 +99,52 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           ),
         ),
         drawer: ProfileMenu(widthFactor: widthFactor),
-        body: Padding(
-          padding: EdgeInsets.all(widthFactor * 0.04),
-          child: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return Container(
-                height: heightFactor * 0.15,
-                margin: EdgeInsets.only(bottom: heightFactor * 0.02),
-                decoration: BoxDecoration(
-                  color: Colors.lightGreen[100],
-                  borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5.0,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.category,
-                      size: widthFactor * 0.12,
-                      color: Colors.green,
-                    ),
-                    SizedBox(width: widthFactor * 0.02),
-                    Text(
-                      "Card ${index + 1}",
-                      style: TextStyle(
-                        fontSize: widthFactor * 0.04,
-                        fontWeight: FontWeight.bold,
+        body: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(widthFactor * 0.04),
+            child: ListView.builder(
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return Container(
+                  height: heightFactor * 0.15,
+                  margin: EdgeInsets.only(bottom: heightFactor * 0.02),
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreen[100],
+                    borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5.0,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.category,
+                        size: widthFactor * 0.12,
+                        color: Colors.green,
+                      ),
+                      SizedBox(width: widthFactor * 0.02),
+                      Text(
+                        "Card ${index + 1}",
+                        style: TextStyle(
+                          fontSize: widthFactor * 0.04,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(
@@ -243,13 +248,13 @@ class ProfileMenu extends StatelessWidget {
                     leading: const Icon(Icons.person),
                     title: const Text('My Account'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                     onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return const JobProviderProfile();
-                            },
-                          ));
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const JobProviderProfile();
                         },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.thumb_up),
@@ -268,9 +273,11 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const EditJobProviderProfile();
-                      },));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const EditJobProviderProfile();
+                        },
+                      ));
                     },
                   ),
                 ],
