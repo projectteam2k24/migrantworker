@@ -23,7 +23,8 @@ class _RegisterContractorState extends State<RegisterContractor> {
 
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterContractorHandler() {
-    if (true) { // _formKey.currentState?.validate() ?? false -!!!repalce this condition after test
+    if (true) {
+      // _formKey.currentState?.validate() ?? false -!!!repalce this condition after test
       print('Email: ${EmailController.text}');
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
@@ -54,223 +55,241 @@ class _RegisterContractorState extends State<RegisterContractor> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Form(
-              key: _formKey, // Link the form to the key
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Contractor Registration',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                      fontFamily: 'Times New Roman',
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Personal Information',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontFamily: 'Times New Roman',
-                      decoration: TextDecoration.underline
+
+                  // Form Container with BoxDecoration
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: FullNameController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person_2_outlined),
-                        labelText: 'Full Name',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          const Text(
+                            'Contractor Registration',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                              fontFamily: 'Times New Roman',
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          // Full Name Field
+                          _buildInputContainer(
+                            TextFormField(
+                              controller: FullNameController,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.person_2_outlined,
+                                    color: Colors.green),
+                                labelText: 'Full Name',
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your full name';
+                                } else if (!RegExp(r'^[a-zA-Z\s]+$')
+                                    .hasMatch(value)) {
+                                  return 'Name should contain only letters';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          // Date of Birth Field
+                          _buildInputContainer(
+                            TextFormField(
+                              controller: DOBController,
+                              readOnly: true, // Prevent manual typing
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.calendar_today,
+                                    color: Colors.green),
+                                labelText: 'Date of Birth',
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              onTap: () async {
+                                // Open date picker on field tap
+                                final DateTime? pickedDate =
+                                    await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime(2000), // Default date
+                                  firstDate: DateTime(1900), // Start date
+                                  lastDate: DateTime.now(), // End date
+                                  builder:
+                                      (BuildContext context, Widget? child) {
+                                    return Theme(
+                                      data: ThemeData.light().copyWith(
+                                        colorScheme: const ColorScheme.light(
+                                          primary: Colors
+                                              .green, // Header background color
+                                          onPrimary:
+                                              Colors.white, // Header text color
+                                          onSurface:
+                                              Colors.green, // Body text color
+                                        ),
+                                        textButtonTheme: TextButtonThemeData(
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors
+                                                .green, // Button text color
+                                          ),
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  },
+                                );
+
+                                if (pickedDate != null) {
+                                  setState(() {
+                                    DOBController.text =
+                                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                  });
+                                }
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select your date of birth';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          // Gender Field
+                          _buildInputContainer(
+                            TextFormField(
+                              controller: GenderController,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.person_2_outlined,
+                                    color: Colors.green),
+                                labelText: 'Gender',
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select your gender';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          // Phone Number Field
+                          _buildInputContainer(
+                            TextFormField(
+                              controller: PhoneController,
+                              keyboardType: TextInputType.phone,
+                              decoration: const InputDecoration(
+                                prefixIcon:
+                                    Icon(Icons.phone, color: Colors.green),
+                                labelText: 'Phone Number',
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your phone number';
+                                } else if (!RegExp(r'^[0-9]{10}$')
+                                    .hasMatch(value)) {
+                                  return 'Phone number must be 10 digits';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          // Password Field
+                          _buildInputContainer(
+                            TextFormField(
+                              controller: PasswordController,
+                              obscureText: ShowPass,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                prefixIcon: const Icon(Icons.lock_outline,
+                                    color: Colors.green),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      ShowPass = !ShowPass;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    ShowPass
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.lightGreen,
+                                  ),
+                                ),
+                                labelStyle: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                } else if (value.length < 6) {
+                                  return 'Password must be at least 6 characters long';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
-                        } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                          return 'Name should contain only letters';
-                        }
-                        return null;
-                      },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: DOBController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.calendar_today),
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+
+                  const SizedBox(height: 20),
+
+                  // Next Button
+                  ElevatedButton(
+                    onPressed: RegisterContractorHandler,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(200, 60),
+                      backgroundColor: Colors.green[700],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your date of birth';
-                        }
-                        return null;
-                      },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: GenderController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person_2_outlined),
-                        labelText: 'Gender',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select your gender';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: PhoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.phone),
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone number';
-                        } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                          return 'Phone number must be 10 digits';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: EmailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email),
-                        labelText: 'Email Address',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        } else if (!RegExp(r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: AddressController,
-                      maxLines: 2,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.home),
-                        labelText: 'Address',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your address';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 23.0, left: 20.0, right: 20.0),
-                    child: TextFormField(
-                      controller: PasswordController,
-                      obscureText: ShowPass,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.verified_user_outlined),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              ShowPass = !ShowPass;
-                            });
-                          },
-                          icon: Icon(ShowPass
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                        ),
-                        border: const OutlineInputBorder(),
-                        labelStyle: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters long';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: RegisterContractorHandler,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(200, 60),
-                      ),
-                      child: const Text(
-                        "Next",
-                        style: TextStyle(
-                          fontSize: 23,
-                        ),
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -282,8 +301,29 @@ class _RegisterContractorState extends State<RegisterContractor> {
       ),
     );
   }
-}
 
+// Helper Function for Individual Input Field Styling
+  Widget _buildInputContainer(Widget child) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(10),
+        child: child,
+      ),
+    );
+  }
+}
 
 class RegisterContractor1 extends StatefulWidget {
   const RegisterContractor1({super.key});
@@ -325,10 +365,11 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       print('Form is invalid');
     }
   }
+
   //
-             String? govtIdFile;
-             String? CompRegFile;
-             String? AddressProofFile;
+  String? govtIdFile;
+  String? CompRegFile;
+  String? AddressProofFile;
 
   // Function to handle file selection
   Future<void> selectGovtIdFile() async {
@@ -342,6 +383,7 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       });
     }
   }
+
   // Function to handle file selection
   Future<void> selectCompRegFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -354,6 +396,7 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       });
     }
   }
+
   // Function to handle file selection
   Future<void> selectAddressProofFile() async {
     final result = await FilePicker.platform.pickFiles(
@@ -406,16 +449,16 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                   const Text(
                     'Professional Information',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontFamily: 'Times New Roman',
-                      decoration: TextDecoration.underline
-                    ),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontFamily: 'Times New Roman',
+                        decoration: TextDecoration.underline),
                     textAlign: TextAlign.center,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: TextFormField(
                       controller: CompanyController,
                       decoration: const InputDecoration(
@@ -436,7 +479,8 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: TextFormField(
                       controller: RoleController,
                       decoration: const InputDecoration(
@@ -457,7 +501,8 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: TextFormField(
                       controller: ExcperienceController,
                       decoration: const InputDecoration(
@@ -478,7 +523,8 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: TextFormField(
                       controller: ExpertiseController,
                       keyboardType: TextInputType.text,
@@ -493,104 +539,110 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                       ),
                     ),
                   ),
-                  
                   const SizedBox(height: 20),
                   const Text(
                     'Document Upload',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontFamily: 'Times New Roman',
-                      decoration: TextDecoration.underline
-                    ),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontFamily: 'Times New Roman',
+                        decoration: TextDecoration.underline),
                     textAlign: TextAlign.center,
                   ),
-       
-
-                 Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           "Government issued ID:",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         ElevatedButton(
                           onPressed: selectGovtIdFile,
-                          child: Text(govtIdFile == null ? "Upload File" : "File Selected"),
+                          child: Text(govtIdFile == null
+                              ? "Upload File"
+                              : "File Selected"),
                         ),
                       ],
                     ),
                   ),
-                 
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "Company Registration Certificate",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          "Company Reg. Certificate:",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         ElevatedButton(
                           onPressed: selectCompRegFile,
-                          child: Text(CompRegFile == null ? "Upload File" : "File Selected"),
+                          child: Text(CompRegFile == null
+                              ? "Upload File"
+                              : "File Selected"),
                         ),
                       ],
                     ),
                   ),
-                 
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           "Proof of address :",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         ElevatedButton(
                           onPressed: selectAddressProofFile,
-                          child: Text(AddressProofFile == null ? "Upload File" : "File Selected"),
+                          child: Text(AddressProofFile == null
+                              ? "Upload File"
+                              : "File Selected"),
                         ),
                       ],
                     ),
                   ),
-                 
                   Row(
                     children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 55.0),
-                    child: ElevatedButton(
-                      onPressed: PrevHandler,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(120, 40),
-                      ),
-                      child: const Text(
-                        "Previous",
-                        style: TextStyle(
-                          fontSize: 23,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0, left: 55.0),
+                        child: ElevatedButton(
+                          onPressed: PrevHandler,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(120, 40),
+                          ),
+                          child: const Text(
+                            "Previous",
+                            style: TextStyle(
+                              fontSize: 23,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                    Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: RegisterContractorHandler,  // Updated to call RegisterContractorHandler
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(120, 40),
-                      ),
-                      child: const Text(
-                        "Register",
-                        style: TextStyle(
-                          fontSize: 23,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: ElevatedButton(
+                          onPressed:
+                              RegisterContractorHandler, // Updated to call RegisterContractorHandler
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(120, 40),
+                          ),
+                          child: const Text(
+                            "Register",
+                            style: TextStyle(
+                              fontSize: 23,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
                     ],
                   ),
                 ],

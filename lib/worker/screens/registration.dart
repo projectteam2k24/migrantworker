@@ -107,16 +107,86 @@ class _RegisterWorkerState extends State<RegisterWorker> {
                               return null;
                             },
                           ),
-                          buildTextField(
-                            controller: DOBController,
-                            label: 'Date of Birth',
-                            icon: Icons.calendar_today,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your date of birth';
-                              }
-                              return null;
-                            },
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.green.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(2, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextFormField(
+                                controller: DOBController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Date of Birth',
+                                  labelStyle: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.green,
+                                  ),
+                                  border: InputBorder.none,
+                                  icon: Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your date of birth';
+                                  }
+                                  return null;
+                                },
+                                onTap: () async {
+                                  // Prevent the keyboard from showing
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+
+                                  // Show date picker
+                                  DateTime? selectedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime.now(),
+                                    builder:
+                                        (BuildContext context, Widget? child) {
+                                      return Theme(
+                                        data: ThemeData.light().copyWith(
+                                          colorScheme: const ColorScheme.light(
+                                            primary: Colors
+                                                .green, // Header background color
+                                            onPrimary: Colors
+                                                .white, // Header text color
+                                            onSurface:
+                                                Colors.green, // Body text color
+                                          ),
+                                          textButtonTheme: TextButtonThemeData(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors
+                                                  .green, // Button text color
+                                            ),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
+                                  );
+
+                                  if (selectedDate != null) {
+                                    // Format the date and set it to the controller
+                                    DOBController.text =
+                                        "${selectedDate.toLocal()}"
+                                            .split(' ')[0]; // YYYY-MM-DD
+                                  }
+                                },
+                                readOnly:
+                                    true, // To prevent typing in the text field
+                              ),
+                            ),
                           ),
                           buildTextField(
                             controller: GenderController,
@@ -348,7 +418,8 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
   TextEditingController ExcperienceController = TextEditingController();
   TextEditingController SalaryController = TextEditingController();
   TextEditingController LanguageController = TextEditingController();
-  TextEditingController GovtController = TextEditingController();  TextEditingController AddressProofController = TextEditingController();
+  TextEditingController GovtController = TextEditingController();
+  TextEditingController AddressProofController = TextEditingController();
 
   bool ShowPass = true;
 
@@ -389,7 +460,6 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
       });
     }
   }
-
 
   // Function to handle file selection
   Future<void> selectAddressProofFile() async {
@@ -545,9 +615,12 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Text(govtIdFile == null
-                                    ? "Upload File"
-                                    : "File Selected", style: const TextStyle(color: Colors.white),),
+                                child: Text(
+                                  govtIdFile == null
+                                      ? "Upload File"
+                                      : "File Selected",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
                               ),
                             ],
                           ),
@@ -575,9 +648,12 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Text(AddressProofFile == null
-                                    ? "Upload File"
-                                    : "File Selected", style: TextStyle(color: Colors.white),),
+                                child: Text(
+                                  AddressProofFile == null
+                                      ? "Upload File"
+                                      : "File Selected",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ],
                           ),
