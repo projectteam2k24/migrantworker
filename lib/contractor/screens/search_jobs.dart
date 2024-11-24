@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/contractor/screens/homepage.dart';
+
 
 class SearchJobPage extends StatefulWidget {
   const SearchJobPage({super.key});
@@ -18,6 +20,15 @@ class _SearchJobPageState extends State<SearchJobPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white), // Left arrow icon
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ContractorHome()), // Navigate to ContractorHome page
+            );
+          },
+        ),
         title: Text(
           "Search Job",
           style: TextStyle(
@@ -30,34 +41,78 @@ class _SearchJobPageState extends State<SearchJobPage> {
         padding: EdgeInsets.all(widthFactor * 0.05),
         child: ListView(
           children: [
-            // Search Bar Section
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Job Type Search Bar
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search the job type",
-                    filled: true,
-                    fillColor: Colors.green.withOpacity(0.1),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                      borderSide: BorderSide.none,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Search the job type",
+                          filled: true,
+                          fillColor: Colors.green.withOpacity(0.1),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(widthFactor * 0.03),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(width: widthFactor * 0.02),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add search functionality here
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        backgroundColor: Colors.green,
+                        padding: EdgeInsets.all(widthFactor * 0.03),
+                      ),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: heightFactor * 0.02),
 
                 // Property Location Search Bar
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Property Location",
-                    filled: true,
-                    fillColor: Colors.green.withOpacity(0.1),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                      borderSide: BorderSide.none,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Property Location",
+                          filled: true,
+                          fillColor: Colors.green.withOpacity(0.1),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(widthFactor * 0.03),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(width: widthFactor * 0.02),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add search functionality here
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        backgroundColor: Colors.green,
+                        padding: EdgeInsets.all(widthFactor * 0.03),
+                      ),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: heightFactor * 0.03),
 
@@ -73,7 +128,13 @@ class _SearchJobPageState extends State<SearchJobPage> {
                       ),
                     ),
                     Container(
-                      width: widthFactor * 0.4,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: widthFactor * 0.02),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(widthFactor * 0.03),
+                      ),
                       child: DropdownButton<String>(
                         value: _selectedDateFilter,
                         items: [
@@ -93,16 +154,15 @@ class _SearchJobPageState extends State<SearchJobPage> {
                             _selectedDateFilter = newValue!;
                           });
                         },
-                        isExpanded: true,
                         underline: Container(),
-                        dropdownColor: Colors.green.withOpacity(0.1),
+                        dropdownColor: Colors.white, // Set dropdown color
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: heightFactor * 0.03),
 
-                // "Top Jobs" section
+                // "Top Jobs" Section
                 Text(
                   "Top Jobs",
                   style: TextStyle(
@@ -159,16 +219,25 @@ class JobCard extends StatelessWidget {
     double widthFactor = MediaQuery.of(context).size.width;
     double heightFactor = MediaQuery.of(context).size.height;
 
-    return Card(
+    return Container(
+      width: double.infinity,
       margin: EdgeInsets.only(bottom: heightFactor * 0.02),
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(widthFactor * 0.03),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: widthFactor * 0.02,
+            spreadRadius: widthFactor * 0.01,
+          ),
+        ],
       ),
-      elevation: 5,
       child: Padding(
         padding: EdgeInsets.all(widthFactor * 0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               jobTitle,

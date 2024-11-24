@@ -4,6 +4,7 @@ import 'package:migrantworker/contractor/screens/edit_profile.dart';
 import 'package:migrantworker/contractor/screens/notification.dart';
 import 'package:migrantworker/contractor/screens/worker_detail.dart';
 import 'package:migrantworker/contractor/screens/search_jobs.dart';
+import 'package:migrantworker/contractor/screens/worker_status.dart'; // Importing WorkerStatusPage
 
 class ContractorHome extends StatefulWidget {
   const ContractorHome({super.key});
@@ -18,6 +19,13 @@ class _ContractorHomeState extends State<ContractorHome> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (_selectedIndex == 0) {
+        // Navigate to SearchJobPage
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SearchJobPage()));
+      } else if (_selectedIndex == 2) {
+        // Navigate to WorkerStatusPage
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WorkerStatusPage()));
+      }
     });
   }
 
@@ -320,7 +328,7 @@ class ProfileMenu extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+   const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
