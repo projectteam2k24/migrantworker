@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 
 class WorkerNotificationHub extends StatefulWidget {
-  const WorkerNotificationHub({Key? key}) : super(key: key);
+  WorkerNotificationHub({Key? key, required this.toggle}) : super(key: key);
+
+  bool toggle;
 
   @override
-  State<WorkerNotificationHub> createState() => _WorkerNotificationHubState();
+  State<WorkerNotificationHub> createState() =>
+      _WorkerNotificationHubState();
 }
 
 class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
-  bool showMessages = false; // Toggle between Messages and Notifications
+  bool showMessages = true; // Toggle between Messages and Notifications
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    showMessages = widget.toggle;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Contractor Notification Hub',
+          'Worker Notification Hub',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -53,7 +63,6 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                 ),
               ],
               onPressed: (index) {
-                print(index);
                 setState(() {
                   showMessages = index == 0;
                 });

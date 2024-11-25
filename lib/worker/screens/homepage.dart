@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/contractor/screens/homepage.dart';
+import 'package:migrantworker/worker/screens/exchange_contractor.dart';
+import 'package:migrantworker/worker/screens/my_contractor.dart';
+import 'package:migrantworker/worker/screens/notification.dart';
 import 'package:migrantworker/worker/screens/profile.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
+import 'package:migrantworker/worker/screens/search_contractor.dart';
+import 'package:migrantworker/worker/screens/view_current_job.dart';
 
 class WorkerHome extends StatefulWidget {
   const WorkerHome({super.key});
@@ -15,8 +21,26 @@ class _WorkerHomeState extends State<WorkerHome> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 0) {
+        Notification();
+      } else if (index == 2) {
+        currentjob();
+      }
     });
   }
+
+  void Notification() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return  WorkerNotificationHub(toggle: false,);
+    },));
+  }
+
+
+  void currentjob() {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return  ViewCurrentJobPage();
+    },));
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +168,13 @@ class _WorkerHomeState extends State<WorkerHome> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(
+                Icons.notifications,
+                color: Colors.green,
+              ),
+              label: "Notification",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
                 Icons.search,
                 color: Colors.green,
               ),
@@ -151,17 +182,10 @@ class _WorkerHomeState extends State<WorkerHome> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              label: "Add Worker",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
                 Icons.work,
                 color: Colors.green,
               ),
-              label: "Working Status",
+              label: "Current Job",
             ),
           ],
           currentIndex: _selectedIndex,
@@ -172,11 +196,15 @@ class _WorkerHomeState extends State<WorkerHome> {
           height: widthFactor * 0.15,
           width: widthFactor * 0.15,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const ContractorSearchPage();
+              },));
+            },
             shape: const CircleBorder(),
             backgroundColor: Colors.lightGreen,
             child: Icon(
-              Icons.add,
+              Icons.search,
               size: widthFactor * 0.09,
               color: Colors.white,
             ),
@@ -187,7 +215,6 @@ class _WorkerHomeState extends State<WorkerHome> {
     );
   }
 }
-
 class ProfileMenu extends StatelessWidget {
   final double widthFactor;
   const ProfileMenu({super.key, required this.widthFactor});
@@ -256,19 +283,39 @@ class ProfileMenu extends StatelessWidget {
                     leading: const Icon(Icons.work),
                     title: const Text('My Contractor'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const MyContractor();
+                      },));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.thumb_up),
-                    title: const Text('My Jobs'),
+                    title: const Text('Responses'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                     onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return WorkerNotificationHub(
+                            toggle: true,
+                          );
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications),
                     title: const Text('Notification Hub'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return WorkerNotificationHub(
+                            toggle: false,
+                          );
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.edit),
@@ -286,7 +333,11 @@ class ProfileMenu extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const ViewCurrentJobPage();
+                },));
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -295,7 +346,11 @@ class ProfileMenu extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const ContractorExchangePage();
+                },));
+              },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.green),
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
