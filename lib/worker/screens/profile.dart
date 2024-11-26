@@ -19,13 +19,19 @@ class _WorkerProfileState extends State<WorkerProfile> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Worker Profile'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context); // Navigate to the previous screen
+            },
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return const EditWorkerProfile();
-                },));
+                }));
                 // Navigate to edit profile page or enable editing
               },
             ),
@@ -40,7 +46,8 @@ class _WorkerProfileState extends State<WorkerProfile> {
                 const Center(
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/profile_placeholder.png'),
+                    backgroundImage:
+                        AssetImage('assets/profile_placeholder.png'),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -66,8 +73,10 @@ class _WorkerProfileState extends State<WorkerProfile> {
                 _buildProfileItem('Address', '123 Main St, Springfield'),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Professional Details'),
-                _buildProfileItem('Emergency Contact Number', '+1 234 567 8901'),
-                _buildProfileItem('Duration of stay at Current Location in Months', '14'),
+                _buildProfileItem(
+                    'Emergency Contact Number', '+1 234 567 8901'),
+                _buildProfileItem(
+                    'Duration of stay at Current Location in Months', '14'),
                 _buildProfileItem('Skill', '15 Years'),
                 _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
                 const SizedBox(height: 20),

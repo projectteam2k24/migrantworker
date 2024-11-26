@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/job_provider/screens/post_job.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
+import 'package:migrantworker/job_provider/screens/profile2.dart';
 
 class JobProviderHome extends StatefulWidget {
   const JobProviderHome({super.key});
@@ -15,6 +17,21 @@ class _JobProviderHomeState extends State<JobProviderHome> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 0) {
+        // Add any specific logic for the first tab, if needed.
+      } else if (index == 1) {
+        // Navigate to the PostJobPage when the "Post Job" tab is selected.
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const PostJobPage();
+            },
+          ),
+        );
+      } else if (index == 2) {
+        // Add logic for the third tab if needed.
+      }
     });
   }
 
@@ -73,7 +90,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return const JobProviderProfile();
+                              return const JobProviderProfile1();
                             },
                           ));
                         },
@@ -176,7 +193,13 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           height: widthFactor * 0.15,
           width: widthFactor * 0.15,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return const PostJobPage();
+                },
+              ));
+            },
             shape: const CircleBorder(),
             backgroundColor: Colors.lightGreen,
             child: Icon(
@@ -251,7 +274,7 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return const JobProviderProfile();
+                          return const JobProviderProfile1();
                         },
                       ));
                     },

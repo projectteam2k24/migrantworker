@@ -156,7 +156,7 @@ class _PostJobPageState extends State<PostJobPage> {
                       ));
                     },
                     child: const Text(
-                      'Post Job',
+                      'NEXT',
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -283,8 +283,7 @@ class _PostJobPage1State extends State<PostJobPage1> {
   final ImagePicker _picker = ImagePicker();
 
   // Variables to hold selected image files
-  XFile? _image1;
-  XFile? _image2;
+  List<XFile>? _images = [];
 
   @override
   Widget build(BuildContext context) {
@@ -317,33 +316,21 @@ class _PostJobPage1State extends State<PostJobPage1> {
               key: _formKey,
               child: Column(
                 children: [
-                  // Upload Image 1
-                  _buildCard('Upload Image 1', [
-                    _buildFileUploadButton(1),
-                    if (_image1 != null)
-                      Container(
-                        width: MediaQuery.of(context).size.width -
-                            32, // Adjust width to match description field
-                        child: Image.file(
-                          File(_image1!.path),
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                  ]),
-                  const SizedBox(height: 16),
-                  // Upload Image 2
-                  _buildCard('Upload Image 2', [
-                    _buildFileUploadButton(2),
-                    if (_image2 != null)
-                      Container(
-                        width: MediaQuery.of(context).size.width -
-                            32, // Adjust width to match description field
-                        child: Image.file(
-                          File(_image2!.path),
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
+                  // Upload Images
+                  _buildCard('Upload Images', [
+                    _buildFileUploadButton(),
+                    if (_images != null && _images!.isNotEmpty)
+                      Column(
+                        children: _images!.map((image) {
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width - 32,
+                            child: Image.file(
+                              File(image.path),
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }).toList(),
                       ),
                   ]),
                   const SizedBox(height: 16),
@@ -455,10 +442,10 @@ class _PostJobPage1State extends State<PostJobPage1> {
   }
 
   // Image upload button widget
-  Widget _buildFileUploadButton(int imageNumber) {
+  Widget _buildFileUploadButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width -
             32, // Same width as description field
         child: ElevatedButton.icon(
@@ -467,19 +454,17 @@ class _PostJobPage1State extends State<PostJobPage1> {
             backgroundColor: Colors.green[700],
           ),
           onPressed: () async {
-            final pickedFile =
-                await _picker.pickImage(source: ImageSource.gallery);
-            setState(() {
-              if (imageNumber == 1) {
-                _image1 = pickedFile;
-              } else {
-                _image2 = pickedFile;
-              }
-            });
+            // Allow the user to select two images
+            final pickedFiles = await _picker.pickMultiImage();
+            if (pickedFiles != null && pickedFiles.isNotEmpty) {
+              setState(() {
+                _images = pickedFiles;
+              });
+            }
           },
           icon: const Icon(Icons.attach_file, color: Colors.white),
           label: const Text(
-            'Upload Image',
+            'Upload Images',
             style: TextStyle(color: Colors.white),
           ),
         ),

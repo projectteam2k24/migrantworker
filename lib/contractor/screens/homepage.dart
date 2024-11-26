@@ -192,7 +192,7 @@ class _ContractorHomeState extends State<ContractorHome> {
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return WorkerDetailsPage();
+                  return const WorkerDetailsPage();
                 },
               ));
             },
@@ -282,7 +282,7 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return WorkerDetailsPage();
+                          return const WorkerDetailsPage();
                         },
                       ));
                     },
@@ -350,7 +350,7 @@ class ProfileMenu extends StatelessWidget {
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return WorkerDetailsPage(); // Navigate to WorkerDetailsPage
+                    return const WorkerDetailsPage(); // Navigate to WorkerDetailsPage
                   },
                 ));
               },
