@@ -90,9 +90,14 @@ class _ContractorProfileState extends State<ContractorProfile> {
                         backgroundColor: Colors.green[700],
                       ),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => LogIn(),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LogIn(),
+                            ));
                       },
-                      child: const Text('Log Out',
+                      child: const Text(
+                        'Log Out',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

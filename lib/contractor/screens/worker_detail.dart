@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:migrantworker/worker/screens/registration.dart';
 
 class WorkerDetailsPage extends StatefulWidget {
+  const WorkerDetailsPage({super.key});
+
   @override
   _WorkerDetailsPageState createState() => _WorkerDetailsPageState();
 }
@@ -125,7 +127,8 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterWorker()),
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterWorker()),
                   );
                 },
                 heroTag: 'newWorker',

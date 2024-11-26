@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ViewCurrentJobPage extends StatelessWidget {
-  const ViewCurrentJobPage({Key? key}) : super(key: key);
+  const ViewCurrentJobPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,8 @@ class ViewCurrentJobPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.green[700],
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+            icon: const Icon(Icons.arrow_back,
+                color: Colors.white), // White back button
             onPressed: () {
               Navigator.pop(context); // Navigate to the previous page
             },
@@ -48,7 +49,8 @@ class ViewCurrentJobPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildCard('Property Details', [
-                  _buildDetailItem('Property Type', jobDetails['propertyType']!),
+                  _buildDetailItem(
+                      'Property Type', jobDetails['propertyType']!),
                   _buildDetailItem('Job Type', jobDetails['jobType']!),
                 ]),
                 const SizedBox(height: 16),
@@ -60,7 +62,8 @@ class ViewCurrentJobPage extends StatelessWidget {
                 ]),
                 const SizedBox(height: 16),
                 _buildCard('Property Description', [
-                  _buildDetailItem('Plot Size (sq ft)', jobDetails['plotSize']!),
+                  _buildDetailItem(
+                      'Plot Size (sq ft)', jobDetails['plotSize']!),
                   _buildDetailItem('Number of Rooms', jobDetails['rooms']!),
                   _buildDetailItem('Number of Floors', jobDetails['floors']!),
                 ]),
@@ -68,11 +71,13 @@ class ViewCurrentJobPage extends StatelessWidget {
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 15),
                       backgroundColor: Colors.green[700],
                     ),
                     onPressed: () {
-                      Navigator.pop(context); // Navigate back to the previous page
+                      Navigator.pop(
+                          context); // Navigate back to the previous page
                     },
                     child: const Text(
                       'Back to Dashboard',

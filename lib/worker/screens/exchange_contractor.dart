@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ContractorExchangePage extends StatelessWidget {
-  const ContractorExchangePage({Key? key}) : super(key: key);
+  const ContractorExchangePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,28 +37,28 @@ class ContractorExchangePage extends StatelessWidget {
                 _buildSectionTitle('Current Contractor Details'),
                 _buildTextField('Contractor Name', 'John Doe'),
                 _buildTextField('Contractor ID/Ref', 'CNT12345'),
-                _buildTextField('Current Job Assigned', 'Building Construction'),
-
+                _buildTextField(
+                    'Current Job Assigned', 'Building Construction'),
                 const SizedBox(height: 20),
                 _buildSectionTitle('New Contractor Details'),
-                _buildDropdown('Select New Contractor', ['Contractor A', 'Contractor B', 'Contractor C']),
+                _buildDropdown('Select New Contractor',
+                    ['Contractor A', 'Contractor B', 'Contractor C']),
                 _buildTextField('Reason for Exchange', 'Enter reason'),
-
                 const SizedBox(height: 20),
                 _buildSectionTitle('Job Transfer Details'),
                 _buildTextField('Job ID/Reference', 'JOB56789'),
-                _buildTextField('Location of Job', 'Main Street, City', readOnly: true),
+                _buildTextField('Location of Job', 'Main Street, City',
+                    readOnly: true),
                 _buildTextField('Number of Workers', '12'),
-
                 const SizedBox(height: 20),
                 _buildSectionTitle('Optional Note'),
                 _buildTextField('Additional Details', 'Enter details here'),
-
                 const SizedBox(height: 30),
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 15),
                       backgroundColor: Colors.green[700],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
@@ -67,7 +67,9 @@ class ContractorExchangePage extends StatelessWidget {
                     onPressed: () {
                       // Handle exchange request logic here
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Exchange request submitted successfully!')),
+                        const SnackBar(
+                            content: Text(
+                                'Exchange request submitted successfully!')),
                       );
                     },
                     child: const Text(

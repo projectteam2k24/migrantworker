@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 
-
 class WorkerStatusPage extends StatefulWidget {
   const WorkerStatusPage({super.key});
 
@@ -40,11 +39,13 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const ContractorHome();
-            },));  
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return const ContractorHome();
+              },
+            ));
           },
         ),
         title: const Text(
@@ -72,7 +73,7 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                     color: Colors.green.withOpacity(0.3),
                     spreadRadius: 2,
                     blurRadius: 8,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),

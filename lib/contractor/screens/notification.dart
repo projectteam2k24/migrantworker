@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ContractorNotificationHub extends StatefulWidget {
-  ContractorNotificationHub({Key? key, required this.toggle}) : super(key: key);
+  ContractorNotificationHub({super.key, required this.toggle});
 
   bool toggle;
 

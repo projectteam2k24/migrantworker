@@ -21,10 +21,12 @@ class _ContractorHomeState extends State<ContractorHome> {
       _selectedIndex = index;
       if (_selectedIndex == 0) {
         // Navigate to SearchJobPage
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SearchJobPage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const SearchJobPage()));
       } else if (_selectedIndex == 2) {
         // Navigate to WorkerStatusPage
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WorkerStatusPage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const WorkerStatusPage()));
       }
     });
   }
@@ -328,12 +330,12 @@ class ProfileMenu extends StatelessWidget {
                 ],
               ),
             ),
-   const SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return SearchJobPage(); // Navigate to WorkerDetailsPage
+                    return const SearchJobPage(); // Navigate to WorkerDetailsPage
                   },
                 ));
               },

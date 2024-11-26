@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 
-
 class SearchJobPage extends StatefulWidget {
   const SearchJobPage({super.key});
 
@@ -21,11 +20,14 @@ class _SearchJobPageState extends State<SearchJobPage> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Left arrow icon
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // Left arrow icon
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ContractorHome()), // Navigate to ContractorHome page
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const ContractorHome()), // Navigate to ContractorHome page
             );
           },
         ),
@@ -67,11 +69,11 @@ class _SearchJobPageState extends State<SearchJobPage> {
                         // Add search functionality here
                       },
                       style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                         backgroundColor: Colors.green,
                         padding: EdgeInsets.all(widthFactor * 0.03),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.search,
                         color: Colors.white,
                       ),
@@ -103,11 +105,11 @@ class _SearchJobPageState extends State<SearchJobPage> {
                         // Add search functionality here
                       },
                       style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                         backgroundColor: Colors.green,
                         padding: EdgeInsets.all(widthFactor * 0.03),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.search,
                         color: Colors.white,
                       ),
@@ -128,12 +130,11 @@ class _SearchJobPageState extends State<SearchJobPage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: widthFactor * 0.02),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: widthFactor * 0.02),
                       decoration: BoxDecoration(
                         color: Colors.green.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(widthFactor * 0.03),
+                        borderRadius: BorderRadius.circular(widthFactor * 0.03),
                       ),
                       child: DropdownButton<String>(
                         value: _selectedDateFilter,
@@ -174,22 +175,22 @@ class _SearchJobPageState extends State<SearchJobPage> {
                 SizedBox(height: heightFactor * 0.02),
 
                 // Job Cards
-                JobCard(
+                const JobCard(
                   jobTitle: "Painter Needed",
                   jobDetails: "Location: Downtown, 3 Bedrooms",
                   jobDate: "Posted 2 days ago",
                 ),
-                JobCard(
+                const JobCard(
                   jobTitle: "Plumber Required",
                   jobDetails: "Location: Uptown, 1 Bathroom",
                   jobDate: "Posted 1 week ago",
                 ),
-                JobCard(
+                const JobCard(
                   jobTitle: "Electrician Service",
                   jobDetails: "Location: Suburb, Electrical Wiring",
                   jobDate: "Posted 1 month ago",
                 ),
-                JobCard(
+                const JobCard(
                   jobTitle: "Carpenter Required",
                   jobDetails: "Location: Central, 5 Doors",
                   jobDate: "Posted 3 months ago",
@@ -209,6 +210,7 @@ class JobCard extends StatelessWidget {
   final String jobDate;
 
   const JobCard({
+    super.key,
     required this.jobTitle,
     required this.jobDetails,
     required this.jobDate,

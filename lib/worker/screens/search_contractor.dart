@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ContractorSearchPage extends StatelessWidget {
-  const ContractorSearchPage({Key? key}) : super(key: key);
+  const ContractorSearchPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,8 @@ class ContractorSearchPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: widthFactor * 0.07),
+          icon: Icon(Icons.arrow_back,
+              color: Colors.white, size: widthFactor * 0.07),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -39,7 +40,7 @@ class ContractorSearchPage extends StatelessWidget {
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: "Search by name, company, or location",
-                      hintStyle: TextStyle(color: Colors.grey),
+                      hintStyle: const TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: EdgeInsets.symmetric(
@@ -48,15 +49,18 @@ class ContractorSearchPage extends StatelessWidget {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(widthFactor * 0.05),
-                        borderSide: BorderSide(color: Colors.green, width: 2),
+                        borderSide:
+                            const BorderSide(color: Colors.green, width: 2),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(widthFactor * 0.05),
-                        borderSide: BorderSide(color: Colors.green, width: 2),
+                        borderSide:
+                            const BorderSide(color: Colors.green, width: 2),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(widthFactor * 0.05),
-                        borderSide: BorderSide(color: Colors.green, width: 2),
+                        borderSide:
+                            const BorderSide(color: Colors.green, width: 2),
                       ),
                     ),
                   ),
@@ -73,7 +77,8 @@ class ContractorSearchPage extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(widthFactor * 0.03),
                   ),
-                  child: Icon(Icons.search, color: Colors.white, size: widthFactor * 0.07),
+                  child: Icon(Icons.search,
+                      color: Colors.white, size: widthFactor * 0.07),
                 ),
               ],
             ),
@@ -97,7 +102,7 @@ class ContractorSearchPage extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
                         blurRadius: 8.0,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -110,7 +115,7 @@ class ContractorSearchPage extends StatelessWidget {
                             backgroundColor: Colors.green,
                             child: Text(
                               "C${index + 1}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -140,7 +145,8 @@ class ContractorSearchPage extends StatelessWidget {
                       SizedBox(height: heightFactor * 0.01),
                       Row(
                         children: [
-                          Icon(Icons.phone, color: Colors.green, size: widthFactor * 0.05),
+                          Icon(Icons.phone,
+                              color: Colors.green, size: widthFactor * 0.05),
                           SizedBox(width: widthFactor * 0.02),
                           Text(
                             "+91 9876543210",
@@ -151,7 +157,8 @@ class ContractorSearchPage extends StatelessWidget {
                       SizedBox(height: heightFactor * 0.01),
                       Row(
                         children: [
-                          Icon(Icons.email, color: Colors.green, size: widthFactor * 0.05),
+                          Icon(Icons.email,
+                              color: Colors.green, size: widthFactor * 0.05),
                           SizedBox(width: widthFactor * 0.02),
                           Text(
                             "contractor${index + 1}@example.com",
@@ -162,7 +169,8 @@ class ContractorSearchPage extends StatelessWidget {
                       SizedBox(height: heightFactor * 0.01),
                       Row(
                         children: [
-                          Icon(Icons.location_on, color: Colors.green, size: widthFactor * 0.05),
+                          Icon(Icons.location_on,
+                              color: Colors.green, size: widthFactor * 0.05),
                           SizedBox(width: widthFactor * 0.02),
                           Text(
                             "City ${index + 1}",

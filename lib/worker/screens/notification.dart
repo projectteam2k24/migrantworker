@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class WorkerNotificationHub extends StatefulWidget {
-  WorkerNotificationHub({Key? key, required this.toggle}) : super(key: key);
+  WorkerNotificationHub({super.key, required this.toggle});
 
   bool toggle;
 
   @override
-  State<WorkerNotificationHub> createState() =>
-      _WorkerNotificationHubState();
+  State<WorkerNotificationHub> createState() => _WorkerNotificationHubState();
 }
 
 class _WorkerNotificationHubState extends State<WorkerNotificationHub> {

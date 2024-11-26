@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:migrantworker/login.dart';
 
 class MyContractor extends StatefulWidget {
   const MyContractor({super.key});
@@ -50,7 +49,8 @@ class _MyContractorState extends State<MyContractor> {
                   const Center(
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.green, // Set background color to green
+                      backgroundColor:
+                          Colors.green, // Set background color to green
                       child: Icon(
                         Icons.person_2_outlined,
                         size: 60, // Increased icon size

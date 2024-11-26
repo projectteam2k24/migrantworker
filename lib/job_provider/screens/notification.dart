@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class JobProviderNotificationHub extends StatefulWidget {
-  const JobProviderNotificationHub({Key? key}) : super(key: key);
+  const JobProviderNotificationHub({super.key});
 
   @override
   State<JobProviderNotificationHub> createState() =>

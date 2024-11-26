@@ -30,17 +30,22 @@ class _WorkerHomeState extends State<WorkerHome> {
   }
 
   void Notification() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return  WorkerNotificationHub(toggle: false,);
-    },));
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return WorkerNotificationHub(
+          toggle: false,
+        );
+      },
+    ));
   }
 
-
   void currentjob() {
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return  ViewCurrentJobPage();
-    },));
-    }
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return const ViewCurrentJobPage();
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,9 +202,11 @@ class _WorkerHomeState extends State<WorkerHome> {
           width: widthFactor * 0.15,
           child: FloatingActionButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ContractorSearchPage();
-              },));
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return const ContractorSearchPage();
+                },
+              ));
             },
             shape: const CircleBorder(),
             backgroundColor: Colors.lightGreen,
@@ -215,6 +222,7 @@ class _WorkerHomeState extends State<WorkerHome> {
     );
   }
 }
+
 class ProfileMenu extends StatelessWidget {
   final double widthFactor;
   const ProfileMenu({super.key, required this.widthFactor});
@@ -272,28 +280,30 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('My Account'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return const WorkerProfile();
-                            },
-                          ));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const WorkerProfile();
                         },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.work),
                     title: const Text('My Contractor'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const MyContractor();
-                      },));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const MyContractor();
+                        },
+                      ));
                     },
                   ),
                   ListTile(
                     leading: const Icon(Icons.thumb_up),
                     title: const Text('Responses'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                     onTap: () {
+                    onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
                           return WorkerNotificationHub(
@@ -322,10 +332,11 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const EditWorkerProfile();
-                      },)
-                      );
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const EditWorkerProfile();
+                        },
+                      ));
                     },
                   ),
                 ],
@@ -334,9 +345,11 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const ViewCurrentJobPage();
-                },));
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const ViewCurrentJobPage();
+                  },
+                ));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
@@ -347,9 +360,11 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 10),
             OutlinedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const ContractorExchangePage();
-                },));
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const ContractorExchangePage();
+                  },
+                ));
               },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.green),

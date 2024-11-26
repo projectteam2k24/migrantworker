@@ -652,7 +652,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                                   AddressProofFile == null
                                       ? "Upload File"
                                       : "File Selected",
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
