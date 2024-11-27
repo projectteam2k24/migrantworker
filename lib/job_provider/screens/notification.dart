@@ -17,7 +17,7 @@ class _JobProviderNotificationHubState
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Contractor Notification Hub',
+          'Job Provider Notification Hub',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),

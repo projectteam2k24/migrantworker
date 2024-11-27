@@ -1,161 +1,208 @@
-// //import 'package:flutter/material.dart';
-// import 'package:migrantworker/job_provider/screens/edit_profile.dart';
-// import 'package:migrantworker/login.dart';
+import 'package:flutter/material.dart';
+import 'package:migrantworker/job_provider/screens/edit_profile.dart';
 
-// class JobProviderProfile1 extends StatefulWidget {
-//   const JobProviderProfile1({super.key});
+class JobProviderProfile1 extends StatelessWidget {
+  // Demo values for the profile
+  final String fullName = 'John Doe';
+  final String company = 'Tech Innovators Inc.';
+  final String phone = '+1 234 567 890';
+  final String email = 'john.doe@example.com';
+  final String address = '123 Tech Lane, Silicon Valley';
+  final String userType = 'Job Provider';
+  final String password = '••••••'; // Hiding the password for security
 
-//   @override
-//   State<JobProviderProfile1> createState() => _JobProviderProfile1State();
-// }
+  const JobProviderProfile1({super.key});
 
-// class _JobProviderProfile1State extends State<JobProviderProfile1> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Job Provider Profile',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: Scaffold(
-//         appBar: AppBar(
-//           backgroundColor: Colors.white,
-//           title: const Text('Job Provider Profile'),
-//           leading: IconButton(
-//             icon: const Icon(Icons.arrow_back, color: Colors.black),
-//             onPressed: () {
-//               Navigator.pop(
-//                   context); // This will navigate to the previous screen
-//             },
-//           ),
-//           actions: [
-//             IconButton(
-//               icon: const Icon(Icons.edit),
-//               onPressed: () {
-//                 Navigator.push(context, MaterialPageRoute(
-//                   builder: (context) {
-//                     return const EditJobProviderProfile1();
-//                   },
-//                 ));
-//                 // Navigate to edit profile page or enable editing
-//               },
-//             ),
-//           ],
-//         ),
-//         body: Container(
-//           color: Colors.white,
-//           child: Padding(
-//             padding: const EdgeInsets.all(16.0),
-//             child: SingleChildScrollView(
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   const Center(
-//                     child: CircleAvatar(
-//                       radius: 50,
-//                       backgroundImage:
-//                           AssetImage('assets/profile_placeholder.png'),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   const Center(
-//                     child: Text(
-//                       'John Doe', // Contractor name
-//                       style:
-//                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-//                     ),
-//                   ),
-//                   const Center(
-//                     child: Text(
-//                       'Experienced Contractor', // Role or specialization
-//                       style: TextStyle(fontSize: 16, color: Colors.grey),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 30),
-//                   _buildSectionTitle('Personal Information'),
-//                   _buildProfileItem('Full Name', 'John Doe'),
-//                   _buildProfileItem('Phone Number', '+1 234 567 8901'),
-//                   _buildProfileItem('Email Address', 'johndoe@example.com'),
-//                   _buildProfileItem('Address', '123 Main St, Springfield'),
-//                   const SizedBox(height: 20),
-//                   SizedBox(height: MediaQuery.of(context).size.height * 0.34),
-//                   Center(
-//                     child: ElevatedButton(
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Colors.green[700],
-//                       ),
-//                       onPressed: () {
-//                         Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                               builder: (context) => const LogIn(),
-//                             ));
-//                       },
-//                       child: const Text(
-//                         'Log Out',
-//                         style: TextStyle(
-//                           color: Colors.white,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: Colors.green[700],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        actions: [
+          // Edit Icon Button at the top-right corner
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return const EditProfilePage();
+                },
+              ));
 
-//   Widget _buildSectionTitle(String title) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 10.0),
-//       child: Text(
-//         title,
-//         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//       ),
-//     );
-//   }
+              showDialog;
+              (
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: const Text('Edit Profile'),
+                      content: const Text(
+                          'Editing profile functionality goes here.'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Close the dialog
+                          },
+                          child: const Text('Close'),
+                        ),
+                      ],
+                    ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Picture with a circular container, shadow, and edit icon
+              Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      width: 120, // Profile picture size
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.green[50], // Soft light green background
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const ClipOval(
+                        child: CircleAvatar(
+                          radius: 60, // Radius of the profile picture
+                          backgroundImage:
+                              AssetImage('assets/profile_placeholder.png'),
+                        ),
+                      ),
+                    ),
+                    // Edit icon inside the profile picture circle
+                    IconButton(
+                      icon: const Icon(Icons.camera_alt),
+                      onPressed: () {
+                        // Handle image change functionality here
+                      },
+                      iconSize: 30,
+                      color: Colors.green[700],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
 
-//   Widget _buildProfileItem(String label, String value) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 5.0),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Text(
-//             label,
-//             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-//           ),
-//           Text(
-//             value,
-//             style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
+              // Profile Header
+              Center(
+                child: Text(
+                  'Job Provider Profile',
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[800],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
-//   Widget _buildDocumentItem(String label, String status) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 5.0),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Text(
-//             label,
-//             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-//           ),
-//           Text(
-//             status,
-//             style: TextStyle(
-//               fontSize: 16,
-//               color: status == 'Uploaded' ? Colors.green : Colors.red,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+              // Personal Information Container with Elevated Card and Shadow
+              Card(
+                elevation: 8,
+                shadowColor: Colors.green.withOpacity(0.2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProfileItem('Full Name', fullName),
+                      _buildProfileItem('Company', company),
+                      _buildProfileItem('Phone Number', phone),
+                      _buildProfileItem('Email Address', email),
+                      _buildProfileItem('Address', address),
+                      _buildProfileItem('User Type', userType),
+                      _buildProfileItem('Password', password),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // Logout Button with style
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Implement logout or other functionalities
+                    Navigator.pop(
+                        context); // Just an example, could be logout logic
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    minimumSize: const Size(200, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30), // More rounded
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
+                  ),
+                  child: const Text(
+                    "Log Out",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Profile item builder for the personal information details
+  Widget _buildProfileItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.green[700],
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[700],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

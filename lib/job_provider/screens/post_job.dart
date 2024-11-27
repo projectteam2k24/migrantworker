@@ -456,7 +456,7 @@ class _PostJobPage1State extends State<PostJobPage1> {
           onPressed: () async {
             // Allow the user to select two images
             final pickedFiles = await _picker.pickMultiImage();
-            if (pickedFiles != null && pickedFiles.isNotEmpty) {
+            if (pickedFiles.isNotEmpty) {
               setState(() {
                 _images = pickedFiles;
               });

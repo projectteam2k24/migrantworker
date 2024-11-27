@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/exchange_contractor.dart';
 import 'package:migrantworker/worker/screens/my_contractor.dart';
 import 'package:migrantworker/worker/screens/notification.dart';
@@ -263,7 +264,13 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 5),
             Center(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const LogIn();
+                    },
+                  ));
+                },
                 child: const Text(
                   'Sign Out',
                   style: TextStyle(color: Colors.red),

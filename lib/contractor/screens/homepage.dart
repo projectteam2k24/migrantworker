@@ -4,7 +4,8 @@ import 'package:migrantworker/contractor/screens/edit_profile.dart';
 import 'package:migrantworker/contractor/screens/notification.dart';
 import 'package:migrantworker/contractor/screens/worker_detail.dart';
 import 'package:migrantworker/contractor/screens/search_jobs.dart';
-import 'package:migrantworker/contractor/screens/worker_status.dart'; // Importing WorkerStatusPage
+import 'package:migrantworker/contractor/screens/worker_status.dart';
+import 'package:migrantworker/login.dart'; // Importing WorkerStatusPage
 
 class ContractorHome extends StatefulWidget {
   const ContractorHome({super.key});
@@ -252,7 +253,13 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 5),
             Center(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const LogIn();
+                    },
+                  ));
+                },
                 child: const Text(
                   'Sign Out',
                   style: TextStyle(color: Colors.red),

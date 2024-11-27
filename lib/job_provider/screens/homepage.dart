@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/job_provider/screens/edit_profile.dart';
+import 'package:migrantworker/job_provider/screens/notification.dart';
 import 'package:migrantworker/job_provider/screens/post_job.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
-import 'package:migrantworker/job_provider/screens/edit_profile.dart';
-import 'package:migrantworker/job_provider/screens/profile2.dart';
+import 'package:migrantworker/login.dart';
 
 class JobProviderHome extends StatefulWidget {
   const JobProviderHome({super.key});
@@ -256,7 +257,13 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 5),
             Center(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const LogIn();
+                    },
+                  ));
+                },
                 child: const Text(
                   'Sign Out',
                   style: TextStyle(color: Colors.red),
@@ -289,7 +296,13 @@ class ProfileMenu extends StatelessWidget {
                     leading: const Icon(Icons.notifications),
                     title: const Text('Notification Hub'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const JobProviderNotificationHub();
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.edit),
@@ -298,7 +311,7 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return const EditJobProviderProfile();
+                          return const EditProfilePage();
                         },
                       ));
                     },
@@ -308,12 +321,18 @@ class ProfileMenu extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const PostJobPage();
+                  },
+                ));
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
               ),
-              child: const Text('View Current Job'),
+              child: const Text('Post Job'),
             ),
             const SizedBox(height: 10),
             OutlinedButton(
@@ -323,7 +342,7 @@ class ProfileMenu extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
               ),
               child: const Text(
-                'Contractor Change Request',
+                'Working Status',
                 style: TextStyle(color: Colors.green),
               ),
             ),
