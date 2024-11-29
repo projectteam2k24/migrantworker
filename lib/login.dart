@@ -11,20 +11,19 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   final _formKey = GlobalKey<FormState>(); // Key to manage the form state
-  TextEditingController EmailController = TextEditingController();
-  TextEditingController PasswordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
-  bool ShowPass = true;
+  bool showPass = true;
 
-  // Sign-up handler that checks if the form is valid before printing the email
-  void LogInHandler() {
+  void logInHandler() {
     if (_formKey.currentState?.validate() ?? false) {
-      print('Email: ${EmailController.text}');
+      print('Email: ${emailController.text}');
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
           return const ContractorHome();
         },
-      )); // You can add further sign-up logic here, like calling an API
+      ));
     } else {
       print('Form is invalid');
     }
@@ -32,9 +31,8 @@ class _LogInState extends State<LogIn> {
 
   @override
   void dispose() {
-    // Dispose the controllers to prevent memory leaks
-    EmailController.dispose();
-    PasswordController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -44,8 +42,7 @@ class _LogInState extends State<LogIn> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFAF3E0), // Match registration background
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -70,9 +67,9 @@ class _LogInState extends State<LogIn> {
                   Text(
                     'Migrant Connect',
                     style: TextStyle(
-                      fontSize: screenWidth * 0.06,
+                      fontSize: screenWidth * 0.065,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromRGBO(183, 145, 62, 10),
+                      color: const Color(0xFFB7913E),
                       fontFamily: 'Times New Roman',
                     ),
                     textAlign: TextAlign.center,
@@ -82,28 +79,31 @@ class _LogInState extends State<LogIn> {
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                     child: TextFormField(
-                      controller: EmailController,
+                      controller: emailController,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person_2_outlined),
+                        prefixIcon: const Icon(Icons.person_2_outlined,
+                            color: Color(0xFFB7913E)),
                         labelText: 'Email/Mobile',
-                        border: const OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(screenWidth * 0.02),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFB7913E)),
+                        ),
                         labelStyle: TextStyle(
-                          fontSize: screenWidth * 0.05,
+                          fontSize: screenWidth * 0.045,
                           fontWeight: FontWeight.bold,
+                          color: const Color(0xFFB7913E),
                         ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email or mobile number';
-                        }
-                        // Email validation
-                        else if (RegExp(
+                        } else if (RegExp(
                                 r"^[a-zA-Z0-9]+@([a-zA-Z0-9]+\.)+[a-zA-Z]{2,}$")
                             .hasMatch(value)) {
                           return null; // Valid email
-                        }
-                        // Mobile number validation (e.g., 10 digits)
-                        else if (RegExp(r"^\d{10}$").hasMatch(value)) {
+                        } else if (RegExp(r"^\d{10}$").hasMatch(value)) {
                           return null; // Valid mobile number
                         }
                         return 'Please enter a valid email or 10-digit mobile number';
@@ -115,25 +115,34 @@ class _LogInState extends State<LogIn> {
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                     child: TextFormField(
-                      controller: PasswordController,
-                      obscureText: ShowPass,
+                      controller: passwordController,
+                      obscureText: showPass,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.verified_user_outlined),
+                        prefixIcon: const Icon(Icons.lock_outline,
+                            color: Color(0xFFB7913E)),
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              ShowPass = !ShowPass;
+                              showPass = !showPass;
                             });
                           },
-                          icon: Icon(ShowPass
-                              ? Icons.visibility
-                              : Icons.visibility_off),
+                          icon: Icon(
+                              showPass
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: const Color(0xFFB7913E)),
                         ),
-                        border: const OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(screenWidth * 0.02),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFB7913E)),
+                        ),
                         labelStyle: TextStyle(
-                          fontSize: screenWidth * 0.05,
+                          fontSize: screenWidth * 0.045,
                           fontWeight: FontWeight.bold,
+                          color: const Color(0xFFB7913E),
                         ),
                       ),
                       validator: (value) {
@@ -155,20 +164,26 @@ class _LogInState extends State<LogIn> {
                       'Forgot Password?',
                       style: TextStyle(
                         color: Colors.blue,
-                        fontSize: screenWidth * 0.05,
+                        fontSize: screenWidth * 0.045,
                       ),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.03),
                   ElevatedButton(
-                    onPressed: LogInHandler,
+                    onPressed: logInHandler,
                     style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color(0xFFB7913E), // Match button color
                       minimumSize: Size(screenWidth * 0.5, screenHeight * 0.06),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                      ),
                     ),
                     child: Text(
                       "Login",
                       style: TextStyle(
-                        fontSize: screenWidth * 0.055,
+                        fontSize: screenWidth * 0.05,
+                        color: Colors.white,
                       ),
                     ),
                   ),

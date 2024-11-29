@@ -14,20 +14,20 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
     {
       "name": "John Doe",
       "job": "Masonry Work",
-      "status": "Working",
-      "statusOptions": ["Working", "On Leave", "Idle"]
+      "status": "Not Started",
+      "progress": 0.0,
     },
     {
       "name": "Jane Smith",
       "job": "Painting",
-      "status": "On Leave",
-      "statusOptions": ["Working", "On Leave", "Idle"]
+      "status": "In Progress",
+      "progress": 50.0,
     },
     {
       "name": "Alan Walker",
       "job": "Electrician",
-      "status": "Idle",
-      "statusOptions": ["Working", "On Leave", "Idle"]
+      "status": "Completed",
+      "progress": 100.0,
     },
   ];
 
@@ -79,7 +79,6 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
               ),
               child: GestureDetector(
                 onTap: () {
-                  // Handle tap to show details or edit worker status
                   print("Tapped on worker: ${worker['name']}");
                 },
                 child: Container(
@@ -114,44 +113,71 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          DropdownButton<String>(
-                            value: worker['status'],
-                            items: worker['statusOptions']
-                                .map<DropdownMenuItem<String>>((String status) {
-                              return DropdownMenuItem<String>(
-                                value: status,
-                                child: Text(
-                                  status,
-                                  style: TextStyle(
-                                    color: Colors.green[700],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? newStatus) {
-                              setState(() {
-                                worker['status'] = newStatus!;
-                              });
-                            },
-                            icon: const Icon(Icons.arrow_drop_down),
+                          Text(
+                            worker['status'],
                             style: TextStyle(
                               fontSize: widthFactor * 0.045,
-                              color: Colors.green[900],
+                              color: worker['status'] == "Completed"
+                                  ? Colors.green[700]
+                                  : (worker['status'] == "In Progress"
+                                      ? Colors.orange[700]
+                                      : Colors.red[700]),
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: heightFactor * 0.015),
+                      SizedBox(height: heightFactor * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Completion:",
+                            style: TextStyle(
+                              fontSize: widthFactor * 0.045,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "${worker['progress'].toInt()}%",
+                            style: TextStyle(
+                              fontSize: widthFactor * 0.045,
+                              color: Colors.green[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Slider(
+                        value: worker['progress'],
+                        min: 0.0,
+                        max: 100.0,
+                        divisions: 100,
+                        activeColor: Colors.green,
+                        inactiveColor: Colors.green.withOpacity(0.3),
+                        label: "${worker['progress'].toInt()}%",
+                        onChanged: (double newValue) {
+                          setState(() {
+                            worker['progress'] = newValue;
+                            if (newValue == 100.0) {
+                              worker['status'] = "Completed";
+                            } else if (newValue > 0.0) {
+                              worker['status'] = "In Progress";
+                            } else {
+                              worker['status'] = "Not Started";
+                            }
+                          });
+                        },
+                      ),
                       Center(
                         child: ElevatedButton.icon(
                           onPressed: () {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text("Status Change"),
+                                title: const Text("Update Completion"),
                                 content: Text(
-                                    "Are you sure you want to change the status of ${worker['name']} to '${worker['status']}'?"),
+                                    "Are you sure you want to update the progress of ${worker['name']} to ${worker['progress'].toInt()}%?"),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -161,8 +187,14 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      // Add logic to save changes if needed
                                       Navigator.pop(context);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "Progress for ${worker['name']} updated to ${worker['progress'].toInt()}%"),
+                                        ),
+                                      );
                                     },
                                     child: const Text("Confirm"),
                                   ),
@@ -178,7 +210,7 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                             ),
                           ),
                           icon: const Icon(Icons.sync_alt),
-                          label: const Text("Update Status"),
+                          label: const Text("Save Progress"),
                         ),
                       ),
                     ],

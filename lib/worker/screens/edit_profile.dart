@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class EditWorkerProfile extends StatefulWidget {
   const EditWorkerProfile({super.key});
@@ -9,20 +12,66 @@ class EditWorkerProfile extends StatefulWidget {
 
 class _EditWorkerProfileState extends State<EditWorkerProfile> {
   // Controllers for text fields
-  final TextEditingController _fullNameController = TextEditingController(text: 'John Doe');
-  final TextEditingController _dobController = TextEditingController(text: '12/12/1980');
-  final TextEditingController _genderController = TextEditingController(text: 'Male');
-  final TextEditingController _phoneController = TextEditingController(text: '+1 234 567 8901');
-  final TextEditingController _emailController = TextEditingController(text: 'johndoe@example.com');
-  final TextEditingController _addressController = TextEditingController(text: '123 Main St, Springfield');
-  final TextEditingController _companyNameController = TextEditingController(text: 'Doe Constructions');
-  final TextEditingController _roleController = TextEditingController(text: 'Senior Contractor');
-  final TextEditingController _experienceController = TextEditingController(text: '15 Years');
-  final TextEditingController _expertiseController = TextEditingController(text: 'Carpentry, Electrical Work');
+  final TextEditingController _fullNameController =
+      TextEditingController(text: 'John Doe');
+  final TextEditingController _dobController =
+      TextEditingController(text: '12/12/1980');
+  final TextEditingController _genderController =
+      TextEditingController(text: 'Male');
+  final TextEditingController _phoneController =
+      TextEditingController(text: '+1 234 567 8901');
+  final TextEditingController _emailController =
+      TextEditingController(text: 'johndoe@example.com');
+  final TextEditingController _addressController =
+      TextEditingController(text: '123 Main St, Springfield');
+  final TextEditingController _companyNameController =
+      TextEditingController(text: 'Doe Constructions');
+  final TextEditingController _roleController =
+      TextEditingController(text: 'Senior Contractor');
+  final TextEditingController _experienceController =
+      TextEditingController(text: '15 Years');
+  final TextEditingController _expertiseController =
+      TextEditingController(text: 'Carpentry, Electrical Work');
+
+  // Image file for the profile picture
+  File? _profileImage;
+
+  // Pick an image from the gallery
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _cropImage(pickedFile.path);
+    }
+  }
+
+  // Crop the selected image
+  Future<void> _cropImage(String imagePath) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      compressQuality: 90,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Image',
+          toolbarColor: Colors.green,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: Colors.green,
+        ),
+        IOSUiSettings(
+          title: 'Crop Image',
+        ),
+      ],
+    );
+    if (croppedFile != null) {
+      setState(() {
+        _profileImage = File(croppedFile.path);
+      });
+    }
+  }
 
   // Save handler
   void _saveProfile() {
-    // Collect updated values
     final updatedProfile = {
       'Full Name': _fullNameController.text,
       'Date of Birth': _dobController.text,
@@ -34,12 +83,12 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
       'Role/Position': _roleController.text,
       'Experience': _experienceController.text,
       'Expertise': _expertiseController.text,
+      'Profile Picture': _profileImage?.path ?? 'No image selected',
     };
 
-    // Print updated values (can replace this with API call)
+    // Print updated profile (Replace with your API call)
     print('Updated Profile: $updatedProfile');
 
-    // Navigate back to the profile page
     Navigator.pop(context);
   }
 
@@ -61,6 +110,35 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Profile Picture Section
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!)
+                            : const AssetImage('assets/placeholder.png')
+                                as ImageProvider,
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.green,
+                          radius: 18,
+                          child: const Icon(Icons.edit,
+                              color: Colors.white, size: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               _buildTextField('Full Name', _fullNameController),
               _buildTextField('Date of Birth', _dobController),
               _buildTextField('Gender', _genderController),
@@ -72,8 +150,10 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
                 'Professional Details',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              _buildTextField('Emergency Contact Number', _companyNameController),
-              _buildTextField('Duration of stay at Current Location in Months', _roleController),
+              _buildTextField(
+                  'Emergency Contact Number', _companyNameController),
+              _buildTextField('Duration of stay at Current Location in Months',
+                  _roleController),
               _buildTextField('Skill', _experienceController),
               _buildTextField('Expertise', _expertiseController),
               const SizedBox(height: 30),
