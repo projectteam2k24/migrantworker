@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "282800535881",
+    "project_id": "migrant-connect",
+    "storage_bucket": "migrant-connect.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282800535881:android:47489e0cc85cd247d48298",
+        "android_client_info": {
+          "package_name": "com.example.migrantworker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNvOW2AGsnnivmHuzujvvq6esI3NGka8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
