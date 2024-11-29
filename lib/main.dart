@@ -10,7 +10,8 @@ import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
 
 Future<void> main() async {
-await Firebase.initializeApp(
+  await WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
   runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
