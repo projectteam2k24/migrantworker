@@ -92,7 +92,7 @@ class _SelectUserState extends State<SelectUser> {
       Icons.handyman,
     ];
     final titles = ["Worker", "Job Provider", "Contractor"];
-    final routes = [const RegisterWorker(), const RegisterJobProvider(), const RegisterContractor()];
+    final routes = [const RegisterWorker(), const RegisterJobProvider(), RegisterContractor()];
 
     return GestureDetector(
       onTap: () {

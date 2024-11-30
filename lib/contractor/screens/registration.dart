@@ -1,52 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class RegisterContractor extends StatefulWidget {
-  const RegisterContractor({super.key});
-
   @override
-  State<RegisterContractor> createState() => _RegisterContractorState();
+  _RegisterContractorState createState() =>
+      _RegisterContractorState();
 }
 
-class _RegisterContractorState extends State<RegisterContractor> {
-  final _formKey = GlobalKey<FormState>(); // Key to manage the form state
-  TextEditingController FullNameController = TextEditingController();
-  TextEditingController DOBController = TextEditingController();
-  TextEditingController GenderController = TextEditingController();
-  TextEditingController PhoneController = TextEditingController();
-  TextEditingController EmailController = TextEditingController();
-  TextEditingController AddressController = TextEditingController();
-  TextEditingController PasswordController = TextEditingController();
+class _RegisterContractorState
+    extends State<RegisterContractor> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController FullNameController = TextEditingController();
+  final TextEditingController DOBController = TextEditingController();
+  final TextEditingController GenderController = TextEditingController();
+  final TextEditingController PhoneController = TextEditingController();
+  final TextEditingController PasswordController = TextEditingController();
 
-  bool ShowPass = true;
+  bool ShowPass = false;
+  File? _profileImage;
 
-  // Sign-up handler that checks if the form is valid before printing the email
-  void RegisterContractorHandler() {
-    if (true) {
-      // _formKey.currentState?.validate() ?? false -!!!repalce this condition after test
-      print('Email: ${EmailController.text}');
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) {
-          return const RegisterContractor1();
-        },
-      )); // You can add further sign-up logic here, like calling an API
-    } else {
-      print('Form is invalid');
+  // Function to pick an image from the gallery
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery, // Use ImageSource.camera for camera option
+      maxHeight: 200,
+      maxWidth: 200,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
     }
   }
 
-  @override
-  void dispose() {
-    // Dispose the controllers to prevent memory leaks
-    FullNameController.dispose();
-    DOBController.dispose();
-    GenderController.dispose();
-    PhoneController.dispose();
-    EmailController.dispose();
-    AddressController.dispose();
-    PasswordController.dispose();
-    super.dispose();
+  // Helper to wrap input fields in styled containers
+  Widget _buildInputContainer(Widget child) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  // Profile Picture Widget
+  Widget _buildProfilePicture() {
+    return Stack(
+      children: [
+        // Profile Picture
+        GestureDetector(
+          onTap: _pickImage, // Trigger image picker when tapped
+          child: CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.grey[200],
+            backgroundImage:
+                _profileImage != null ? FileImage(_profileImage!) : null,
+            child: _profileImage == null
+                ? const Icon(Icons.camera_alt, color: Colors.green, size: 40)
+                : null,
+          ),
+        ),
+
+        // Edit Icon
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: _pickImage, // Trigger image picker when tapped
+            child: const CircleAvatar(
+              radius: 15,
+              backgroundColor: Colors.green,
+              child: const Icon(
+                Icons.edit,
+                size: 15,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Registration Button Handler
+  void RegisterContractorHandler() {
+    if (_formKey.currentState!.validate()) {
+      // Registration logic
+      print("Registration Successful");
+    }
   }
 
   @override
@@ -63,7 +116,7 @@ class _RegisterContractorState extends State<RegisterContractor> {
                 children: [
                   const SizedBox(height: 20),
 
-                  // Form Container with BoxDecoration
+                  // Form Container
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -92,6 +145,11 @@ class _RegisterContractorState extends State<RegisterContractor> {
                             ),
                             textAlign: TextAlign.center,
                           ),
+
+                          const SizedBox(height: 20,),
+
+                          _buildProfilePicture(),
+
                           // Full Name Field
                           _buildInputContainer(
                             TextFormField(
@@ -117,6 +175,7 @@ class _RegisterContractorState extends State<RegisterContractor> {
                               },
                             ),
                           ),
+
                           // Date of Birth Field
                           _buildInputContainer(
                             TextFormField(
@@ -301,28 +360,6 @@ class _RegisterContractorState extends State<RegisterContractor> {
       ),
     );
   }
-
-// Helper Function for Individual Input Field Styling
-  Widget _buildInputContainer(Widget child) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(10),
-        child: child,
-      ),
-    );
-  }
 }
 
 class RegisterContractor1 extends StatefulWidget {
@@ -348,14 +385,15 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
   void PrevHandler() {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
-        return const RegisterContractor();
+        return RegisterContractor();
       },
     )); // You can add further sign-up logic here, like calling an API
   }
 
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterContractorHandler() {
-    if (true) { // _formKey.currentState?.validate() ?? false -!!add this line after test
+    if (true) {
+      // _formKey.currentState?.validate() ?? false -!!add this line after test
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
           return const ContractorHome();
