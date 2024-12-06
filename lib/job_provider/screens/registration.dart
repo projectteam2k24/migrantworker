@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterJobProvider extends StatefulWidget {
   const RegisterJobProvider({super.key});
@@ -19,6 +21,21 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
   String UserType = 'Personal';
 
   bool ShowPass = true;
+  File? _profileImage;
+
+  // Function to pick an image from the gallery
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery, // Use ImageSource.camera for camera option
+      maxHeight: 200,
+      maxWidth: 200,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
 
   void RegisterJobProviderHandler() {
     if (true) { // _formKey.currentState?.validate() ?? false -!!add this line after test
@@ -47,6 +64,44 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
     AddressController.dispose();
     PasswordController.dispose();
     super.dispose();
+  }
+
+  Widget _buildProfilePicture() {
+    return Stack(
+      children: [
+        // Profile Picture
+        GestureDetector(
+          onTap: _pickImage, // Trigger image picker when tapped
+          child: CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.grey[200],
+            backgroundImage:
+                _profileImage != null ? FileImage(_profileImage!) : null,
+            child: _profileImage == null
+                ? const Icon(Icons.camera_alt, color: Colors.green, size: 40)
+                : null,
+          ),
+        ),
+
+        // Edit Icon
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: _pickImage, // Trigger image picker when tapped
+            child: const CircleAvatar(
+              radius: 15,
+              backgroundColor: Colors.green,
+              child: const Icon(
+                Icons.edit,
+                size: 15,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -90,6 +145,8 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
                             color: Colors.green,
                           ),
                         ),
+                        const SizedBox(height: 20,),
+                        _buildProfilePicture(),
                         const SizedBox(height: 5),
                         buildTextField(
                           controller: FullNameController,
