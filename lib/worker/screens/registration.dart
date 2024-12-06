@@ -1,9 +1,9 @@
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/worker/screens/homepage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
 import 'package:migrantworker/worker/services/worker_firebase_auth_service.dart';
 
 class RegisterWorker extends StatefulWidget {
@@ -48,7 +48,17 @@ class _RegisterWorkerState extends State<RegisterWorker> {
       print('Email: ${EmailController.text}');
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return const RegisterWorker1();
+          return RegisterWorker1(
+              name: FullNameController.text,
+              profilepic: _profileImage,
+              dob: DOBController.text,
+              gender: GenderController.text,
+              phone: PhoneController.text,
+              email: EmailController.text,
+              address: AddressController.text,
+              emergencyContact: EmergencyPhoneController.text,
+              duration: int.parse(StayController.text),
+              password: PasswordController.text);
         },
       )); // You can add further sign-up logic here, like calling an API
     } else {
@@ -465,7 +475,28 @@ class _RegisterWorkerState extends State<RegisterWorker> {
 }
 
 class RegisterWorker1 extends StatefulWidget {
-  const RegisterWorker1({super.key});
+  const RegisterWorker1(
+      {super.key,
+      required this.name,
+      required this.profilepic,
+      required this.dob,
+      required this.gender,
+      required this.phone,
+      required this.email,
+      required this.address,
+      required this.emergencyContact,
+      required this.duration,
+      required this.password});
+  final String name;
+  final File? profilepic;
+  final String dob;
+  final String gender;
+  final String phone;
+  final String email;
+  final String address;
+  final String emergencyContact;
+  final int duration;
+  final String password;
 
   @override
   State<RegisterWorker1> createState() => _RegisterWorker1State();
@@ -473,13 +504,11 @@ class RegisterWorker1 extends StatefulWidget {
 
 class _RegisterWorker1State extends State<RegisterWorker1> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController ExpertiseController =
-      TextEditingController(); // Key to manage the form state
+  TextEditingController ExpertiseController = TextEditingController(); // Key to manage the form state
   TextEditingController ExcperienceController = TextEditingController();
   TextEditingController SalaryController = TextEditingController();
   TextEditingController LanguageController = TextEditingController();
   TextEditingController GovtController = TextEditingController();
-  TextEditingController AddressProofController = TextEditingController();
 
   bool ShowPass = true;
 
@@ -496,20 +525,20 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
   void RegisterWorkerHandler() {
     if (_formKey.currentState?.validate() ?? false) {
       WorkerAuthService().workerReg(
-          name: "asas",
-          dob: "12-21-322",
-          gender: "fdssfd",
-          phone: "sdfsdf",
-          email: "sdsdsd",
-          address: "SDFSDF",
-          emergencyContact: "sdsd",
-          duration: 12,
-          password: "12221",
-          skill: "2221",
-          salary: "21212",
-          languages: "212221",
-          govtID: File(""),
-          AddressProof: File(""),
+          name: widget.name,
+          dob: widget.dob,
+          gender: widget.gender,
+          phone: widget.phone,
+          email: widget.email,
+          address: widget.address,
+          emergencyContact: widget.emergencyContact,
+          duration: widget.duration,
+          password: widget.password,
+          skill: ExpertiseController.text,
+          salary: SalaryController.text,
+          languages: LanguageController.text,
+          govtID: govtIdFile,
+          AddressProof: AddressProofFile,
           context: context);
     } else {
       print('Form is invalid');

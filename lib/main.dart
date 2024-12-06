@@ -14,7 +14,6 @@ import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
 import 'package:migrantworker/worker/screens/notification.dart';
 import 'package:migrantworker/worker/screens/registration.dart';
-
 import 'job_provider/screens/myjob.dart';
 
 Future<void> main() async {
