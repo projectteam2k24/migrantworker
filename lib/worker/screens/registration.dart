@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:migrantworker/worker/services/worker_firebase_auth_service.dart';
+
 class RegisterWorker extends StatefulWidget {
   const RegisterWorker({super.key});
 
@@ -42,8 +44,7 @@ class _RegisterWorkerState extends State<RegisterWorker> {
 
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterWorkerHandler() {
-    if (true) {
-      // _formKey.currentState?.validate() ?? false -!!!replace this condition after test
+    if (_formKey.currentState?.validate() ?? false) {
       print('Email: ${EmailController.text}');
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
@@ -494,11 +495,22 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterWorkerHandler() {
     if (_formKey.currentState?.validate() ?? false) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) {
-          return const WorkerHome();
-        },
-      )); // You can add further sign-up logic here, like calling an API
+      WorkerAuthService().workerReg(
+          name: "asas",
+          dob: "12-21-322",
+          gender: "fdssfd",
+          phone: "sdfsdf",
+          email: "sdsdsd",
+          address: "SDFSDF",
+          emergencyContact: "sdsd",
+          duration: 12,
+          password: "12221",
+          skill: "2221",
+          salary: "21212",
+          languages: "212221",
+          govtID: File(""),
+          AddressProof: File(""),
+          context: context);
     } else {
       print('Form is invalid');
     }

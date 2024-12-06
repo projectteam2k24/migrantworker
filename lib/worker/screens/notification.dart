@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/chat_page.dart';
 
+// ignore: must_be_immutable
 class WorkerNotificationHub extends StatefulWidget {
   WorkerNotificationHub({super.key, required this.toggle});
 
@@ -14,7 +16,6 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     showMessages = widget.toggle;
   }
@@ -80,6 +81,19 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
           ),
         ],
       ),
+      // Floating Action Button only for Messages
+      floatingActionButton: showMessages
+          ? FloatingActionButton(
+              onPressed: () {
+                // Navigate to a new message creation page (or relevant action)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Navigate to New Message Page!')),
+                );
+              },
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.chat),
+            )
+          : null,
     );
   }
 
@@ -104,6 +118,13 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
               style:
                   const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
             ),
+            onTap: () {
+              // Navigate to ChatPage when tapping on a message
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatPage()),
+              );
+            },
           ),
         );
       },

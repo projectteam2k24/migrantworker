@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/contractor/screens/homepage.dart';
 import 'package:migrantworker/selectuser.dart';
 
 void main() {
@@ -181,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
-                                  return SelectUser();
+                                  return ContractorHome();
                                 },
                               ));
                             },
