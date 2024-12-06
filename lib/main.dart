@@ -11,10 +11,12 @@ import 'package:migrantworker/job_provider/screens/work_status.dart';
 import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
 
+import 'job_provider/screens/myjob.dart';
+
 Future<void> main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: MyJobPage()));
 }
