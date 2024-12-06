@@ -540,6 +540,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
           govtID: govtIdFile,
           AddressProof: AddressProofFile,
           context: context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => WorkerHome(),));
     } else {
       print('Form is invalid');
     }

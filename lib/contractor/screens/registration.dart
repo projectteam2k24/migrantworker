@@ -4,19 +4,20 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:migrantworker/contractor/services/contractor_firebase_auth_service.dart';
+
 class RegisterContractor extends StatefulWidget {
   @override
-  _RegisterContractorState createState() =>
-      _RegisterContractorState();
+  _RegisterContractorState createState() => _RegisterContractorState();
 }
 
-class _RegisterContractorState
-    extends State<RegisterContractor> {
+class _RegisterContractorState extends State<RegisterContractor> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController FullNameController = TextEditingController();
   final TextEditingController DOBController = TextEditingController();
   final TextEditingController GenderController = TextEditingController();
   final TextEditingController PhoneController = TextEditingController();
+  final TextEditingController EmailController = TextEditingController();
   final TextEditingController PasswordController = TextEditingController();
 
   bool ShowPass = false;
@@ -97,8 +98,19 @@ class _RegisterContractorState
   // Registration Button Handler
   void RegisterContractorHandler() {
     if (_formKey.currentState!.validate()) {
-      // Registration logic
-      print("Registration Successful");
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegisterContractor1(
+              name: FullNameController.text,
+              dob: DOBController.text,
+              gender: GenderController.text,
+              phone: PhoneController.text,
+              email: EmailController.text,
+              password: PasswordController.text,
+              profilePic: _profileImage,
+            ),
+          ));
     }
   }
 
@@ -146,7 +158,9 @@ class _RegisterContractorState
                             textAlign: TextAlign.center,
                           ),
 
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
 
                           _buildProfilePicture(),
 
@@ -288,7 +302,33 @@ class _RegisterContractorState
                               },
                             ),
                           ),
-
+                          // Email Field
+                          _buildInputContainer(
+                            TextFormField(
+                              controller: EmailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.email_outlined,
+                                    color: Colors.green),
+                                labelText: 'Email Address',
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email address';
+                                } else if (!RegExp(
+                                        r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$')
+                                    .hasMatch(value)) {
+                                  return 'Please enter a valid email address';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
                           // Password Field
                           _buildInputContainer(
                             TextFormField(
@@ -363,7 +403,23 @@ class _RegisterContractorState
 }
 
 class RegisterContractor1 extends StatefulWidget {
-  const RegisterContractor1({super.key});
+  const RegisterContractor1({
+    super.key,
+    required this.name,
+    required this.dob,
+    required this.gender,
+    required this.phone,
+    required this.password,
+    required this.email,
+    this.profilePic,
+  });
+  final String name;
+  final String dob;
+  final String gender;
+  final String phone;
+  final String email;
+  final String password;
+  final File? profilePic;
 
   @override
   State<RegisterContractor1> createState() => _RegisterContractor1State();
@@ -375,9 +431,6 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
   TextEditingController RoleController = TextEditingController();
   TextEditingController ExcperienceController = TextEditingController();
   TextEditingController ExpertiseController = TextEditingController();
-  TextEditingController GovtController = TextEditingController();
-  TextEditingController CompRegController = TextEditingController();
-  TextEditingController AddressProofController = TextEditingController();
 
   bool ShowPass = true;
 
@@ -392,8 +445,22 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
 
   // Sign-up handler that checks if the form is valid before printing the email
   void RegisterContractorHandler() {
-    if (true) {
-      // _formKey.currentState?.validate() ?? false -!!add this line after test
+    if (_formKey.currentState?.validate() ?? false) {
+      ContractorFirebaseAuthService().contractorReg(
+          name: widget.name,
+          dob: widget.dob,
+          gender: widget.gender,
+          phone: widget.phone,
+          email: widget.email,
+          password: widget.password,
+          companyName: CompanyController.text,
+          role: RoleController.text,
+          skill: ExpertiseController.text,
+          experience: ExcperienceController.text,
+          govtID: govtIdFile,
+          companyCertificate: CompRegFile,
+          AddressProof: AddressProofFile,
+          context: context);
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
           return const ContractorHome();
@@ -455,8 +522,6 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
     RoleController.dispose();
     ExcperienceController.dispose();
     ExpertiseController.dispose();
-    GovtController.dispose();
-    CompRegController.dispose();
     super.dispose();
   }
 

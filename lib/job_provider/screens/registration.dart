@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:migrantworker/job_provider/services/job_provider_firebase_auth_service.dart';
 
 class RegisterJobProvider extends StatefulWidget {
   const RegisterJobProvider({super.key});
@@ -38,10 +39,15 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
   }
 
   void RegisterJobProviderHandler() {
-    if (true) { // _formKey.currentState?.validate() ?? false -!!add this line after test
-      print('Email: ${EmailController.text}');
-      print(UserType);
-      // Navigate or perform other actions here
+    if (_formKey.currentState?.validate() ?? false) {
+      JobProviderFirebaseAuthService().jobProviderReg(
+          name: FullNameController.text,
+          phone: PhoneController.text,
+          email: EmailController.text,
+          address: AddressController.text,
+          userType: UserType,
+          password: PasswordController.text,
+          context: context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -145,7 +151,9 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
                             color: Colors.green,
                           ),
                         ),
-                        const SizedBox(height: 20,),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         _buildProfilePicture(),
                         const SizedBox(height: 5),
                         buildTextField(
