@@ -93,7 +93,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LogIn(),
+                              builder: (context) => LogIn(),
                             ));
                       },
                       child: const Text(

@@ -1,228 +1,266 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/selectuser.dart';
-import 'package:migrantworker/contractor/screens/homepage.dart';
 
-class LogIn extends StatefulWidget {
-  const LogIn({super.key});
-
-  @override
-  State<LogIn> createState() => _LogInState();
+void main() {
+  runApp(LogIn());
 }
 
-class _LogInState extends State<LogIn> {
-  final _formKey = GlobalKey<FormState>(); // Key to manage the form state
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  bool showPass = true;
-
-  void logInHandler() {
-    if (_formKey.currentState?.validate() ?? false) {
-      print('Email: ${emailController.text}');
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) {
-          return const ContractorHome();
-        },
-      ));
-    } else {
-      print('Form is invalid');
-    }
-  }
-
+class LogIn extends StatelessWidget {
   @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginPage(),
+    );
   }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF3E0), // Match registration background
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      body: Stack(
+        children: [
+          // Background Gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topCenter,
+                radius: 1.0,
+                colors: [
+                  Colors.green,
+                  Colors.green,
+                ],
+              ),
+            ),
+          ),
+          // White Wave at the Bottom
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: ClipPath(
+                clipper: WaveClipper(),
+                child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                ),
+              ),
+            ),
+          ),
+          // Login Content
+          Center(
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: screenHeight * 0.08),
-                  Center(
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/logo.png',
-                        width: screenWidth * 0.4,
-                        height: screenWidth * 0.4,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  Icon(
+                    Icons.fingerprint,
+                    size: 100,
+                    color: Colors.white,
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: 20),
                   Text(
-                    'Migrant Connect',
+                    'MIGRANT CONNECT',
                     style: TextStyle(
-                      fontSize: screenWidth * 0.065,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFFB7913E),
-                      fontFamily: 'Times New Roman',
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: screenHeight * 0.1),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                    child: TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person_2_outlined,
-                            color: Color(0xFFB7913E)),
-                        labelText: 'Email/Mobile',
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(screenWidth * 0.02),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFB7913E)),
-                        ),
-                        labelStyle: TextStyle(
-                          fontSize: screenWidth * 0.045,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFFB7913E),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email or mobile number';
-                        } else if (RegExp(
-                                r"^[a-zA-Z0-9]+@([a-zA-Z0-9]+\.)+[a-zA-Z]{2,}$")
-                            .hasMatch(value)) {
-                          return null; // Valid email
-                        } else if (RegExp(r"^\d{10}$").hasMatch(value)) {
-                          return null; // Valid mobile number
-                        }
-                        return 'Please enter a valid email or 10-digit mobile number';
-                      },
+                      color: Colors.white,
+                      letterSpacing: 2,
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: 30),
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.grey.shade300,
+                    child: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Colors.green,
+                    ),
+                  ),
+                  SizedBox(height: 30),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                    child: TextFormField(
-                      controller: passwordController,
-                      obscureText: showPass,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline,
-                            color: Color(0xFFB7913E)),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              showPass = !showPass;
-                            });
+                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                    child: Column(
+                      children: [
+                        // Email/Mobile Field with Green and Red Borders
+                        TextFormField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            hintText: 'EMAIL / MOBILE',
+                            hintStyle: TextStyle(color: Colors.grey.shade600),
+                            filled: true,
+                            fillColor: Colors.grey.shade200,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 2),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 2),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email or mobile';
+                            } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$')
+                                    .hasMatch(value) &&
+                                !RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                              return 'Enter a valid email or mobile number';
+                            }
+                            return null;
                           },
-                          icon: Icon(
-                              showPass
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: const Color(0xFFB7913E)),
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(screenWidth * 0.02),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFB7913E)),
+                        SizedBox(height: 20),
+                        // Password Field with Green and Red Borders
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: 'PASSWORD',
+                            hintStyle: TextStyle(color: Colors.grey.shade600),
+                            filled: true,
+                            fillColor: Colors.grey.shade200,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 2),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 2),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            } else if (value.length < 6) {
+                              return 'Password must be at least 6 characters long';
+                            }
+                            return null;
+                          },
                         ),
-                        labelStyle: TextStyle(
-                          fontSize: screenWidth * 0.045,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFFB7913E),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters long';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  GestureDetector(
-                    onTap: () {
-                      // Add your "Forgot Password" navigation or logic here
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: screenWidth * 0.045,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-                  ElevatedButton(
-                    onPressed: logInHandler,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(0xFFB7913E), // Match button color
-                      minimumSize: Size(screenWidth * 0.5, screenHeight * 0.06),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(screenWidth * 0.02),
-                      ),
-                    ),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.05,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account?",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.045,
-                        ),
-                      ),
-                      SizedBox(width: screenWidth * 0.02),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return const SelectUser();
+                        SizedBox(height: 30),
+                        // Login Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return SelectUser();
+                                },
+                              ));
                             },
-                          ));
-                        },
-                        child: Text(
-                          'Register Now',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: screenWidth * 0.045,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 15),
+                            ),
+                            child: const Text(
+                              'LOG IN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'DON\'T YOU HAVE AN ACCOUNT?',
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SelectUser(),
+                                    ));
+                              },
+                              child: Text(
+                                'CREATE ACCOUNT',
+                                style: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 55, 129, 58)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
+}
+
+// Custom Wave Clipper
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height * 0.3);
+    path.quadraticBezierTo(
+      size.width / 4, size.height * 0.4, // Control point
+      size.width / 2, size.height * 0.35, // End point
+    );
+    path.quadraticBezierTo(
+      3 * size.width / 4, size.height * 0.3, // Control point
+      size.width, size.height * 0.4, // End point
+    );
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

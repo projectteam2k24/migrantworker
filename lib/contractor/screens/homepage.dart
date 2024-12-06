@@ -256,7 +256,7 @@ class ProfileMenu extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
-                      return const LogIn();
+                      return LogIn();
                     },
                   ));
                 },
