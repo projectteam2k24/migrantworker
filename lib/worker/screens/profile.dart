@@ -14,11 +14,12 @@ class _WorkerProfileState extends State<WorkerProfile> {
     return MaterialApp(
       title: 'Worker Profile',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Worker Profile'),
+          backgroundColor: Colors.green[700],
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
@@ -53,42 +54,100 @@ class _WorkerProfileState extends State<WorkerProfile> {
                 const SizedBox(height: 20),
                 const Center(
                   child: Text(
-                    'John Doe', // Contractor name
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    'John Doe', // Worker name
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green),
                   ),
                 ),
                 const Center(
                   child: Text(
-                    'Experienced Contractor', // Role or specialization
+                    'Skilled Worker', // Role or specialization
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ),
                 const SizedBox(height: 30),
-                _buildSectionTitle('Personal Information'),
-                _buildProfileItem('Full Name', 'John Doe'),
-                _buildProfileItem('Date of Birth', '12/12/1980'),
-                _buildProfileItem('Gender', 'Male'),
-                _buildProfileItem('Phone Number', '+1 234 567 8901'),
-                _buildProfileItem('Email Address', 'johndoe@example.com'),
-                _buildProfileItem('Address', '123 Main St, Springfield'),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Professional Details'),
-                _buildProfileItem(
-                    'Emergency Contact Number', '+1 234 567 8901'),
-                _buildProfileItem(
-                    'Duration of stay at Current Location in Months', '14'),
-                _buildProfileItem('Skill', '15 Years'),
-                _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Uploaded Documents'),
-                _buildDocumentItem('Government-issued ID', 'Uploaded'),
-                _buildDocumentItem('Proof of Address', 'Uploaded'),
+
+                // First Container for Personal and Professional Information
+                Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.green[50],
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle('Personal Information'),
+                      _buildProfileItem('Full Name', 'John Doe'),
+                      _buildProfileItem('Date of Birth', '12/12/1980'),
+                      _buildProfileItem('Gender', 'Male'),
+                      _buildProfileItem('Phone Number', '+1 234 567 8901'),
+                      _buildProfileItem('Email Address', 'johndoe@example.com'),
+                      _buildProfileItem('Address', '123 Main St, Springfield'),
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('Professional Details'),
+                      _buildProfileItem(
+                          'Emergency Contact Number', '+1 234 567 8901'),
+                      _buildProfileItem(
+                          'Duration of stay at Current Location in Months',
+                          '14'),
+                      _buildProfileItem('Skill', 'Plumbing'),
+                      _buildProfileItem(
+                          'Expertise', 'Plumbing, Electrical Work'),
+                    ],
+                  ),
+                ),
+
                 const SizedBox(height: 30),
+
+                // Second Container for Uploaded Documents
+                Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.green[50],
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle('Uploaded Documents'),
+                      _buildDocumentItem('Government-issued ID', 'Uploaded'),
+                      _buildDocumentItem('Proof of Address', 'Uploaded'),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                // Log Out Button
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
                       // Log out functionality
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[700],
+                      minimumSize: const Size(200, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
                     child: const Text('Log Out'),
                   ),
                 ),
@@ -105,7 +164,11 @@ class _WorkerProfileState extends State<WorkerProfile> {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.green[700],
+        ),
       ),
     );
   }
