@@ -91,7 +91,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return const JobProviderProfile1();
+                              return const JobProviderProfile();
                             },
                           ));
                         },
@@ -281,7 +281,7 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return const JobProviderProfile1();
+                          return const JobProviderProfile();
                         },
                       ));
                     },

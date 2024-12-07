@@ -225,13 +225,19 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                         ),
 
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'DON\'T YOU HAVE AN ACCOUNT?',
-                              style: TextStyle(color: Colors.grey.shade600),
+                            TextButton(
+                              onPressed: () {
+                              },
+                              child: const Text(
+                                'Forgot Password ?',
+                                style: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 146, 148, 146)),
+                              ),
                             ),
                             TextButton(
                               onPressed: () {
@@ -241,11 +247,11 @@ class _LoginPageState extends State<LoginPage> {
                                       builder: (context) => SelectUser(),
                                     ));
                               },
-                              child: Text(
+                              child: const Text(
                                 'CREATE ACCOUNT',
                                 style: TextStyle(
                                     color:
-                                        const Color.fromARGB(255, 55, 129, 58)),
+                                        Color.fromARGB(255, 55, 129, 58)),
                               ),
                             ),
                           ],
