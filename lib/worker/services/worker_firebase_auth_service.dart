@@ -27,8 +27,9 @@ class WorkerAuthService {
       File? profile,
       required BuildContext context}) async {
     try {
-      final user = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      
+      final user = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
       firestoreDatabse.collection('Worker').doc(user.user?.uid).set({
         'name': name,
         'dob': dob,
@@ -44,11 +45,14 @@ class WorkerAuthService {
         'experience': experience,
         'languages': languages,
         'govtID': govtID
-
       });
-      
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Registration Successful')));
+
+      firestoreDatabse
+          .collection('role_tb')
+          .add({'uid': user.user?.uid, 'role': 'worker'});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration Successful')));
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Registration failed')));

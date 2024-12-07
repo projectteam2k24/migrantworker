@@ -18,10 +18,9 @@ import 'package:migrantworker/worker/screens/registration.dart';
 import 'job_provider/screens/myjob.dart';
 
 Future<void> main() async {
-  await WidgetsFlutterBinding.ensureInitialized();
+   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-      MaterialApp(debugShowCheckedModeBanner: false, home: SelectUser()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
 }

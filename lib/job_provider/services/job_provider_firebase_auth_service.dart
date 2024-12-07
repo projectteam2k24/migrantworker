@@ -28,6 +28,10 @@ class JobProviderFirebaseAuthService {
         'userType': userType,
         'password': password,
       });
+
+      firestoreDatabse
+          .collection('role_tb')
+          .add({'uid': user.user?.uid, 'role': 'job_provider'});
       
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Registration Successful')));

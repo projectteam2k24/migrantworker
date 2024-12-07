@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
+import 'package:migrantworker/contractor/services/contractor_firebase_auth_service.dart';
 import 'package:migrantworker/selectuser.dart';
+import 'package:migrantworker/services/login_service_fire.dart';
 
 void main() {
   runApp(LogIn());
@@ -25,6 +27,27 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool loading = false;
+
+  void LoginHandler() async {
+    setState(() {
+      loading = true;
+    });
+
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    // Call the login function
+    await LoginServiceFire().LoginService(
+      email: email,
+      password: password,
+      context: context,
+    );
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,31 +201,30 @@ class _LoginPageState extends State<LoginPage> {
                         // Login Button
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return ContractorHome();
-                                },
-                              ));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                            ),
-                            child: const Text(
-                              'LOG IN',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          child: loading
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ElevatedButton(
+                                  onPressed: LoginHandler,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 15),
+                                  ),
+                                  child: const Text(
+                                    'LOG IN',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                         ),
+
                         SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
