@@ -85,10 +85,11 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
       floatingActionButton: showMessages
           ? FloatingActionButton(
               onPressed: () {
-                // Navigate to a new message creation page (or relevant action)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Navigate to New Message Page!')),
-                );
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return ChatPage();
+                  },
+                ));
               },
               backgroundColor: Colors.green,
               child: const Icon(Icons.chat),

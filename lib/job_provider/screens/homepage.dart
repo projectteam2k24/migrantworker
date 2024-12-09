@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
+import 'package:migrantworker/job_provider/screens/myjob.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
 import 'package:migrantworker/job_provider/screens/post_job.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
@@ -290,7 +291,13 @@ class ProfileMenu extends StatelessWidget {
                     leading: const Icon(Icons.thumb_up),
                     title: const Text('My Jobs'),
                     trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return MyJobPage();
+                        },
+                      ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications),

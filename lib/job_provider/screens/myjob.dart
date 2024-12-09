@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:migrantworker/job_details.dart';
 
 class MyJobPage extends StatelessWidget {
   const MyJobPage({super.key});
@@ -29,9 +30,9 @@ class MyJobPage extends StatelessWidget {
         'squareFeet': '300 sqft',
         'budget': '\$8,000',
         'images': [
-          'assets/images/image1.jpg',
-          'assets/images/image2.jpg',
-          'assets/images/image3.jpg',
+          'assets/images/image4.jpg',
+          'assets/images/image5.jpg',
+          'assets/images/image6.jpg',
         ],
         'description':
             'Complete makeover of the bathroom with new fittings, tiles, and lighting.',
@@ -43,12 +44,12 @@ class MyJobPage extends StatelessWidget {
         'squareFeet': '700 sqft',
         'budget': '\$5,000',
         'images': [
-          'assets/images/image1.jpg',
-          'assets/images/image2.jpg',
-          'assets/images/image3.jpg',
+          'assets/images/image7.jpg',
+          'assets/images/image8.jpg',
+          'assets/images/image9.jpg',
         ],
         'description':
-            'Repair and waterproofing of the roof to fix leaks and improve durability.',
+            'The Roof Repairing Demo app is a user-friendly platform designed to showcase the details of professional roof repair services. It provides an intuitive interface to highlight essential aspects of roof maintenance and repair, making it perfect for contractors, clients, or demo purposes.At the top, the app features an elegant AppBar displaying the service title, emphasizing professionalism and clarity. The interface includes an image carousel with high-quality images, demonstrating various stages of roof repair, such as inspection, removal of damaged materials, and installaton of new layers. These visuals create an engaging experience, offering users a clear idea of the work process.',
       },
     ];
 
@@ -210,136 +211,6 @@ class MyJobPage extends StatelessWidget {
               ),
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class JobDetailPage extends StatelessWidget {
-  final Map<String, dynamic> job;
-
-  const JobDetailPage({super.key, required this.job});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(job['jobTitle']),
-        centerTitle: true,
-        backgroundColor: Colors.green,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Job Title
-            Text(
-              job['jobTitle'],
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Image Slider
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 300.0,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                enableInfiniteScroll: true,
-              ),
-              items: job['images'].map<Widget>((imageUrl) {
-                return ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  child: Image.asset(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.broken_image,
-                        size: 100,
-                        color: Colors.grey,
-                      );
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            // Job Description
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0, 4),
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Job Description:',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    job['description'] ?? 'No description available.',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Address
-            Row(
-              children: [
-                const Icon(Icons.home, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text(job['address'], style: const TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Location
-            Row(
-              children: [
-                const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text('Location: ${job['location']}',
-                    style: const TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Square Feet
-            Row(
-              children: [
-                const Icon(Icons.square_foot, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text('Size: ${job['squareFeet']}',
-                    style: const TextStyle(fontSize: 14)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Budget
-            Row(
-              children: [
-                const Icon(Icons.attach_money, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text('Budget: ${job['budget']}',
-                    style: const TextStyle(fontSize: 14)),
-              ],
-            ),
-          ],
         ),
       ),
     );

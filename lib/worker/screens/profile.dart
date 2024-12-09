@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
 
 class WorkerProfile extends StatefulWidget {
@@ -139,7 +140,11 @@ class _WorkerProfileState extends State<WorkerProfile> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Log out functionality
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return LogIn();
+                        },
+                      ));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[700],

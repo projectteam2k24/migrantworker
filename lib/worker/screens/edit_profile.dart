@@ -97,6 +97,7 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
+        backgroundColor: Colors.green[700],
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -120,7 +121,7 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
                         radius: 60,
                         backgroundImage: _profileImage != null
                             ? FileImage(_profileImage!)
-                            : const AssetImage('assets/placeholder.png')
+                            : const AssetImage('assets/profile_placeholder.png')
                                 as ImageProvider,
                         backgroundColor: Colors.grey[300],
                       ),
@@ -139,27 +140,70 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
                 ),
               ),
               const SizedBox(height: 20),
-              _buildTextField('Full Name', _fullNameController),
-              _buildTextField('Date of Birth', _dobController),
-              _buildTextField('Gender', _genderController),
-              _buildTextField('Phone Number', _phoneController),
-              _buildTextField('Email Address', _emailController),
-              _buildTextField('Address', _addressController),
-              const SizedBox(height: 20),
-              const Text(
-                'Professional Details',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+
+              // Personal Details Card
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTextField('Full Name', _fullNameController),
+                      _buildTextField('Date of Birth', _dobController),
+                      _buildTextField('Gender', _genderController),
+                      _buildTextField('Phone Number', _phoneController),
+                      _buildTextField('Email Address', _emailController),
+                      _buildTextField('Address', _addressController),
+                    ],
+                  ),
+                ),
               ),
-              _buildTextField(
-                  'Emergency Contact Number', _companyNameController),
-              _buildTextField('Duration of stay at Current Location in Months',
-                  _roleController),
-              _buildTextField('Skill', _experienceController),
-              _buildTextField('Expertise', _expertiseController),
+              const SizedBox(height: 20),
+
+              // Professional Details Card
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Professional Details',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      _buildTextField(
+                          'Emergency Contact Number', _companyNameController),
+                      _buildTextField(
+                          'Duration of stay at Current Location in Months',
+                          _roleController),
+                      _buildTextField('Skill', _experienceController),
+                      _buildTextField('Expertise', _expertiseController),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 30),
+
+              // Save Button
               Center(
                 child: ElevatedButton(
                   onPressed: _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    minimumSize: const Size(200, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                   child: const Text('Save Changes'),
                 ),
               ),
@@ -177,7 +221,11 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30), // Rounded borders
+          ),
+          filled: true,
+          fillColor: Colors.grey[200],
         ),
       ),
     );
