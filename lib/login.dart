@@ -5,13 +5,15 @@ import 'package:migrantworker/selectuser.dart';
 import 'package:migrantworker/services/login_service_fire.dart';
 
 void main() {
-  runApp(LogIn());
+  runApp(const LogIn());
 }
 
 class LogIn extends StatelessWidget {
+  const LogIn({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );
@@ -19,6 +21,8 @@ class LogIn extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -56,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           // Background Gradient
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.topCenter,
                 radius: 1.0,
@@ -87,13 +91,13 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.fingerprint,
                     size: 100,
                     color: Colors.white,
                   ),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 20),
+                  const Text(
                     'MIGRANT CONNECT',
                     style: TextStyle(
                       fontSize: 24,
@@ -102,17 +106,17 @@ class _LoginPageState extends State<LoginPage> {
                       letterSpacing: 2,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.grey.shade300,
-                    child: Icon(
+                    child: const Icon(
                       Icons.person,
                       size: 50,
                       color: Colors.green,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
                     child: Column(
@@ -128,22 +132,22 @@ class _LoginPageState extends State<LoginPage> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.green, width: 2),
+                                  const BorderSide(color: Colors.green, width: 2),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.green, width: 2),
+                                  const BorderSide(color: Colors.green, width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.red, width: 2),
+                                  const BorderSide(color: Colors.red, width: 2),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.red, width: 2),
+                                  const BorderSide(color: Colors.red, width: 2),
                             ),
                           ),
                           validator: (value) {
@@ -157,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Password Field with Green and Red Borders
                         TextFormField(
                           controller: passwordController,
@@ -170,22 +174,22 @@ class _LoginPageState extends State<LoginPage> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.green, width: 2),
+                                  const BorderSide(color: Colors.green, width: 2),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.green, width: 2),
+                                  const BorderSide(color: Colors.green, width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.red, width: 2),
+                                  const BorderSide(color: Colors.red, width: 2),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  BorderSide(color: Colors.red, width: 2),
+                                  const BorderSide(color: Colors.red, width: 2),
                             ),
                           ),
                           validator: (value) {
@@ -197,12 +201,12 @@ class _LoginPageState extends State<LoginPage> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         // Login Button
                         SizedBox(
                           width: double.infinity,
                           child: loading
-                              ? Center(
+                              ?const Center(
                                   child: CircularProgressIndicator(),
                                 )
                               : ElevatedButton(
@@ -212,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    padding: EdgeInsets.symmetric(vertical: 15),
+                                    padding: const EdgeInsets.symmetric(vertical: 15),
                                   ),
                                   child: const Text(
                                     'LOG IN',
@@ -236,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                                 'Forgot Password ?',
                                 style: TextStyle(
                                     color:
-                                        const Color.fromARGB(255, 146, 148, 146)),
+                                        Color.fromARGB(255, 146, 148, 146)),
                               ),
                             ),
                             TextButton(
@@ -244,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SelectUser(),
+                                      builder: (context) => const SelectUser(),
                                     ));
                               },
                               child: const Text(

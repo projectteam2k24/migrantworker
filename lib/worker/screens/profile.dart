@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
@@ -20,7 +22,6 @@ class _WorkerProfileState extends State<WorkerProfile> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Worker Profile'),
-          backgroundColor: Colors.green[700],
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
@@ -34,132 +35,184 @@ class _WorkerProfileState extends State<WorkerProfile> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return const EditWorkerProfile();
                 }));
-                // Navigate to edit profile page or enable editing
               },
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage:
-                        AssetImage('assets/profile_placeholder.png'),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Center(
-                  child: Text(
-                    'John Doe', // Worker name
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green),
-                  ),
-                ),
-                const Center(
-                  child: Text(
-                    'Skilled Worker', // Role or specialization
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ),
-                const SizedBox(height: 30),
-
-                // First Container for Personal and Professional Information
-                Container(
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                    color: Colors.green[50],
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.green.withOpacity(0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionTitle('Personal Information'),
-                      _buildProfileItem('Full Name', 'John Doe'),
-                      _buildProfileItem('Date of Birth', '12/12/1980'),
-                      _buildProfileItem('Gender', 'Male'),
-                      _buildProfileItem('Phone Number', '+1 234 567 8901'),
-                      _buildProfileItem('Email Address', 'johndoe@example.com'),
-                      _buildProfileItem('Address', '123 Main St, Springfield'),
-                      const SizedBox(height: 20),
-                      _buildSectionTitle('Professional Details'),
-                      _buildProfileItem(
-                          'Emergency Contact Number', '+1 234 567 8901'),
-                      _buildProfileItem(
-                          'Duration of stay at Current Location in Months',
-                          '14'),
-                      _buildProfileItem('Skill', 'Plumbing'),
-                      _buildProfileItem(
-                          'Expertise', 'Plumbing, Electrical Work'),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                // Second Container for Uploaded Documents
-                Container(
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                    color: Colors.green[50],
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.green.withOpacity(0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionTitle('Uploaded Documents'),
-                      _buildDocumentItem('Government-issued ID', 'Uploaded'),
-                      _buildDocumentItem('Proof of Address', 'Uploaded'),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                // Log Out Button
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return LogIn();
-                        },
-                      ));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[700],
-                      minimumSize: const Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+        body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('Worker')
+              .doc(FirebaseAuth.instance.currentUser?.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Error loading data.'));
+            } else if (!snapshot.hasData || snapshot.data == null) {
+              return const Center(child: Text('No data found.'));
+            } else {
+              final profileData = snapshot.data!.data() as Map<String, dynamic>;
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile Picture with Shadow and Edit Icon
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.green.withOpacity(0.5),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                              shape: BoxShape.circle,
+                            ),
+                            child: const CircleAvatar(
+                              radius: 50,
+                              backgroundImage:
+                                  AssetImage('assets/profile_placeholder.png'),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              _editProfilePicture();
+                            },
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.green[700],
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: const Text('Log Out'),
-                  ),
+                    const SizedBox(height: 20),
+
+                    // Worker Name and Role
+                    Center(
+                      child: Text(
+                        profileData['name'] ?? 'N/A',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    const Center(
+                      child: Text(
+                        'Skilled Worker',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // First Box: Personal Information
+                    _buildBox(
+                      title: 'Personal Information',
+                      children: [
+                        _buildProfileItem('Full Name', profileData['name'] ?? 'N/A'),
+                        _buildProfileItem('Date of Birth', profileData['dob'] ?? 'N/A'),
+                        _buildProfileItem('Gender', profileData['gender'] ?? 'N/A'),
+                        _buildProfileItem('Phone Number', profileData['phone'] ?? 'N/A'),
+                        _buildProfileItem('Email Address', profileData['email'] ?? 'N/A'),
+                        _buildProfileItem('Address', profileData['address'] ?? 'N/A'),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Second Box: Professional Details
+                    _buildBox(
+                      title: 'Professional Details',
+                      children: [
+                        _buildProfileItem('Emergency Contact Number',
+                            profileData['emergencyContact'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Duration of Stay',
+                            '${profileData['stayDuration'] ?? 0} Months'),
+                        _buildProfileItem('Skill', profileData['skill'] ?? 'N/A'),
+                        _buildProfileItem('Expertise', profileData['expertise'] ?? 'N/A'),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Third Box: Uploaded Documents
+                    _buildBox(
+                      title: 'Uploaded Documents',
+                      children: [
+                        _buildDocumentItem('Government-issued ID',
+                            profileData['govtID'] ?? 'Not Uploaded'),
+                        _buildDocumentItem('Proof of Address',
+                            profileData['addressProof'] ?? 'Not Uploaded'),
+                      ],
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Log Out Button
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return LogIn();
+                            },
+                          ));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[700],
+                          minimumSize: const Size(200, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text('Log Out', style: TextStyle(color: Colors.white),),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              );
+            }
+          },
         ),
+      ),
+    );
+  }
+
+  Widget _buildBox({required String title, required List<Widget> children}) {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Colors.green[50],
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(title),
+          const SizedBox(height: 10),
+          ...children,
+        ],
       ),
     );
   }
@@ -216,6 +269,13 @@ class _WorkerProfileState extends State<WorkerProfile> {
           ),
         ],
       ),
+    );
+  }
+
+  void _editProfilePicture() {
+    // Logic to handle profile picture update (e.g., opening a file picker or camera)
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Edit Profile Picture feature coming soon!')),
     );
   }
 }

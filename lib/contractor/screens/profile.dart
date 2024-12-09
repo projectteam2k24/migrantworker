@@ -17,7 +17,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Contractor Profile'),
-        backgroundColor: Colors.green[700],
+        backgroundColor: Colors.green[750],
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -152,7 +152,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                       _buildDocumentItem(
                           'Government-issued ID', profileData['govtID'] ?? 'Not Uploaded'),
                       _buildDocumentItem(
-                          'Company Registration Certificate', 'Uploaded'), // Placeholder
+                          'Company Reg. Certificate', 'Uploaded'), // Placeholder
                       _buildDocumentItem('Proof of Address', 'Uploaded'), // Placeholder
                     ],
                   ),
