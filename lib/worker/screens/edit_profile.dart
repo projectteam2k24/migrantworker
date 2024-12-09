@@ -142,11 +142,19 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
               const SizedBox(height: 20),
 
               // Personal Details Card
-              Card(
-                shape: RoundedRectangleBorder(
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.green[50], // Light green background color
                   borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.5), // Green shadow
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4), // Shadow position
+                    ),
+                  ],
                 ),
-                elevation: 5,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -165,11 +173,19 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
               const SizedBox(height: 20),
 
               // Professional Details Card
-              Card(
-                shape: RoundedRectangleBorder(
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.green[50], // Light green background color
                   borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.5), // Green shadow
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4), // Shadow position
+                    ),
+                  ],
                 ),
-                elevation: 5,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
