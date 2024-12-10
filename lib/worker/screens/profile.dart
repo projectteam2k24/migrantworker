@@ -143,7 +143,7 @@ class _WorkerProfileState extends State<WorkerProfile> {
                             'Duration of Stay',
                             '${profileData['stayDuration'] ?? 0} Months'),
                         _buildProfileItem('Skill', profileData['skill'] ?? 'N/A'),
-                        _buildProfileItem('Expertise', profileData['expertise'] ?? 'N/A'),
+                        _buildProfileItem('Experience', profileData['experience'] ?? 'N/A'),
                       ],
                     ),
 
@@ -168,7 +168,7 @@ class _WorkerProfileState extends State<WorkerProfile> {
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return LogIn();
+                              return const LogIn();
                             },
                           ));
                         },

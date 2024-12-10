@@ -106,7 +106,7 @@ class _RegisterWorkerState extends State<RegisterWorker> {
             child: const CircleAvatar(
               radius: 15,
               backgroundColor: Colors.green,
-              child: const Icon(
+              child: Icon(
                 Icons.edit,
                 size: 15,
                 color: Colors.white,
@@ -541,7 +541,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
           govtID: govtIdFile,
           AddressProof: AddressProofFile,
           context: context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => WorkerHome(),));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkerHome(),));
     } else {
       print('Form is invalid');
     }

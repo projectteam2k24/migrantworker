@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class WorkingStatusPage extends StatelessWidget {
-  const WorkingStatusPage({Key? key}) : super(key: key);
+  const WorkingStatusPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +57,11 @@ class WorkingStatusPage extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search by Job Title...',
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                             horizontal: 12, vertical: 10),
                         border: InputBorder.none,
                       ),

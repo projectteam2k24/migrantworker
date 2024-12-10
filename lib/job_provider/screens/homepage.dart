@@ -261,7 +261,7 @@ class ProfileMenu extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
-                      return LogIn();
+                      return const LogIn();
                     },
                   ));
                 },
@@ -294,7 +294,7 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return MyJobPage();
+                          return const MyJobPage();
                         },
                       ));
                     },

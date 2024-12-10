@@ -38,21 +38,21 @@ class LoginServiceFire {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WorkerHome(),
+                  builder: (context) => const WorkerHome(),
                 ));
             break;
           case 'contractor':
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ContractorHome(),
+                  builder: (context) => const ContractorHome(),
                 ));
             break;
           case 'job_provider':
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => JobProviderHome(),
+                  builder: (context) => const JobProviderHome(),
                 ));
             break;
         }

@@ -98,7 +98,7 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
             child: const CircleAvatar(
               radius: 15,
               backgroundColor: Colors.green,
-              child: const Icon(
+              child: Icon(
                 Icons.edit,
                 size: 15,
                 color: Colors.white,

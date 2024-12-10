@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:migrantworker/contractor/services/contractor_firebase_auth_service.dart';
 
 class RegisterContractor extends StatefulWidget {
+  const RegisterContractor({super.key});
+
   @override
   _RegisterContractorState createState() => _RegisterContractorState();
 }
@@ -83,7 +85,7 @@ class _RegisterContractorState extends State<RegisterContractor> {
             child: const CircleAvatar(
               radius: 15,
               backgroundColor: Colors.green,
-              child: const Icon(
+              child: Icon(
                 Icons.edit,
                 size: 15,
                 color: Colors.white,

@@ -34,7 +34,7 @@ class JobProviderProfile extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Text(
                 'An error occurred. Please try again later.',
                 style: TextStyle(color: Colors.red, fontSize: 16),

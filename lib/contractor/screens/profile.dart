@@ -165,7 +165,7 @@ class _ContractorProfileState extends State<ContractorProfile> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LogIn(),
+                            builder: (context) => const LogIn(),
                           ),
                         );
                       },

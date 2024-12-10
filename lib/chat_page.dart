@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
+
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -12,7 +14,7 @@ class _ChatPageState extends State<ChatPage> {
   // Function to handle file attachment
   void _attachFile() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Attach File Functionality Triggered!')),
+      const SnackBar(content: Text('Attach File Functionality Triggered!')),
     );
     // Add file picker or attachment logic here
   }
@@ -50,17 +52,17 @@ class _ChatPageState extends State<ChatPage> {
           child: Row(
             children: [
               IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               CircleAvatar(
                 backgroundColor: Colors.grey.shade300,
-                child: Icon(Icons.person, color: Colors.green),
+                child: const Icon(Icons.person, color: Colors.green),
               ),
-              SizedBox(width: 10),
-              Text("User Name"),
+              const SizedBox(width: 10),
+              const Text("User Name"),
             ],
           ),
         ),
@@ -78,8 +80,8 @@ class _ChatPageState extends State<ChatPage> {
                       ? Alignment.centerRight
                       : Alignment.centerLeft,
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     decoration: BoxDecoration(
                       color: message['isSentByMe']
                           ? Colors.green.shade200
@@ -93,14 +95,14 @@ class _ChatPageState extends State<ChatPage> {
                       children: [
                         Text(
                           message['text'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           message['timestamp'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Colors.grey,
                           ),
@@ -113,8 +115,8 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: const BoxDecoration(color: Colors.white, boxShadow: [
               BoxShadow(
                 color: Colors.black12,
                 offset: Offset(0, -2),
@@ -124,20 +126,20 @@ class _ChatPageState extends State<ChatPage> {
             child: Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.attach_file, color: Colors.grey),
+                  icon: const Icon(Icons.attach_file, color: Colors.grey),
                   onPressed: _attachFile,
                 ),
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "Type a message",
                       border: InputBorder.none,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.green),
+                  icon: const Icon(Icons.send, color: Colors.green),
                   onPressed: _sendMessage,
                 ),
               ],
@@ -151,14 +153,16 @@ class _ChatPageState extends State<ChatPage> {
 
 // Dummy UserProfilePage for navigation (replace with actual implementation)
 class UserProfilePage extends StatelessWidget {
+  const UserProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile'),
+        title: const Text('User Profile'),
         backgroundColor: Colors.green,
       ),
-      body: Center(
+      body: const Center(
         child: Text('User Profile Page'),
       ),
     );
