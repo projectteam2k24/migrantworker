@@ -1,7 +1,9 @@
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:migrantworker/job_provider/screens/homepage.dart';
 
 class PostJobPage extends StatefulWidget {
   const PostJobPage({super.key});
@@ -144,16 +146,23 @@ class _PostJobPageState extends State<PostJobPage> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Job Posted Successfully!')),
-                        );
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return PostJobPage1(
+                              selectedPropertyType: selectedPropertyType,
+                              jobType: jobTypeController.text,
+                              selectedDistrict: selectedDistrict,
+                              selectedTown: selectedTown,
+                              landMark: landmarkController.text,
+                              address: addressController.text,
+                              phone: contactController.text,
+                              plotSize: plotSizeController.text,
+                              rooms: roomsController.text,
+                              floors: floorsController.text,
+                            );
+                          },
+                        ));
                       }
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const PostJobPage1();
-                        },
-                      ));
                     },
                     child: const Text(
                       'NEXT',
@@ -268,7 +277,29 @@ class _PostJobPageState extends State<PostJobPage> {
 }
 
 class PostJobPage1 extends StatefulWidget {
-  const PostJobPage1({super.key});
+  const PostJobPage1({
+    super.key,
+    required this.selectedPropertyType,
+    required this.jobType,
+    required this.selectedDistrict,
+    required this.selectedTown,
+    required this.landMark,
+    required this.address,
+    required this.phone,
+    required this.plotSize,
+    required this.rooms,
+    required this.floors,
+  });
+  final String? selectedPropertyType;
+  final String jobType;
+  final String? selectedDistrict;
+  final String? selectedTown;
+  final String landMark;
+  final String address;
+  final String phone;
+  final String plotSize;
+  final String rooms;
+  final String floors;
 
   @override
   State<PostJobPage1> createState() => _PostJobPage1State();
@@ -284,6 +315,69 @@ class _PostJobPage1State extends State<PostJobPage1> {
 
   // Variables to hold selected image files
   List<XFile>? _images = [];
+
+  bool loading = false;
+
+  Future<void> postJobHandler() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        loading = true;
+      });
+
+      try {
+        // Get the current user's UID
+        final user = FirebaseAuth.instance.currentUser;
+        if (user == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User not authenticated')),
+          );
+          return;
+        }
+
+        // Prepare job data
+        final jobData = {
+          'uid': user.uid,
+          'propertyType': widget.selectedPropertyType,
+          'jobType': widget.jobType,
+          'district': widget.selectedDistrict,
+          'town': widget.selectedTown,
+          'landmark': widget.landMark,
+          'address': widget.address,
+          'contactNumber': widget.phone,
+          'plotSize': widget.plotSize,
+          'rooms': widget.rooms,
+          'floors': widget.floors,
+          'propertyDescription': propertyDescriptionController.text,
+          'images': _images != null
+              ? _images!.map((image) => image.path).toList()
+              : [],
+          'createdAt': FieldValue.serverTimestamp(), // Add a timestamp
+        };
+
+        // Save to Firestore
+        await FirebaseFirestore.instance.collection('Jobs').add(jobData);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Job Posted Successfully!')),
+        );
+
+        // Navigate to Home Page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const JobProviderHome(),
+          ),
+        );
+        setState(() {
+          loading = false;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -346,25 +440,22 @@ class _PostJobPage1State extends State<PostJobPage1> {
                   ]),
                   const SizedBox(height: 30),
                   // Post Job Button
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15),
-                      backgroundColor: Colors.green[700],
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Job Posted Successfully!')),
-                        );
-                      }
-                    },
-                    child: const Text(
-                      'Post Job',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
+                  loading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 15),
+                            backgroundColor: Colors.green[700],
+                          ),
+                          onPressed: postJobHandler,
+                          child: const Text(
+                            'Post Job',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
                 ],
               ),
             ),
