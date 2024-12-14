@@ -4,8 +4,11 @@ import 'package:migrantworker/contractor/screens/edit_profile.dart';
 import 'package:migrantworker/contractor/screens/notification.dart';
 import 'package:migrantworker/contractor/screens/worker_detail.dart';
 import 'package:migrantworker/contractor/screens/search_jobs.dart';
+import 'package:migrantworker/contractor/screens/worker_registration.dart';
 import 'package:migrantworker/contractor/screens/worker_status.dart';
 import 'package:migrantworker/login.dart'; // Importing WorkerStatusPage
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ContractorHome extends StatefulWidget {
   const ContractorHome({super.key});
@@ -212,18 +215,62 @@ class _ContractorHomeState extends State<ContractorHome> {
   }
 }
 
-class ProfileMenu extends StatelessWidget {
+class ProfileMenu extends StatefulWidget {
   final double widthFactor;
   const ProfileMenu({super.key, required this.widthFactor});
 
   @override
+  State<ProfileMenu> createState() => _ProfileMenuState();
+}
+
+class _ProfileMenuState extends State<ProfileMenu> {
+  String userName = 'Loading...';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('Contractor') // Replace with your Firestore collection name
+            .doc(userId)
+            .get();
+
+        if (snapshot.exists) {
+          setState(() {
+            userName = snapshot.data()?['name'] ?? 'Unknown User';
+          });
+        } else {
+          setState(() {
+            userName = 'User Not Found';
+          });
+        }
+      } else {
+        setState(() {
+          userName = 'Not Logged In';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        userName = 'Error Loading Name';
+      });
+      print('Error fetching user name: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: widthFactor * 0.8,
+      width: widget.widthFactor * 0.8,
       child: Container(
         color: Colors.green.shade100,
         padding: EdgeInsets.symmetric(
-          horizontal: widthFactor * 0.05,
+          horizontal: widget.widthFactor * 0.05,
           vertical: 20.0,
         ),
         child: Column(
@@ -231,11 +278,11 @@ class ProfileMenu extends StatelessWidget {
           children: [
             Center(
               child: CircleAvatar(
-                radius: widthFactor * 0.13,
+                radius: widget.widthFactor * 0.13,
                 backgroundColor: Colors.green,
                 child: Icon(
                   Icons.person,
-                  size: widthFactor * 0.13,
+                  size: widget.widthFactor * 0.13,
                   color: Colors.white,
                 ),
               ),
@@ -243,9 +290,9 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                'Jais Roy',
+                userName,
                 style: TextStyle(
-                  fontSize: widthFactor * 0.055,
+                  fontSize: widget.widthFactor * 0.055,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -253,12 +300,9 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 5),
             Center(
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const LogIn();
-                    },
-                  ));
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LogIn(),)); // Adjust route as necessary
                 },
                 child: const Text(
                   'Sign Out',
@@ -275,11 +319,7 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('My Account'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const ContractorProfile();
-                        },
-                      ));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ContractorProfile(),)); // Adjust route as necessary
                     },
                   ),
                   ListTile(
@@ -287,11 +327,7 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('Worker Details'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const WorkerDetailsPage();
-                        },
-                      ));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => WorkerDetailsPage(),)); // Adjust route as necessary
                     },
                   ),
                   ListTile(
@@ -327,11 +363,7 @@ class ProfileMenu extends StatelessWidget {
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const EditContractorProfile();
-                        },
-                      ));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditContractorProfile(),)); // Adjust route as necessary
                     },
                   ),
                 ],
@@ -340,11 +372,7 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return const SearchJobPage(); // Navigate to WorkerDetailsPage
-                  },
-                ));
+                Navigator.push(context, MaterialPageRoute(builder:(context) => SearchJobPage(),)); // Adjust route as necessary
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
@@ -355,11 +383,7 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 10),
             OutlinedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return const WorkerDetailsPage(); // Navigate to WorkerDetailsPage
-                  },
-                ));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddExistingWorker(),)); // Adjust route as necessary
               },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.green),
