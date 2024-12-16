@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
+import 'package:migrantworker/login.dart';
 
 class JobProviderProfile extends StatelessWidget {
   const JobProviderProfile({super.key});
@@ -129,7 +130,7 @@ class JobProviderProfile extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () async {
                           await FirebaseAuth.instance.signOut();
-                          Navigator.pushReplacementNamed(context, '/login');
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => LogIn(),));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700],

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
+import 'package:cloudinary/cloudinary.dart';
 
 class PostJobPage extends StatefulWidget {
   const PostJobPage({super.key});
@@ -290,6 +291,7 @@ class PostJobPage1 extends StatefulWidget {
     required this.rooms,
     required this.floors,
   });
+
   final String? selectedPropertyType;
   final String jobType;
   final String? selectedDistrict;
@@ -307,34 +309,65 @@ class PostJobPage1 extends StatefulWidget {
 
 class _PostJobPage1State extends State<PostJobPage1> {
   final _formKey = GlobalKey<FormState>();
-
-  // Controllers for the fields
-  final TextEditingController propertyDescriptionController =
-      TextEditingController();
+  final TextEditingController propertyDescriptionController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
-  // Variables to hold selected image files
-  List<XFile>? _images = [];
+  // Cloudinary configuration
+  final Cloudinary _cloudinary = Cloudinary.signedConfig(
+    apiKey: '714694759259219',
+    apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
+    cloudName: 'diskdblly',
+  );
 
-  bool loading = false;
+  List<String> _imageUrls = [];
+  bool _isLoading = false;
 
-  Future<void> postJobHandler() async {
+  Future<void> _uploadImages(List<XFile> images) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      for (var image in images) {
+        // Upload to Cloudinary
+        final response = await _cloudinary.upload(
+          file: image.path,
+          fileBytes: File(image.path).readAsBytesSync(),
+          resourceType: CloudinaryResourceType.image,
+          folder: 'job_images', // Optional folder
+        );
+
+        if (response.isSuccessful) {
+          _imageUrls.add(response.secureUrl!);
+        }
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${_imageUrls.length} images uploaded successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading images: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _postJob() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        loading = true;
+        _isLoading = true;
       });
 
       try {
-        // Get the current user's UID
         final user = FirebaseAuth.instance.currentUser;
         if (user == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User not authenticated')),
-          );
-          return;
+          throw Exception('User not authenticated');
         }
 
-        // Prepare job data
         final jobData = {
           'uid': user.uid,
           'propertyType': widget.selectedPropertyType,
@@ -348,10 +381,8 @@ class _PostJobPage1State extends State<PostJobPage1> {
           'rooms': widget.rooms,
           'floors': widget.floors,
           'propertyDescription': propertyDescriptionController.text,
-          'images': _images != null
-              ? _images!.map((image) => image.path).toList()
-              : [],
-          'createdAt': FieldValue.serverTimestamp(), // Add a timestamp
+          'images': _imageUrls,
+          'createdAt': FieldValue.serverTimestamp(),
         };
 
         // Save to Firestore
@@ -361,20 +392,20 @@ class _PostJobPage1State extends State<PostJobPage1> {
           const SnackBar(content: Text('Job Posted Successfully!')),
         );
 
-        // Navigate to Home Page
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => const JobProviderHome(),
           ),
         );
-        setState(() {
-          loading = false;
-        });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+          SnackBar(content: Text('Error: $e')),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -410,51 +441,45 @@ class _PostJobPage1State extends State<PostJobPage1> {
               key: _formKey,
               child: Column(
                 children: [
-                  // Upload Images
+                  // Upload Images Section
                   _buildCard('Upload Images', [
-                    _buildFileUploadButton(),
-                    if (_images != null && _images!.isNotEmpty)
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.upload),
+                      label: const Text('Upload Images'),
+                      onPressed: () async {
+                        final pickedFiles = await _picker.pickMultiImage();
+                        if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                          await _uploadImages(pickedFiles);
+                        }
+                      },
+                    ),
+                    if (_imageUrls.isNotEmpty)
                       Column(
-                        children: _images!.map((image) {
-                          return SizedBox(
-                            width: MediaQuery.of(context).size.width - 32,
-                            child: Image.file(
-                              File(image.path),
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
+                        children: _imageUrls.map((url) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Image.network(url, height: 100),
                           );
                         }).toList(),
                       ),
                   ]),
                   const SizedBox(height: 16),
-                  // Property Description
+                  // Property Description Section
                   _buildCard('Property Description', [
                     _buildTextField(
-                        'Property Description',
-                        'Enter property description',
-                        propertyDescriptionController,
-                        inputType: TextInputType.text,
-                        required: false,
-                        maxLines: 5),
+                      'Property Description',
+                      'Enter property description',
+                      propertyDescriptionController,
+                      maxLines: 5,
+                    ),
                   ]),
                   const SizedBox(height: 30),
-                  // Post Job Button
-                  loading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
+                  // Submit Button
+                  _isLoading
+                      ? const CircularProgressIndicator()
                       : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 15),
-                            backgroundColor: Colors.green[700],
-                          ),
-                          onPressed: postJobHandler,
-                          child: const Text(
-                            'Post Job',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
+                          onPressed: _postJob,
+                          child: const Text('Post Job'),
                         ),
                 ],
               ),
@@ -465,11 +490,9 @@ class _PostJobPage1State extends State<PostJobPage1> {
     );
   }
 
-  // Card widget for grouping related fields
   Widget _buildCard(String title, List<Widget> children) {
     return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)), // borderRadius set to 20
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -492,74 +515,21 @@ class _PostJobPage1State extends State<PostJobPage1> {
     );
   }
 
-  // Text field widget
-  Widget _buildTextField(
-      String label, String hint, TextEditingController controller,
-      {TextInputType inputType = TextInputType.text,
-      bool required = true,
-      int maxLines = 1}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: inputType,
-        maxLines: maxLines, // Set the number of lines based on the label
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20), // borderRadius set to 20
-            borderSide: const BorderSide(color: Colors.green),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20), // borderRadius set to 20
-            borderSide: const BorderSide(color: Colors.green),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20), // borderRadius set to 20
-            borderSide: const BorderSide(color: Colors.green, width: 2.0),
-          ),
-        ),
-        validator: (value) {
-          if (required && (value == null || value.isEmpty)) {
-            return 'Please enter $label';
-          }
-          return null;
-        },
+  Widget _buildTextField(String label, String hint, TextEditingController controller, {int maxLines = 1}) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       ),
-    );
-  }
-
-  // Image upload button widget
-  Widget _buildFileUploadButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width -
-            32, // Same width as description field
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-            backgroundColor: Colors.green[700],
-          ),
-          onPressed: () async {
-            // Allow the user to select two images
-            final pickedFiles = await _picker.pickMultiImage();
-            if (pickedFiles.isNotEmpty) {
-              setState(() {
-                _images = pickedFiles;
-              });
-            }
-          },
-          icon: const Icon(Icons.attach_file, color: Colors.white),
-          label: const Text(
-            'Upload Images',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
     );
   }
 }
