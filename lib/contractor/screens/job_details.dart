@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class JobDetailsPage extends StatefulWidget {
   final Map<String, dynamic> job;
@@ -31,109 +33,159 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
         iconTheme: const IconThemeData(color: Colors.green),
         elevation: 1,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(widthFactor * 0.05),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Images Section (Carousel)
-            if (imageUrls.isNotEmpty)
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: heightFactor * 0.3,
-                  autoPlay: true,
-                  enlargeCenterPage: false,
-                  viewportFraction: 1.0, // Ensures the image takes full width
-                ),
-                items: imageUrls.map((imageUrl) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      width: MediaQuery.of(context).size.width, // Full screen width
+      body: Column(
+        children: [
+          // Main content (Scrollable)
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(widthFactor * 0.05),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Images Section (Carousel)
+                  if (imageUrls.isNotEmpty)
+                    CarouselSlider(
+                      options: CarouselOptions(
+                        height: heightFactor * 0.3,
+                        autoPlay: true,
+                        enlargeCenterPage: false,
+                        viewportFraction: 1.0, // Ensures the image takes full width
+                      ),
+                      items: imageUrls.map((imageUrl) {
+                        return GestureDetector(
+                          onTap: () {
+                            // Open zoomable image in full screen
+                            showDialog(
+                              context: context,
+                              builder: (_) => Dialog(
+                                child: Builder(
+                                  builder: (context) {
+                                    // Use the image dimensions for the dialog size
+                                    final imageWidth = MediaQuery.of(context).size.width;
+                                    final imageHeight = imageWidth * 0.6; // Adjust as needed
+
+                                    return Container(
+                                      width: imageWidth,
+                                      height: imageHeight,
+                                      child: PhotoViewGallery.builder(
+                                        itemCount: imageUrls.length,
+                                        builder: (context, index) {
+                                          return PhotoViewGalleryPageOptions(
+                                            imageProvider: NetworkImage(imageUrls[index]),
+                                            minScale: PhotoViewComputedScale.contained,
+                                            maxScale: PhotoViewComputedScale.covered,
+                                          );
+                                        },
+                                        scrollPhysics: BouncingScrollPhysics(),
+                                        backgroundDecoration: BoxDecoration(
+                                          color: Colors.black,
+                                        ),
+                                        pageController: PageController(initialPage: imageUrls.indexOf(imageUrl)),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width, // Full screen width
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  else
+                    Center(
+                      child: Text(
+                        "No images available",
+                        style: TextStyle(
+                          fontSize: widthFactor * 0.045,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
-              )
-            else
-              Center(
-                child: Text(
-                  "No images available",
-                  style: TextStyle(
-                    fontSize: widthFactor * 0.045,
-                    color: Colors.grey,
+
+                  SizedBox(height: heightFactor * 0.02),
+                  Text(
+                    "Description",
+                    style: TextStyle(
+                      fontSize: widthFactor * 0.05,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-              ),
+                  SizedBox(height: heightFactor * 0.01),
+                  Text(
+                    job['propertyDescription'] ?? "No description available",
+                    style: TextStyle(
+                      fontSize: widthFactor * 0.04,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                  SizedBox(height: heightFactor * 0.02),
 
-            SizedBox(height: heightFactor * 0.02),
-            Text(
-              "Description",
-              style: TextStyle(
-                fontSize: widthFactor * 0.05,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+                  // Property Details
+                  Text(
+                    "Property Details",
+                    style: TextStyle(
+                      fontSize: widthFactor * 0.05,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: heightFactor * 0.01),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Type: ${job['propertyType'] ?? 'N/A'}",
+                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
+                      ),
+                      SizedBox(height: heightFactor * 0.005),
+                      Text(
+                        "Address: ${job['address'] ?? 'N/A'}",
+                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
+                      ),
+                      SizedBox(height: heightFactor * 0.005),
+                      Text(
+                        "Plot Size: ${job['plotSize'] ?? 'N/A'} sqft",
+                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
+                      ),
+                      SizedBox(height: heightFactor * 0.005),
+                      Text(
+                        "Floors: ${job['floors'] ?? 'N/A'}",
+                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
+                      ),
+                      SizedBox(height: heightFactor * 0.005),
+                      Text(
+                        "Rooms: ${job['rooms'] ?? 'N/A'}",
+                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
+                      ),
+                      SizedBox(height: heightFactor * 0.005),
+                      Text(
+                        "Landmark: ${job['landmark'] ?? 'N/A'}",
+                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: heightFactor * 0.03),
+                ],
               ),
             ),
-            SizedBox(height: heightFactor * 0.01),
-            Text(
-              job['propertyDescription'] ?? "No description available",
-              style: TextStyle(
-                fontSize: widthFactor * 0.04,
-                color: Colors.grey[800],
-              ),
-            ),
-            SizedBox(height: heightFactor * 0.02),
+          ),
 
-            // Property Details
-            Text(
-              "Property Details",
-              style: TextStyle(
-                fontSize: widthFactor * 0.05,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+          // Bottom Buttons (fixed at the bottom)
+          Container(
+            padding: EdgeInsets.symmetric(
+              vertical: heightFactor * 0.015,
+              horizontal: widthFactor * 0.05,
             ),
-            SizedBox(height: heightFactor * 0.01),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Type: ${job['propertyType'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                ),
-                SizedBox(height: heightFactor * 0.005),
-                Text(
-                  "Address: ${job['address'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                ),
-                SizedBox(height: heightFactor * 0.005),
-                Text(
-                  "Plot Size: ${job['plotSize'] ?? 'N/A'} sqft",
-                  style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                ),
-                SizedBox(height: heightFactor * 0.005),
-                Text(
-                  "Floors: ${job['floors'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                ),
-                SizedBox(height: heightFactor * 0.005),
-                Text(
-                  "Rooms: ${job['rooms'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                ),
-                SizedBox(height: heightFactor * 0.005),
-                Text(
-                  "Landmark: ${job['landmark'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                ),
-              ],
-            ),
-            SizedBox(height: heightFactor * 0.03),
-
-            // Contact and Favorite Buttons
-            Row(
+            child: Row(
               children: [
                 // Contact Button
                 Expanded(
@@ -193,8 +245,8 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
