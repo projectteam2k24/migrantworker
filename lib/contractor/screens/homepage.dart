@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:migrantworker/contractor/screens/profile.dart';
-import 'package:migrantworker/contractor/screens/edit_profile.dart';
-import 'package:migrantworker/contractor/screens/notification.dart';
-import 'package:migrantworker/contractor/screens/worker_detail.dart';
-import 'package:migrantworker/contractor/screens/search_jobs.dart';
-import 'package:migrantworker/contractor/screens/worker_registration.dart';
-import 'package:migrantworker/contractor/screens/worker_status.dart';
-import 'package:migrantworker/login.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:migrantworker/contractor/screens/job_details.dart';
+
+import 'profile.dart';
+import 'edit_profile.dart';
+import 'notification.dart';
+import 'worker_detail.dart';
+import 'search_jobs.dart';
+import 'worker_status.dart';
+import 'worker_registration.dart';
+import 'package:migrantworker/login.dart';
 
 class ContractorHome extends StatefulWidget {
   const ContractorHome({super.key});
@@ -114,126 +116,172 @@ class _ContractorHomeState extends State<ContractorHome> {
           ),
         ),
         drawer: ProfileMenu(widthFactor: widthFactor),
-        body: SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('Jobs').snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+        body: Container(
+          color: Colors.white,
+          child: StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('Jobs').snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No jobs found"));
-                }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text("No jobs found"));
+              }
 
-                final jobs = snapshot.data!.docs;
+              final jobs = snapshot.data!.docs;
 
-                return Padding(
-                  padding: EdgeInsets.all(widthFactor * 0.04),
-                  child: Column(
-                    children: List.generate(
-                      jobs.length,
-                      (index) {
-                        final job = jobs[index].data() as Map<String, dynamic>;
-                        final List<String> imageUrls = List<String>.from(job['images'] ?? []);
+              return Padding(
+                padding: EdgeInsets.all(widthFactor * 0.04),
+                child: ListView.builder(
+                  itemCount: jobs.length,
+                  itemBuilder: (context, index) {
+                    final job = jobs[index].data() as Map<String, dynamic>;
+                    final imageUrls = job['images'] ?? [];
 
-                        return Container(
-                          height: heightFactor * 0.2,
-                          margin: EdgeInsets.only(bottom: heightFactor * 0.02),
-                          decoration: BoxDecoration(
-                            color: Colors.lightGreen[100],
-                            borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 5.0,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              // Carousel Slider for Images
-                              if (imageUrls.isNotEmpty)
-                                CarouselSlider(
-                                  options: CarouselOptions(
-                                    height: heightFactor * 0.12,
-                                    autoPlay: true,
-                                    enlargeCenterPage: true,
-                                    enableInfiniteScroll: true,
-                                  ),
-                                  items: imageUrls.map<Widget>((imageUrl) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(widthFactor * 0.03),
-                                          topRight: Radius.circular(widthFactor * 0.03),
-                                        ),
-                                        image: DecorationImage(
-                                          image: NetworkImage(imageUrl),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              Padding(
-                                padding: EdgeInsets.all(widthFactor * 0.04),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            job['jobType'] ?? "Untitled Job",
-                                            style: TextStyle(
-                                              fontSize: widthFactor * 0.045,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          SizedBox(height: heightFactor * 0.01),
-                                          Text(
-                                            job['propertyDescription'] ?? "No description available",
-                                            style: TextStyle(
-                                              fontSize: widthFactor * 0.035,
-                                              color: Colors.grey[700],
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.green,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) {
-                                            return WorkerDetailsPage(); // Adjust route as necessary
-                                          },
-                                        ));
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return JobDetailsPage(job: job);
+                          },
+                        ));
                       },
-                    ),
-                  ),
-                );
-              },
-            ),
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: heightFactor * 0.02),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.circular(widthFactor * 0.03),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 5.0,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius:
+                                  BorderRadius.circular(widthFactor * 0.03),
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  height: heightFactor * 0.3,
+                                  autoPlay: true,
+                                  enlargeCenterPage: true,
+                                  viewportFraction: 1.0,
+                                ),
+                                items: imageUrls.map<Widget>((imageUrl) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft:
+                                            Radius.circular(widthFactor * 0.03),
+                                        topRight:
+                                            Radius.circular(widthFactor * 0.03),
+                                      ),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: Image.network(
+                                            imageUrl,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            height: heightFactor * 0.15,
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.black.withOpacity(1.0),
+                                                  Colors.transparent,
+                                                ],
+                                                begin: Alignment.bottomCenter,
+                                                end: Alignment.topCenter,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: heightFactor * 0.02,
+                                          left: widthFactor * 0.04,
+                                          right: widthFactor * 0.04,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                job['jobType'] ??
+                                                    "Untitled Job",
+                                                style: TextStyle(
+                                                  fontSize: widthFactor * 0.05,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(
+                                                  height: heightFactor * 0.005),
+                                              Text(
+                                                job['propertyDescription'] ??
+                                                    "No description available",
+                                                style: TextStyle(
+                                                  fontSize: widthFactor * 0.04,
+                                                  color: Colors.white
+                                                      .withOpacity(0.9),
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Location: ${job['district'] ?? 'Unknown'}",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          widthFactor * 0.035,
+                                                      color: Colors.white
+                                                          .withOpacity(0.8),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          widthFactor * 0.02),
+                                                  Text(
+                                                    "Plot Size: ${job['plotSize']} sqft",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          widthFactor * 0.035,
+                                                      color: Colors.white
+                                                          .withOpacity(0.8),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -291,8 +339,6 @@ class _ContractorHomeState extends State<ContractorHome> {
   }
 }
 
-
-
 class ProfileMenu extends StatefulWidget {
   final double widthFactor;
   const ProfileMenu({super.key, required this.widthFactor});
@@ -315,7 +361,8 @@ class _ProfileMenuState extends State<ProfileMenu> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
         final snapshot = await FirebaseFirestore.instance
-            .collection('Contractor') // Replace with your Firestore collection name
+            .collection(
+                'Contractor') // Replace with your Firestore collection name
             .doc(userId)
             .get();
 
@@ -380,7 +427,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
               child: GestureDetector(
                 onTap: () async {
                   await FirebaseAuth.instance.signOut();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LogIn(),)); // Adjust route as necessary
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LogIn(),
+                      )); // Adjust route as necessary
                 },
                 child: const Text(
                   'Sign Out',
@@ -397,7 +448,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     title: const Text('My Account'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ContractorProfile(),)); // Adjust route as necessary
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ContractorProfile(),
+                          )); // Adjust route as necessary
                     },
                   ),
                   ListTile(
@@ -405,7 +460,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     title: const Text('Worker Details'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => WorkerDetailsPage(),)); // Adjust route as necessary
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WorkerDetailsPage(),
+                          )); // Adjust route as necessary
                     },
                   ),
                   ListTile(
@@ -441,7 +500,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     title: const Text('Edit Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditContractorProfile(),)); // Adjust route as necessary
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditContractorProfile(),
+                          )); // Adjust route as necessary
                     },
                   ),
                 ],
@@ -450,7 +513,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder:(context) => SearchJobPage(),)); // Adjust route as necessary
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchJobPage(),
+                    )); // Adjust route as necessary
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
@@ -461,7 +528,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
             const SizedBox(height: 10),
             OutlinedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AddExistingWorker(),)); // Adjust route as necessary
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddExistingWorker(),
+                    )); // Adjust route as necessary
               },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.green),
