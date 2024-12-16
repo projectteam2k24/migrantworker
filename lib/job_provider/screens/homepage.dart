@@ -6,6 +6,7 @@ import 'package:migrantworker/job_provider/screens/myjob.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
 import 'package:migrantworker/job_provider/screens/post_job.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
+import 'package:migrantworker/job_provider/screens/search.dart';
 import 'package:migrantworker/job_provider/screens/work_status.dart';
 import 'package:migrantworker/login.dart';
 
@@ -27,7 +28,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return const PostJobPage();
+              return ContractorSearch();
             },
           ),
         );
