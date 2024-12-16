@@ -15,6 +15,7 @@ import 'package:migrantworker/job_provider/screens/work_status.dart';
 import 'package:migrantworker/login.dart';
 import 'package:migrantworker/selectuser.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
+import 'package:migrantworker/worker/screens/homepage.dart';
 import 'package:migrantworker/worker/screens/notification.dart';
 import 'package:migrantworker/worker/screens/profile.dart';
 import 'package:migrantworker/worker/screens/registration.dart';
@@ -25,5 +26,5 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
 }

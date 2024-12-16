@@ -4,6 +4,7 @@ import 'package:migrantworker/job_provider/screens/myjob.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
 import 'package:migrantworker/job_provider/screens/post_job.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
+import 'package:migrantworker/job_provider/screens/work_status.dart';
 import 'package:migrantworker/login.dart';
 
 class JobProviderHome extends StatefulWidget {
@@ -20,9 +21,15 @@ class _JobProviderHomeState extends State<JobProviderHome> {
     setState(() {
       _selectedIndex = index;
       if (index == 0) {
-        // Add any specific logic for the first tab, if needed.
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const PostJobPage();
+            },
+          ),
+        );
       } else if (index == 1) {
-        // Navigate to the PostJobPage when the "Post Job" tab is selected.
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -32,7 +39,14 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           ),
         );
       } else if (index == 2) {
-        // Add logic for the third tab if needed.
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const WorkingStatusPage();
+            },
+          ),
+        );
       }
     });
   }
@@ -306,7 +320,9 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return const JobProviderNotificationHub();
+                          return const JobProviderNotificationHub(
+                            toggle: false,
+                          );
                         },
                       ));
                     },

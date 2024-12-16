@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class JobProviderNotificationHub extends StatefulWidget {
-  const JobProviderNotificationHub({super.key});
+  const JobProviderNotificationHub({super.key, required bool toggle});
 
   @override
   State<JobProviderNotificationHub> createState() =>
