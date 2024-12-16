@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
 import 'package:migrantworker/job_provider/screens/myjob.dart';
@@ -231,18 +233,65 @@ class _JobProviderHomeState extends State<JobProviderHome> {
   }
 }
 
-class ProfileMenu extends StatelessWidget {
+class ProfileMenu extends StatefulWidget {
   final double widthFactor;
+
   const ProfileMenu({super.key, required this.widthFactor});
+
+  @override
+  State<ProfileMenu> createState() => _ProfileMenuState();
+}
+
+class _ProfileMenuState extends State<ProfileMenu> {
+  late String userName;
+
+  @override
+  void initState() {
+    super.initState();
+    userName = 'Loading...'; // Initial value for userName
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection(
+                'Job Provider') // Replace with your Firestore collection name
+            .doc(userId)
+            .get();
+
+        if (snapshot.exists) {
+          setState(() {
+            userName = snapshot.data()?['name'] ?? 'Unknown User';
+          });
+        } else {
+          setState(() {
+            userName = 'User Not Found';
+          });
+        }
+      } else {
+        setState(() {
+          userName = 'Not Logged In';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        userName = 'Error Loading Name';
+      });
+      print('Error fetching user name: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: widthFactor * 0.8,
+      width: widget.widthFactor * 0.8,
       child: Container(
         color: Colors.green.shade100,
         padding: EdgeInsets.symmetric(
-          horizontal: widthFactor * 0.05,
+          horizontal: widget.widthFactor * 0.05,
           vertical: 20.0,
         ),
         child: Column(
@@ -250,11 +299,11 @@ class ProfileMenu extends StatelessWidget {
           children: [
             Center(
               child: CircleAvatar(
-                radius: widthFactor * 0.13,
+                radius: widget.widthFactor * 0.13,
                 backgroundColor: Colors.green,
                 child: Icon(
                   Icons.person,
-                  size: widthFactor * 0.13,
+                  size: widget.widthFactor * 0.13,
                   color: Colors.white,
                 ),
               ),
@@ -262,9 +311,9 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                'Jais Roy',
+                userName,
                 style: TextStyle(
-                  fontSize: widthFactor * 0.055,
+                  fontSize: widget.widthFactor * 0.055,
                   fontWeight: FontWeight.bold,
                 ),
               ),

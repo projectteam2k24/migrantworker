@@ -42,6 +42,7 @@ dependencies:
   carousel_slider: ^5.0.0
   firebase_auth: ^5.3.4
   cloud_firestore: ^5.5.1
+  cloudinary: ^1.2.0
 
 dev_dependencies:
   flutter_test:
