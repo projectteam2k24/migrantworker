@@ -9,7 +9,7 @@ class ContractorAddetailPage extends StatefulWidget {
   final String companyName;
   final String phone;
   final String email;
-  final List<String> skills;
+  final String skills;
 
   const ContractorAddetailPage({
     super.key,
@@ -201,7 +201,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Skills:',
+              widget.skills ?? 'No skill provided',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -209,16 +209,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
               ),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: (contractorData['skills'] as List<String>)
-                  .map((skill) => Chip(
-                        label: Text(skill),
-                        backgroundColor: Colors.green[200],
-                      ))
-                  .toList(),
-            ),
+            
           ],
         ),
       ),

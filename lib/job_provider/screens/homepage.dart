@@ -160,11 +160,14 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                     String profileImageUrl = contractor['profileImage'] ?? '';
                     String name = contractor['name'] ?? 'No Name';
                     String role = contractor['role'] ?? 'No Role';
-                    String contact = contractor['contact'] ?? 'No Contact';
+                    String contact = contractor['phone'] ?? 'No Contact';
                     String email = contractor['email'] ?? 'No Email';
+                    
 
                     return GestureDetector(
                       onTap: () {
+                        print(contractor['skill']);
+                        
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -176,10 +179,11 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           jobType: contractor['role'] ?? 'No Role',
           description: contractor['description'] ?? 'No Description',
           companyName: contractor['companyName'] ?? 'No Company',
-          phone: contractor['contact'] ?? 'No Contact',
+          phone: contractor['phone'] ?? 'No Contact',
           email: contractor['email'] ?? 'No Email',
-          skills: contractor['skills'] ?? [],
+          skills: contractor['skill'] ?? 'No SKILL',
         );
+        
       },
     ),
   );
@@ -202,7 +206,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                           children: [
                             // Left side: Profile image or default icon
                             Container(
-                              width: widthFactor * 0.3,
+                              width: widthFactor * 0.28,
                               height: heightFactor * 0.15,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,

@@ -41,6 +41,9 @@ class ContractorFirebaseAuthService {
         'skill': skill,
         'experience': experience,
         'govtID': govtID,
+        'role' : role,
+        'address' : AddressProof,
+        'companyName' : companyName,
       });
 
       firestoreDatabse
