@@ -10,7 +10,7 @@ class JobDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(job['jobTitle']),
+        title: Text(job['jobType']),
         centerTitle: true,
         backgroundColor: Colors.green,
       ),
@@ -21,7 +21,7 @@ class JobDetailPage extends StatelessWidget {
           children: [
             // Job Title
             Text(
-              job['jobTitle'],
+              job['jobType'],
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -46,7 +46,7 @@ class JobDetailPage extends StatelessWidget {
                 items: job['images'].map<Widget>((imageUrl) {
                   return ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: Image.asset(
+                    child: Image.network(
                       imageUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
@@ -85,7 +85,7 @@ class JobDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      job['description'] ?? 'No description available.',
+                      job['propertyDescription'] ?? 'No description available.',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ],
@@ -122,7 +122,7 @@ class JobDetailPage extends StatelessWidget {
                             size: 16, color: Colors.grey),
                         const SizedBox(width: 8),
                         Text(
-                          'Location: ${job['location']}',
+                          'Location: ${job['town']}',
                           style: const TextStyle(fontSize: 14),
                         ),
                       ],
@@ -134,19 +134,7 @@ class JobDetailPage extends StatelessWidget {
                             size: 16, color: Colors.grey),
                         const SizedBox(width: 8),
                         Text(
-                          'Size: ${job['squareFeet']}',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.attach_money,
-                            size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Budget: ${job['budget']}',
+                          'Size: ${job['plotSize']} sqft',
                           style: const TextStyle(fontSize: 14),
                         ),
                       ],

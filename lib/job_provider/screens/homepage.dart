@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:migrantworker/contractor/screens/contractordetailpage.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
 import 'package:migrantworker/job_provider/screens/myjob.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
@@ -139,41 +140,103 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           color: Colors.white,
           child: Padding(
             padding: EdgeInsets.all(widthFactor * 0.04),
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Container(
-                  height: heightFactor * 0.15,
-                  margin: EdgeInsets.only(bottom: heightFactor * 0.02),
-                  decoration: BoxDecoration(
-                    color: Colors.lightGreen[100],
-                    borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 5.0,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.category,
-                        size: widthFactor * 0.12,
-                        color: Colors.green,
-                      ),
-                      SizedBox(width: widthFactor * 0.02),
-                      Text(
-                        "Card ${index + 1}",
-                        style: TextStyle(
-                          fontSize: widthFactor * 0.04,
-                          fontWeight: FontWeight.bold,
+            child: FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance.collection('Contractor').get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No contractors available.'));
+                }
+
+                var contractorDocs = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: contractorDocs.length,
+                  itemBuilder: (context, index) {
+                    var contractor = contractorDocs[index].data() as Map<String, dynamic>;
+                    String profileImageUrl = contractor['profileImage'] ?? '';
+                    String name = contractor['name'] ?? 'No Name';
+                    String role = contractor['role'] ?? 'No Role';
+                    String contact = contractor['contact'] ?? 'No Contact';
+                    String email = contractor['email'] ?? 'No Email';
+
+                    return GestureDetector(
+                      onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) {
+        return ContractorAddetailPage(
+          contractorId: contractorDocs[index].id, // Pass document ID
+          name: contractor['name'] ?? 'No Name',
+          address: contractor['address'] ?? 'No Address',
+          jobType: contractor['role'] ?? 'No Role',
+          description: contractor['description'] ?? 'No Description',
+          companyName: contractor['companyName'] ?? 'No Company',
+          phone: contractor['contact'] ?? 'No Contact',
+          email: contractor['email'] ?? 'No Email',
+          skills: contractor['skills'] ?? [],
+        );
+      },
+    ),
+  );
+},
+                      child: Container(
+                        height: heightFactor * 0.15,
+                        margin: EdgeInsets.only(bottom: heightFactor * 0.02),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen[100],
+                          borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 5.0,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            // Left side: Profile image or default icon
+                            Container(
+                              width: widthFactor * 0.3,
+                              height: heightFactor * 0.15,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: profileImageUrl.isNotEmpty
+                                    ? DecorationImage(image: NetworkImage(profileImageUrl), fit: BoxFit.cover)
+                                    : null,
+                                color: Colors.grey[300],
+                              ),
+                              child: profileImageUrl.isEmpty
+                                  ? Icon(Icons.person, size: widthFactor * 0.12, color: Colors.green)
+                                  : null,
+                            ),
+                            SizedBox(width: widthFactor * 0.02),
+                            // Right side: Contractor details
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    name,
+                                    style: TextStyle(fontSize: widthFactor * 0.05, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(role, style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey)),
+                                  Text(contact, style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey)),
+                                  Text(email, style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey)),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -233,6 +296,53 @@ class _JobProviderHomeState extends State<JobProviderHome> {
     );
   }
 }
+
+/*class ContractorDetailPage extends StatelessWidget {
+  final String contractorId;
+
+  const ContractorDetailPage({super.key, required this.contractorId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Contractor Details')),
+      body: Center(
+        child: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection('Contractor')
+              .doc(contractorId)
+              .get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            var contractorData = snapshot.data!.data() as Map<String, dynamic>;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(contractorData['profileImage'] ?? ''),
+                  child: contractorData['profileImage'] == null
+                      ? Icon(Icons.person, size: 60, color: Colors.white)
+                      : null,
+                ),
+                Text(contractorData['name'] ?? 'No Name'),
+                Text(contractorData['role'] ?? 'No Role'),
+                Text(contractorData['contact'] ?? 'No Contact'),
+                Text(contractorData['email'] ?? 'No Email'),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}*/
 
 class ProfileMenu extends StatefulWidget {
   final double widthFactor;
