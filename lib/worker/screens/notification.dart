@@ -87,7 +87,7 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return ChatPage();
+                    return const ChatPage();
                   },
                 ));
               },
@@ -123,7 +123,7 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
               // Navigate to ChatPage when tapping on a message
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatPage()),
+                MaterialPageRoute(builder: (context) => const ChatPage()),
               );
             },
           ),

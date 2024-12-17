@@ -319,7 +319,7 @@ class _PostJobPage1State extends State<PostJobPage1> {
     cloudName: 'diskdblly',
   );
 
-  List<String> _imageUrls = [];
+  final List<String> _imageUrls = [];
   bool _isLoading = false;
 
   Future<void> _uploadImages(List<XFile> images) async {
@@ -448,7 +448,7 @@ class _PostJobPage1State extends State<PostJobPage1> {
                       label: const Text('Upload Images'),
                       onPressed: () async {
                         final pickedFiles = await _picker.pickMultiImage();
-                        if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                        if (pickedFiles.isNotEmpty) {
                           await _uploadImages(pickedFiles);
                         }
                       },

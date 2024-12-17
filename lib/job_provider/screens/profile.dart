@@ -130,7 +130,7 @@ class JobProviderProfile extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () async {
                           await FirebaseAuth.instance.signOut();
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => LogIn(),));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const LogIn(),));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700],

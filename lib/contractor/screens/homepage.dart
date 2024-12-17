@@ -451,7 +451,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ContractorProfile(),
+                            builder: (context) => const ContractorProfile(),
                           )); // Adjust route as necessary
                     },
                   ),
@@ -463,7 +463,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WorkerDetailsPage(),
+                            builder: (context) => const WorkerDetailsPage(),
                           )); // Adjust route as necessary
                     },
                   ),
@@ -503,7 +503,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EditContractorProfile(),
+                            builder: (context) => const EditContractorProfile(),
                           )); // Adjust route as necessary
                     },
                   ),
@@ -516,7 +516,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SearchJobPage(),
+                      builder: (context) => const SearchJobPage(),
                     )); // Adjust route as necessary
               },
               style: ElevatedButton.styleFrom(
@@ -531,7 +531,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddExistingWorker(),
+                      builder: (context) => const AddExistingWorker(),
                     )); // Adjust route as necessary
               },
               style: OutlinedButton.styleFrom(

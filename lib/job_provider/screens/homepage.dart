@@ -144,11 +144,11 @@ class _JobProviderHomeState extends State<JobProviderHome> {
               future: FirebaseFirestore.instance.collection('Contractor').get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No contractors available.'));
+                  return const Center(child: Text('No contractors available.'));
                 }
 
                 var contractorDocs = snapshot.data!.docs;

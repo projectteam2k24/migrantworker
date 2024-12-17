@@ -56,6 +56,8 @@ class ContractorSearch extends StatelessWidget {
     email: 'john.doe@email.com',
   );
 
+  const ContractorSearch({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -161,7 +163,7 @@ class ContractorSearch extends StatelessWidget {
 class ContractorDetailPage extends StatelessWidget {
   final Contractor contractor;
 
-  const ContractorDetailPage({required this.contractor});
+  const ContractorDetailPage({super.key, required this.contractor});
 
   @override
   Widget build(BuildContext context) {
@@ -185,12 +187,12 @@ class ContractorDetailPage extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 contractor.name,
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Text(
                 contractor.profession,
-                style: TextStyle(fontSize: 20, color: Colors.green),
+                style: const TextStyle(fontSize: 20, color: Colors.green),
               ),
               const SizedBox(height: 20),
               // About Section
@@ -236,7 +238,7 @@ class ContractorDetailPage extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[700],
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 ),
                 icon: const Icon(Icons.phone),
                 label: const Text('Call Contractor'),
@@ -249,7 +251,7 @@ class ContractorDetailPage extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[700],
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 ),
                 icon: const Icon(Icons.email),
                 label: const Text('Message Contractor'),
@@ -272,7 +274,7 @@ class ContractorDetailPage extends StatelessWidget {
           BoxShadow(
             color: Colors.green.withOpacity(0.2),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),

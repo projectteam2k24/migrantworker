@@ -133,8 +133,6 @@ class _ContractorProfileState extends State<ContractorProfile> {
                                 'Phone Number', profileData['phone'] ?? 'N/A'),
                             _buildProfileItem(
                                 'Email Address', profileData['email'] ?? 'N/A'),
-                            _buildProfileItem(
-                                'Address', profileData['address'] ?? 'N/A'),
                           ],
                         ),
                         const SizedBox(height: 20),

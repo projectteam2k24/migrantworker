@@ -22,7 +22,7 @@ class ContractorFirebaseAuthService {
     required String? govtID,
     required String? companyCertificate,
     required String? AddressProof,
-    File? profile,
+    String? profile,
     required BuildContext context,
   }) async {
     try {
@@ -44,6 +44,7 @@ class ContractorFirebaseAuthService {
         'role' : role,
         'address' : AddressProof,
         'companyName' : companyName,
+        'profilePicture': profile,
       });
 
       firestoreDatabse

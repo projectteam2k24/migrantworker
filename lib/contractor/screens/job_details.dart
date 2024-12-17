@@ -6,7 +6,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 class JobDetailsPage extends StatefulWidget {
   final Map<String, dynamic> job;
 
-  const JobDetailsPage({Key? key, required this.job}) : super(key: key);
+  const JobDetailsPage({super.key, required this.job});
 
   @override
   _JobDetailsPageState createState() => _JobDetailsPageState();
@@ -27,7 +27,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
       appBar: AppBar(
         title: Text(
           job['jobType'] ?? "Job Details",
-          style: TextStyle(color: Colors.green),
+          style: const TextStyle(color: Colors.green),
         ),
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.green),
@@ -64,7 +64,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                                     final imageWidth = MediaQuery.of(context).size.width;
                                     final imageHeight = imageWidth * 0.6; // Adjust as needed
 
-                                    return Container(
+                                    return SizedBox(
                                       width: imageWidth,
                                       height: imageHeight,
                                       child: PhotoViewGallery.builder(
@@ -76,8 +76,8 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                                             maxScale: PhotoViewComputedScale.covered,
                                           );
                                         },
-                                        scrollPhysics: BouncingScrollPhysics(),
-                                        backgroundDecoration: BoxDecoration(
+                                        scrollPhysics: const BouncingScrollPhysics(),
+                                        backgroundDecoration: const BoxDecoration(
                                           color: Colors.black,
                                         ),
                                         pageController: PageController(initialPage: imageUrls.indexOf(imageUrl)),

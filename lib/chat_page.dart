@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    UserProfilePage(), // Replace with your profile page
+                    const UserProfilePage(), // Replace with your profile page
               ),
             );
           },

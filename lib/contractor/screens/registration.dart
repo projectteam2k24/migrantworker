@@ -1,3 +1,4 @@
+import 'package:cloudinary/cloudinary.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 import 'package:file_picker/file_picker.dart';
@@ -24,6 +25,13 @@ class _RegisterContractorState extends State<RegisterContractor> {
 
   bool ShowPass = false;
   File? _profileImage;
+  String? profileUrl;
+
+  final Cloudinary _cloudinary = Cloudinary.signedConfig(
+    apiKey: '714694759259219',
+    apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
+    cloudName: 'diskdblly',
+  );
 
   // Function to pick an image from the gallery
   Future<void> _pickImage() async {
@@ -98,8 +106,19 @@ class _RegisterContractorState extends State<RegisterContractor> {
   }
 
   // Registration Button Handler
-  void RegisterContractorHandler() {
+  Future<void> RegisterContractorHandler() async {
     if (_formKey.currentState!.validate()) {
+      if (_profileImage != null) {
+        final response = await _cloudinary.upload(
+          file: _profileImage!.path,
+          fileBytes: File(_profileImage!.path).readAsBytesSync(),
+          resourceType: CloudinaryResourceType.image,
+          folder: 'contractor_profiles', // Optional folder
+        );
+        if (response.isSuccessful) {
+          profileUrl = response.secureUrl!;
+        }
+      }
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -110,7 +129,7 @@ class _RegisterContractorState extends State<RegisterContractor> {
               phone: PhoneController.text,
               email: EmailController.text,
               password: PasswordController.text,
-              profilePic: _profileImage,
+              profilePic: profileUrl,
             ),
           ));
     }
@@ -421,7 +440,7 @@ class RegisterContractor1 extends StatefulWidget {
   final String phone;
   final String email;
   final String password;
-  final File? profilePic;
+  final String? profilePic;
 
   @override
   State<RegisterContractor1> createState() => _RegisterContractor1State();
@@ -436,11 +455,37 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
 
   bool ShowPass = true;
 
+  final Cloudinary _cloudinary = Cloudinary.signedConfig(
+    apiKey: '714694759259219',
+    apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
+    cloudName: 'diskdblly',
+  );
+
+  Future<String?> uploadFileToCloudinary(
+      String filePath, String folderName) async {
+    try {
+      final response = await _cloudinary.upload(
+        file: filePath,
+        resourceType: CloudinaryResourceType.auto,
+        folder: folderName, // Dynamic folder name
+      );
+
+      if (response.isSuccessful) {
+        return response.secureUrl; // Return the uploaded file's URL
+      } else {
+        print('Cloudinary upload failed: ${response.error}');
+      }
+    } catch (e) {
+      print('Exception during upload: $e');
+    }
+    return null;
+  }
+
   // previous handler that helps to go back to the previous page
   void PrevHandler() {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
-        return RegisterContractor();
+        return const RegisterContractor();
       },
     )); // You can add further sign-up logic here, like calling an API
   }
@@ -455,6 +500,7 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
           phone: widget.phone,
           email: widget.email,
           password: widget.password,
+          profile: widget.profilePic,
           companyName: CompanyController.text,
           role: RoleController.text,
           skill: ExpertiseController.text,
@@ -484,10 +530,15 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        govtIdFile = result.files.single.path;
-      });
+
+    if (result != null && result.files.single.path != null) {
+      final uploadedUrl = await uploadFileToCloudinary(
+          result.files.single.path!, "contractor_docs/govt_id");
+      if (uploadedUrl != null) {
+        setState(() {
+          govtIdFile = uploadedUrl; // Save the Cloudinary URL
+        });
+      }
     }
   }
 
@@ -497,10 +548,15 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        CompRegFile = result.files.single.path;
-      });
+
+    if (result != null && result.files.single.path != null) {
+      final uploadedUrl = await uploadFileToCloudinary(
+          result.files.single.path!, "contractor_docs/company_reg");
+      if (uploadedUrl != null) {
+        setState(() {
+          CompRegFile = uploadedUrl; // Save the Cloudinary URL
+        });
+      }
     }
   }
 
@@ -510,10 +566,15 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        AddressProofFile = result.files.single.path;
-      });
+
+    if (result != null && result.files.single.path != null) {
+      final uploadedUrl = await uploadFileToCloudinary(
+          result.files.single.path!, "contractor_docs/address_proof");
+      if (uploadedUrl != null) {
+        setState(() {
+          AddressProofFile = uploadedUrl; // Save the Cloudinary URL
+        });
+      }
     }
   }
 
