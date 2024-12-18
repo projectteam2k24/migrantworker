@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloudinary/cloudinary.dart'; // Cloudinary package
+import 'package:image_picker/image_picker.dart';
 
 class EditContractorProfile extends StatefulWidget {
   const EditContractorProfile({super.key});
@@ -10,22 +12,23 @@ class EditContractorProfile extends StatefulWidget {
 }
 
 class _EditContractorProfileState extends State<EditContractorProfile> {
-  // Controllers for text fields
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
   final TextEditingController _experienceController = TextEditingController();
   final TextEditingController _expertiseController = TextEditingController();
 
-  // Dummy Document URLs (for now)
-  String? _govIdUrl = "https://dummyurl.com/gov_id";
-  String? _companyRegUrl = "https://dummyurl.com/company_reg";
-  String? _proofOfAddressUrl = "https://dummyurl.com/proof_of_address";
+  String? _profilePictureUrl;
+
+  final Cloudinary _cloudinary = Cloudinary.signedConfig(
+    apiKey: '714694759259219',
+    apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
+    cloudName: 'diskdblly',
+  );
 
   @override
   void initState() {
@@ -51,14 +54,11 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
             _genderController.text = data['gender'] ?? '';
             _phoneController.text = data['phone'] ?? '';
             _emailController.text = data['email'] ?? '';
-            _addressController.text = data['address'] ?? '';
             _companyNameController.text = data['companyName'] ?? '';
             _roleController.text = data['role'] ?? '';
             _experienceController.text = data['experience'] ?? '';
             _expertiseController.text = data['skill'] ?? '';
-            _govIdUrl = data['govIdUrl'] ?? _govIdUrl;
-            _companyRegUrl = data['companyRegUrl'] ?? _companyRegUrl;
-            _proofOfAddressUrl = data['proofOfAddressUrl'] ?? _proofOfAddressUrl;
+            _profilePictureUrl = data['profilePicture'] ?? null;
           });
         }
       }
@@ -67,7 +67,7 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
     }
   }
 
-  // Save updated profile data
+  // Save updated profile data to Firestore
   Future<void> _saveProfile() async {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -78,14 +78,11 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
           'gender': _genderController.text,
           'phone': _phoneController.text,
           'email': _emailController.text,
-          'address': _addressController.text,
           'companyName': _companyNameController.text,
           'role': _roleController.text,
           'experience': _experienceController.text,
           'skill': _expertiseController.text,
-          'govIdUrl': _govIdUrl,
-          'companyRegUrl': _companyRegUrl,
-          'proofOfAddressUrl': _proofOfAddressUrl,
+          'profilePicture': _profilePictureUrl,
         };
 
         await FirebaseFirestore.instance
@@ -100,27 +97,31 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
     }
   }
 
-  // Document Item display function
-  Widget _buildDocumentItem(String label, String status) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            status,
-            style: TextStyle(
-              fontSize: 16,
-              color: status == 'Uploaded' ? Colors.green : Colors.red,
-            ),
-          ),
-        ],
-      ),
-    );
+  // Pick and upload profile picture to Cloudinary
+  Future<void> _pickAndUploadProfilePicture() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        final response = await _cloudinary.upload(
+          file: pickedFile.path,
+          resourceType: CloudinaryResourceType.image,
+          folder:
+              'contracotr_doc/profile_pictures', // Optional folder to organize images in Cloudinary
+        );
+
+        if (response.isSuccessful) {
+          setState(() {
+            _profilePictureUrl = response.secureUrl;
+          });
+        } else {
+          print('Cloudinary upload failed');
+        }
+      }
+    } catch (e) {
+      print('Error uploading profile picture: $e');
+    }
   }
 
   @override
@@ -143,43 +144,68 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.grey[300],
-                  child: const Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundImage: _profilePictureUrl != null
+                          ? NetworkImage(_profilePictureUrl!)
+                          : null,
+                      backgroundColor: Colors.grey[300],
+                      child: _profilePictureUrl == null
+                          ? const Icon(
+                              Icons.person,
+                              size: 60,
+                              color: Colors.white,
+                            )
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: _pickAndUploadProfilePicture,
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.green[700],
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
               const SizedBox(height: 20),
 
-              // Personal Details Card
+              // Personal Details Section
               _buildInfoContainer('Personal Details', [
                 _buildTextField('Full Name', _fullNameController),
                 _buildTextField('Date of Birth', _dobController),
                 _buildTextField('Gender', _genderController),
                 _buildTextField('Phone Number', _phoneController),
                 _buildTextField('Email Address', _emailController),
-                _buildTextField('Address', _addressController),
               ]),
               const SizedBox(height: 20),
 
-              // Professional Details Card
+              // Professional Details Section
               _buildInfoContainer('Professional Details', [
                 _buildTextField('Company Name', _companyNameController),
                 _buildTextField('Role/Position', _roleController),
                 _buildTextField('Experience', _experienceController),
                 _buildTextField('Expertise', _expertiseController),
-              ]),
-              const SizedBox(height: 20),
-
-              // Documents Section
-              _buildInfoContainer('Documents', [
-                _buildDocumentItem('Government Issued ID', _govIdUrl != null ? 'Uploaded' : 'Not Uploaded'),
-                _buildDocumentItem('Company Reg. Certificate', _companyRegUrl != null ? 'Uploaded' : 'Not Uploaded'),
-                _buildDocumentItem('Proof of Address', _proofOfAddressUrl != null ? 'Uploaded' : 'Not Uploaded'),
               ]),
               const SizedBox(height: 30),
 
@@ -193,7 +219,10 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text('Save Changes', style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    'Save Changes',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

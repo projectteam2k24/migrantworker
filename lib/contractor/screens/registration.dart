@@ -113,7 +113,7 @@ class _RegisterContractorState extends State<RegisterContractor> {
           file: _profileImage!.path,
           fileBytes: File(_profileImage!.path).readAsBytesSync(),
           resourceType: CloudinaryResourceType.image,
-          folder: 'contractor_profiles', // Optional folder
+          folder: 'contractor_docs/contractor_profiles', // Optional folder
         );
         if (response.isSuccessful) {
           profileUrl = response.secureUrl!;

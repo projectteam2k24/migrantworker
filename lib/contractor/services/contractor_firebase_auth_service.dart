@@ -43,6 +43,7 @@ class ContractorFirebaseAuthService {
         'role' : role,
         'address' : AddressProof,
         'companyName' : companyName,
+        'companyCertificate': companyCertificate,
         'profilePicture': profile,
       });
 

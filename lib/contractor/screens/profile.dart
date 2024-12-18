@@ -75,20 +75,15 @@ class _ContractorProfileState extends State<ContractorProfile> {
                             children: [
                               CircleAvatar(
                                 radius: 60,
-                                backgroundImage: profileData['profilePicture'] != null
-                                    ? NetworkImage(profileData['profilePicture'])
+                                backgroundImage: profileData[
+                                            'profilePicture'] !=
+                                        null
+                                    ? NetworkImage(
+                                        profileData['profilePicture'])
                                     : const AssetImage(
                                             'assets/profile_placeholder.png')
                                         as ImageProvider,
                                 backgroundColor: Colors.grey[300],
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.camera_alt),
-                                onPressed: () {
-                                  // Add logic for changing profile picture
-                                },
-                                iconSize: 30,
-                                color: Colors.green[700],
                               ),
                             ],
                           ),
@@ -159,11 +154,19 @@ class _ContractorProfileState extends State<ContractorProfile> {
                           [
                             _buildDocumentItem(
                                 'Government-issued ID',
-                                profileData['govtID'] ?? 'Not Uploaded'),
-                            _buildDocumentItem('Company Reg. Certificate',
-                                profileData['companyCert'] ?? 'Not Uploaded'),
-                            _buildDocumentItem('Proof of Address',
-                                profileData['proofOfAddress'] ?? 'Not Uploaded'),
+                                profileData['govtID'] == null
+                                    ? 'Not Uploaded'
+                                    : 'Uploaded'),
+                            _buildDocumentItem(
+                                'Company Reg. Certificate',
+                                profileData['companyCertificate'] == null
+                                    ? 'Not Uploaded'
+                                    : 'Uploaded'),
+                            _buildDocumentItem(
+                                'Proof of Address',
+                                profileData['address'] == null
+                                    ? 'Not Uploaded'
+                                    : 'Uploaded'),
                           ],
                         ),
                         const SizedBox(height: 30),
