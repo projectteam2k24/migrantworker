@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package
 import 'package:migrantworker/chat_page.dart';
 
-// ignore: must_be_immutable
 class WorkerNotificationHub extends StatefulWidget {
   WorkerNotificationHub({super.key, required this.toggle});
 
@@ -13,11 +15,52 @@ class WorkerNotificationHub extends StatefulWidget {
 
 class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
   bool showMessages = true; // Toggle between Messages and Notifications
+  String? workerId; // The worker's ID (UID from Firebase Auth)
+  List<Map<String, dynamic>> notifications = []; // Store notifications here
 
   @override
   void initState() {
     super.initState();
     showMessages = widget.toggle;
+    _fetchWorkerId();
+  }
+
+  // Fetch the workerId (UID) from Firebase Authentication
+  Future<void> _fetchWorkerId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        workerId = user.uid; // The UID of the logged-in user
+      });
+      _fetchNotifications(workerId!); // Fetch notifications for this worker
+    }
+  }
+
+  // Fetch notifications for the specific worker from Firestore
+  Future<void> _fetchNotifications(String workerId) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('notifications')
+          .where('workerId', isEqualTo: workerId) // Filter by workerId
+          .orderBy('timestamp', descending: true) // Order by timestamp
+          .get();
+
+      setState(() {
+        notifications = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print("Error fetching notifications: $e");
+    }
+  }
+
+  // Format the timestamp to day-month-year and time in AM/PM
+  String _formatTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    final dateFormat =
+        DateFormat('dd-MM-yyyy hh:mm a'); // Format: day-month-year, time AM/PM
+    return dateFormat.format(dateTime);
   }
 
   @override
@@ -81,20 +124,6 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
           ),
         ],
       ),
-      // Floating Action Button only for Messages
-      floatingActionButton: showMessages
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return const ChatPage();
-                  },
-                ));
-              },
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.chat),
-            )
-          : null,
     );
   }
 
@@ -132,26 +161,46 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
     );
   }
 
-  // Dummy list for Notifications
+  // Display Notifications for the specific worker
   Widget _buildNotificationsList() {
-    final notifications = [
-      'Worker X joined your team.',
-      'Job Provider Y posted a new job.',
-      'Reminder: Complete the pending job report.',
-    ];
+    if (notifications.isEmpty) {
+      return const Center(
+        child: Text(
+          "No notifications available.",
+          style: TextStyle(fontSize: 18),
+        ),
+      );
+    }
 
     return ListView.builder(
       itemCount: notifications.length,
       itemBuilder: (context, index) {
+        final notification = notifications[index];
+        final timestamp = notification['timestamp'] is Timestamp
+            ? notification['timestamp']
+            : Timestamp.now(); // Fallback to current time if missing
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           elevation: 2.0,
           child: ListTile(
             leading: const Icon(Icons.notifications, color: Colors.green),
             title: Text(
-              notifications[index],
+              notification['message'] ?? 'No message content',
               style:
                   const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'From: ${notification['workerName'] ?? 'Unknown'}',
+                  style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+                ),
+                Text(
+                  'Sent on: ${_formatTimestamp(timestamp)}', // Display formatted timestamp
+                  style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+                ),
+              ],
             ),
           ),
         );

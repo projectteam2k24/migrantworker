@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   bool loading = false;
+  bool _obscureText = true; // Add this line to define the _obscureText variable
 
   void LoginHandler() async {
     setState(() {
@@ -129,13 +130,13 @@ class _LoginPageState extends State<LoginPage> {
                             fillColor: Colors.grey.shade200,
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                                  const BorderSide(color: Colors.green, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.green, width: 2),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                                  const BorderSide(color: Colors.green, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.green, width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -161,9 +162,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 20),
                         // Password Field with Green and Red Borders
+                        // Password Field with Green and Red Borders and Eye Icon
                         TextFormField(
                           controller: passwordController,
-                          obscureText: true,
+                          obscureText: _obscureText, // Toggle visibility
                           decoration: InputDecoration(
                             hintText: 'PASSWORD',
                             hintStyle: TextStyle(color: Colors.grey.shade600),
@@ -171,13 +173,13 @@ class _LoginPageState extends State<LoginPage> {
                             fillColor: Colors.grey.shade200,
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                                  const BorderSide(color: Colors.green, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.green, width: 2),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                                  const BorderSide(color: Colors.green, width: 2),
+                              borderSide: const BorderSide(
+                                  color: Colors.green, width: 2),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -188,6 +190,20 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(10),
                               borderSide:
                                   const BorderSide(color: Colors.red, width: 2),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.green,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureText =
+                                      !_obscureText; // Toggle visibility
+                                });
+                              },
                             ),
                           ),
                           validator: (value) {
@@ -204,7 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           width: double.infinity,
                           child: loading
-                              ?const Center(
+                              ? const Center(
                                   child: CircularProgressIndicator(),
                                 )
                               : ElevatedButton(
@@ -214,7 +230,8 @@ class _LoginPageState extends State<LoginPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    padding: const EdgeInsets.symmetric(vertical: 15),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15),
                                   ),
                                   child: const Text(
                                     'LOG IN',
@@ -232,13 +249,11 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             TextButton(
-                              onPressed: () {
-                              },
+                              onPressed: () {},
                               child: const Text(
                                 'Forgot Password ?',
                                 style: TextStyle(
-                                    color:
-                                        Color.fromARGB(255, 146, 148, 146)),
+                                    color: Color.fromARGB(255, 146, 148, 146)),
                               ),
                             ),
                             TextButton(
@@ -252,8 +267,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: const Text(
                                 'CREATE ACCOUNT',
                                 style: TextStyle(
-                                    color:
-                                        Color.fromARGB(255, 55, 129, 58)),
+                                    color: Color.fromARGB(255, 55, 129, 58)),
                               ),
                             ),
                           ],

@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
 
 class ContractorAddetailPage extends StatefulWidget {
   final String contractorId; // Unique ID of the contractor
   final String name;
-  final String address;
   final String jobType;
-  final String description;
-  final String companyName;
   final String phone;
   final String email;
+  final String companyName;
+  final String experience;
   final String skills;
+  final String? profilePictureUrl; // Optional URL for the profile picture
 
   const ContractorAddetailPage({
     super.key,
     required this.contractorId,
     required this.name,
-    required this.address,
     required this.jobType,
-    required this.description,
-    required this.companyName,
     required this.phone,
     required this.email,
+    required this.companyName,
     required this.skills,
+    required this.experience,
+    this.profilePictureUrl, // Optional URL parameter
   });
 
   @override
@@ -36,14 +37,24 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     super.initState();
     contractorData = {
       'name': widget.name,
-      'address': widget.address,
       'jobType': widget.jobType,
-      'description': widget.description,
       'companyName': widget.companyName,
       'phone': widget.phone,
       'email': widget.email,
       'skills': widget.skills,
+      'experience': widget.experience,
+      'profilePicture': widget.profilePictureUrl, // Add profile picture URL
     };
+  }
+
+  // Function to launch the phone dialer
+  Future<void> _launchPhoneDialer(String phone) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      throw 'Could not launch $phone';
+    }
   }
 
   @override
@@ -55,161 +66,147 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
         child: ListView(
           children: [
             // Profile Picture and Name
-            buildProfileCard(),
+            buildProfileSection(),
 
-            const SizedBox(height: 20),
-            buildInfoCard(Icons.location_on, 'Address', contractorData['address']),
-            buildInfoCard(Icons.email, 'Email', contractorData['email']),
-            buildDescriptionCard(),
-            buildInfoCard(Icons.business, 'Company Name', contractorData['companyName']),
-            buildInfoCard(Icons.phone, 'Phone', contractorData['phone']),
-            buildSkillsCard(),
+            const SizedBox(height: 24),
+
+            // Other Details (Phone, Email, Company Details, etc.)
+            buildInfoCard(Icons.phone, 'Phone', contractorData['phone'], () {
+              _launchPhoneDialer(contractorData['phone']);
+            }),
+            buildInfoCard(Icons.email, 'Email', contractorData['email'], () {
+              // You can implement email functionality here if needed
+            }),
+            buildCompanyDetailsCard(),
           ],
         ),
       ),
     );
   }
 
-  // Widget for Profile Card
-  Widget buildProfileCard() {
-    return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundColor: Colors.green,
-              child: Icon(
-                Icons.person,
-                size: 40,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    contractorData['name'] ?? 'No name provided',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    contractorData['jobType'] ?? 'No job type provided',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+  // Profile Section with Profile Picture, Name, and Role (No Card used)
+  Widget buildProfileSection() {
+    return Column(
+      children: [
+        // Centered Profile Picture or Icon
+        CircleAvatar(
+          radius: 75, // Increased circle size for a more modern look
+          backgroundColor: Colors.green[200],
+          backgroundImage: contractorData['profilePicture'] != null &&
+                  contractorData['profilePicture']!.isNotEmpty
+              ? NetworkImage(contractorData['profilePicture']!)
+              : null,
+          child: contractorData['profilePicture'] == null ||
+                  contractorData['profilePicture']!.isEmpty
+              ? const Icon(
+                  Icons.person,
+                  size: 75,
+                  color: Colors.white,
+                )
+              : null,
         ),
-      ),
+        const SizedBox(height: 16),
+        // Name and Role (Job Type) below the profile picture with improved styling
+        Text(
+          contractorData['name'] ?? 'No name provided',
+          style: const TextStyle(
+            fontSize: 30, // Increased name size for more prominence
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          contractorData['jobType'] ?? 'No job type provided',
+          style: TextStyle(
+            fontSize: 18, // Adjusted size for job type
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
     );
   }
 
-  // General Info Card
-  Widget buildInfoCard(IconData icon, String title, String content) {
+  // General Info Card (Phone, Email, etc.)
+  Widget buildInfoCard(
+      IconData icon, String title, String content, Function() onTap) {
     return Card(
-      elevation: 4,
+      elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.green),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                content.isNotEmpty ? content : 'No $title provided',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
+      color: Colors.white,
+      child: InkWell(
+        onTap: onTap, // Trigger the onTap callback
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.green[600], size: 28),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  content.isNotEmpty ? content : 'No $title provided',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Description Card
-  Widget buildDescriptionCard() {
+  // Single Card for Company Details, Experience, and Skills
+  Widget buildCompanyDetailsCard() {
     return Card(
-      elevation: 4,
+      elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
       ),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Display Company Name
             Text(
-              'Description:',
+              'Company: ${contractorData['companyName']}',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.green[700],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
+
+            // Display Experience
             Text(
-              contractorData['description'] ?? 'No description provided',
+              'Experience: ${contractorData['experience']}',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[700],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
+            const SizedBox(height: 16),
 
-  // Skills Card
-  Widget buildSkillsCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            // Display Skills
             Text(
-              widget.skills ?? 'No skill provided',
+              'Skills: ${contractorData['skills']}',
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[700],
+                fontSize: 16,
+                color: Colors.grey[700],
               ),
             ),
-            const SizedBox(height: 8),
-            
           ],
         ),
       ),
