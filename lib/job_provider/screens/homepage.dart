@@ -156,44 +156,48 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                 return ListView.builder(
                   itemCount: contractorDocs.length,
                   itemBuilder: (context, index) {
-                    var contractor = contractorDocs[index].data() as Map<String, dynamic>;
-                    String profileImageUrl = contractor['profileImage'] ?? '';
+                    var contractor =
+                        contractorDocs[index].data() as Map<String, dynamic>;
+                    String profileImageUrl = contractor['profilePicture'] ?? '';
                     String name = contractor['name'] ?? 'No Name';
                     String role = contractor['role'] ?? 'No Role';
                     String contact = contractor['phone'] ?? 'No Contact';
                     String email = contractor['email'] ?? 'No Email';
-                    
 
                     return GestureDetector(
                       onTap: () {
                         print(contractor['skill']);
-                        
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) {
-        return ContractorAddetailPage(
-          contractorId: contractorDocs[index].id, // Pass document ID
-          name: contractor['name'] ?? 'No Name',
-          address: contractor['address'] ?? 'No Address',
-          jobType: contractor['role'] ?? 'No Role',
-          description: contractor['description'] ?? 'No Description',
-          companyName: contractor['companyName'] ?? 'No Company',
-          phone: contractor['phone'] ?? 'No Contact',
-          email: contractor['email'] ?? 'No Email',
-          skills: contractor['skill'] ?? 'No SKILL',
-        );
-        
-      },
-    ),
-  );
-},
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ContractorAddetailPage(
+                                contractorId: contractorDocs[index]
+                                    .id, // Pass document ID
+                                name: contractor['name'] ?? 'No Name',
+                                jobType: contractor['role'] ?? 'No Role',
+                                phone: contractor['phone'] ?? 'No Phone Number',
+                                email: contractor['email'] ?? 'No Email',
+                                companyName:
+                                    contractor['companyName'] ?? 'No Company',
+                                experience:
+                                    contractor['experience'] ?? 'No Experience',
+                                skills: contractor['skill'] ?? 'No Skill',
+                                profilePictureUrl:
+                                    contractor['profilePicture'] ?? null,
+                              );
+                            },
+                          ),
+                        );
+                      },
                       child: Container(
                         height: heightFactor * 0.15,
                         margin: EdgeInsets.only(bottom: heightFactor * 0.02),
                         decoration: BoxDecoration(
                           color: Colors.lightGreen[100],
-                          borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                          borderRadius:
+                              BorderRadius.circular(widthFactor * 0.03),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
@@ -206,17 +210,21 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                           children: [
                             // Left side: Profile image or default icon
                             Container(
-                              width: widthFactor * 0.28,
-                              height: heightFactor * 0.15,
+                              width: widthFactor * 0.23,
+                              height: heightFactor * 0.10,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: profileImageUrl.isNotEmpty
-                                    ? DecorationImage(image: NetworkImage(profileImageUrl), fit: BoxFit.cover)
+                                    ? DecorationImage(
+                                        image: NetworkImage(profileImageUrl),
+                                        fit: BoxFit.cover)
                                     : null,
                                 color: Colors.grey[300],
                               ),
                               child: profileImageUrl.isEmpty
-                                  ? Icon(Icons.person, size: widthFactor * 0.12, color: Colors.green)
+                                  ? Icon(Icons.person,
+                                      size: widthFactor * 0.12,
+                                      color: Colors.green)
                                   : null,
                             ),
                             SizedBox(width: widthFactor * 0.02),
@@ -228,11 +236,22 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                                 children: [
                                   Text(
                                     name,
-                                    style: TextStyle(fontSize: widthFactor * 0.05, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontSize: widthFactor * 0.05,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  Text(role, style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey)),
-                                  Text(contact, style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey)),
-                                  Text(email, style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey)),
+                                  Text(role,
+                                      style: TextStyle(
+                                          fontSize: widthFactor * 0.04,
+                                          color: Colors.grey)),
+                                  Text(contact,
+                                      style: TextStyle(
+                                          fontSize: widthFactor * 0.04,
+                                          color: Colors.grey)),
+                                  Text(email,
+                                      style: TextStyle(
+                                          fontSize: widthFactor * 0.04,
+                                          color: Colors.grey)),
                                 ],
                               ),
                             ),

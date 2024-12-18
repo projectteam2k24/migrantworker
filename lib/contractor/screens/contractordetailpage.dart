@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 class ContractorAddetailPage extends StatefulWidget {
   final String contractorId; // Unique ID of the contractor
   final String name;
-  final String address;
   final String jobType;
-  final String description;
-  final String companyName;
   final String phone;
   final String email;
+  final String companyName;
+  final String experience;
   final String skills;
+  final String? profilePictureUrl; // Optional URL for the profile picture
 
   const ContractorAddetailPage({
     super.key,
     required this.contractorId,
     required this.name,
-    required this.address,
     required this.jobType,
-    required this.description,
-    required this.companyName,
     required this.phone,
     required this.email,
+    required this.companyName,
     required this.skills,
+    required this.experience,
+    this.profilePictureUrl, // Optional URL parameter
   });
 
   @override
@@ -36,13 +36,13 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     super.initState();
     contractorData = {
       'name': widget.name,
-      'address': widget.address,
       'jobType': widget.jobType,
-      'description': widget.description,
       'companyName': widget.companyName,
       'phone': widget.phone,
       'email': widget.email,
       'skills': widget.skills,
+      'experience': widget.experience,
+      'profilePicture': widget.profilePictureUrl, // Add profile picture URL
     };
   }
 
@@ -59,74 +59,66 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
         child: ListView(
           children: [
             // Profile Picture and Name
-            buildProfileCard(),
+            buildProfileSection(),
 
             const SizedBox(height: 20),
-            buildInfoCard(Icons.location_on, 'Address', contractorData['address']),
-            buildInfoCard(Icons.email, 'Email', contractorData['email']),
-            buildDescriptionCard(),
-            buildInfoCard(Icons.business, 'Company Name', contractorData['companyName']),
+
+            // Other Details (Phone, Email, Company Details, etc.)
             buildInfoCard(Icons.phone, 'Phone', contractorData['phone']),
-            buildSkillsCard(),
+            buildInfoCard(Icons.email, 'Email', contractorData['email']),
+            buildCompanyDetailsCard(),
           ],
         ),
       ),
     );
   }
 
-  // Widget for Profile Card
-  Widget buildProfileCard() {
-    return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundColor: Colors.green,
-              child: Icon(
-                Icons.person,
-                size: 40,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    contractorData['name'] ?? 'No name provided',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    contractorData['jobType'] ?? 'No job type provided',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+  // Profile Section with Profile Picture, Name, and Role (No Card used)
+  Widget buildProfileSection() {
+    return Column(
+      children: [
+        // Centered Profile Picture or Icon
+        CircleAvatar(
+          radius: 60, // Increased circle size
+          backgroundColor: Colors.green,
+          backgroundImage: contractorData['profilePicture'] != null &&
+                  contractorData['profilePicture']!.isNotEmpty
+              ? NetworkImage(contractorData[
+                  'profilePicture']!) // Load the image from the URL
+              : null, // No background image if profile picture is null
+          child: contractorData['profilePicture'] == null ||
+                  contractorData['profilePicture']!.isEmpty
+              ? const Icon(
+                  Icons.person, // Default icon when no image is provided
+                  size: 60,
+                  color: Colors.white,
+                )
+              : null, // No icon when image is provided
         ),
-      ),
+        const SizedBox(height: 12),
+        // Name and Role (Job Type) below the profile picture with increased size
+        Text(
+          contractorData['name'] ?? 'No name provided',
+          style: const TextStyle(
+            fontSize: 28, // Increased name size
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          contractorData['jobType'] ?? 'No job type provided',
+          style: TextStyle(
+            fontSize: 18, // Increased job type size
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
     );
   }
 
-  // General Info Card
+  // General Info Card (Phone, Email, etc.)
   Widget buildInfoCard(IconData icon, String title, String content) {
     return Card(
       elevation: 4,
@@ -154,8 +146,8 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     );
   }
 
-  // Description Card
-  Widget buildDescriptionCard() {
+  // Single Card for Company Details, Experience, and Skills
+  Widget buildCompanyDetailsCard() {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -166,50 +158,35 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Display Company Name
             Text(
-              'Description:',
+              'Company: ${contractorData['companyName']}',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.green[700],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
+
+            // Display Experience
             Text(
-              contractorData['description'] ?? 'No description provided',
+              'Experience: ${contractorData['experience']}',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[700],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
+            const SizedBox(height: 12),
 
-  // Skills Card
-  Widget buildSkillsCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            // Display Skills
             Text(
-              widget.skills ?? 'No skill provided',
+              'Skills: ${contractorData['skills']}',
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[700],
+                fontSize: 16,
+                color: Colors.grey[700],
               ),
             ),
-            const SizedBox(height: 8),
-            
           ],
         ),
       ),
