@@ -29,7 +29,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return ContractorSearch();
+              return const ContractorSearch();
             },
           ),
         );

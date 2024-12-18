@@ -319,5 +319,5 @@ class ContractorDetailPage extends StatelessWidget {
 }
 
 void main() {
-  runApp(ContractorSearch());
+  runApp(const ContractorSearch());
 }
