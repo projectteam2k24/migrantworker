@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/chat_page.dart';
+import 'package:migrantworker/contractor/screens/addworkers.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 import 'package:migrantworker/contractor/screens/profile.dart';
 import 'package:migrantworker/contractor/screens/registration.dart';
@@ -27,5 +28,5 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
 }

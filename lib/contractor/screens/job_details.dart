@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
 
 class JobDetailsPage extends StatefulWidget {
   final Map<String, dynamic> job;
@@ -15,6 +16,18 @@ class JobDetailsPage extends StatefulWidget {
 class _JobDetailsPageState extends State<JobDetailsPage> {
   bool isFavorite = false;
 
+  // Function to launch phone dialer
+  Future<void> _launchPhoneDialer(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not dial the number: $phoneNumber')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final job = widget.job;
@@ -27,11 +40,12 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
       appBar: AppBar(
         title: Text(
           job['jobType'] ?? "Job Details",
-          style: const TextStyle(color: Colors.green),
+          style:
+              const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.green),
-        elevation: 1,
+        elevation: 4,
       ),
       body: Column(
         children: [
@@ -48,8 +62,10 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                       options: CarouselOptions(
                         height: heightFactor * 0.3,
                         autoPlay: true,
-                        enlargeCenterPage: false,
-                        viewportFraction: 1.0, // Ensures the image takes full width
+                        enlargeCenterPage: true,
+                        viewportFraction: 1.0,
+                        enableInfiniteScroll: true,
+                        autoPlayInterval: const Duration(seconds: 3),
                       ),
                       items: imageUrls.map((imageUrl) {
                         return GestureDetector(
@@ -60,9 +76,9 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                               builder: (_) => Dialog(
                                 child: Builder(
                                   builder: (context) {
-                                    // Use the image dimensions for the dialog size
-                                    final imageWidth = MediaQuery.of(context).size.width;
-                                    final imageHeight = imageWidth * 0.6; // Adjust as needed
+                                    final imageWidth =
+                                        MediaQuery.of(context).size.width;
+                                    final imageHeight = imageWidth * 0.6;
 
                                     return SizedBox(
                                       width: imageWidth,
@@ -71,16 +87,23 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                                         itemCount: imageUrls.length,
                                         builder: (context, index) {
                                           return PhotoViewGalleryPageOptions(
-                                            imageProvider: NetworkImage(imageUrls[index]),
-                                            minScale: PhotoViewComputedScale.contained,
-                                            maxScale: PhotoViewComputedScale.covered,
+                                            imageProvider:
+                                                NetworkImage(imageUrls[index]),
+                                            minScale: PhotoViewComputedScale
+                                                .contained,
+                                            maxScale:
+                                                PhotoViewComputedScale.covered,
                                           );
                                         },
-                                        scrollPhysics: const BouncingScrollPhysics(),
-                                        backgroundDecoration: const BoxDecoration(
+                                        scrollPhysics:
+                                            const BouncingScrollPhysics(),
+                                        backgroundDecoration:
+                                            const BoxDecoration(
                                           color: Colors.black,
                                         ),
-                                        pageController: PageController(initialPage: imageUrls.indexOf(imageUrl)),
+                                        pageController: PageController(
+                                            initialPage:
+                                                imageUrls.indexOf(imageUrl)),
                                       ),
                                     );
                                   },
@@ -89,11 +112,15 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                             );
                           },
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                            borderRadius:
+                                BorderRadius.circular(widthFactor * 0.05),
                             child: Image.network(
                               imageUrl,
                               fit: BoxFit.cover,
-                              width: MediaQuery.of(context).size.width, // Full screen width
+                              width: MediaQuery.of(context)
+                                  .size
+                                  .width, // Full screen width
+                              height: heightFactor * 0.25,
                             ),
                           ),
                         );
@@ -110,16 +137,16 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                       ),
                     ),
 
-                  SizedBox(height: heightFactor * 0.02),
+                  SizedBox(height: heightFactor * 0.03),
                   Text(
                     "Description",
                     style: TextStyle(
-                      fontSize: widthFactor * 0.05,
+                      fontSize: widthFactor * 0.055,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: heightFactor * 0.01),
+                  SizedBox(height: heightFactor * 0.015),
                   Text(
                     job['propertyDescription'] ?? "No description available",
                     style: TextStyle(
@@ -127,53 +154,30 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: heightFactor * 0.02),
+                  SizedBox(height: heightFactor * 0.03),
 
                   // Property Details
                   Text(
                     "Property Details",
                     style: TextStyle(
-                      fontSize: widthFactor * 0.05,
+                      fontSize: widthFactor * 0.055,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: heightFactor * 0.01),
+                  SizedBox(height: heightFactor * 0.015),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Type: ${job['propertyType'] ?? 'N/A'}",
-                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                      ),
-                      SizedBox(height: heightFactor * 0.005),
-                      Text(
-                        "Address: ${job['address'] ?? 'N/A'}",
-                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                      ),
-                      SizedBox(height: heightFactor * 0.005),
-                      Text(
-                        "Plot Size: ${job['plotSize'] ?? 'N/A'} sqft",
-                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                      ),
-                      SizedBox(height: heightFactor * 0.005),
-                      Text(
-                        "Floors: ${job['floors'] ?? 'N/A'}",
-                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                      ),
-                      SizedBox(height: heightFactor * 0.005),
-                      Text(
-                        "Rooms: ${job['rooms'] ?? 'N/A'}",
-                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                      ),
-                      SizedBox(height: heightFactor * 0.005),
-                      Text(
-                        "Landmark: ${job['landmark'] ?? 'N/A'}",
-                        style: TextStyle(fontSize: widthFactor * 0.04, color: Colors.grey[800]),
-                      ),
+                      _buildPropertyInfo("Type", job['propertyType']),
+                      _buildPropertyInfo("Address", job['address']),
+                      _buildPropertyInfo("Plot Size", job['plotSize']),
+                      _buildPropertyInfo("Floors", job['floors']),
+                      _buildPropertyInfo("Rooms", job['rooms']),
+                      _buildPropertyInfo("Landmark", job['landmark']),
                     ],
                   ),
-                  SizedBox(height: heightFactor * 0.03),
+                  SizedBox(height: heightFactor * 0.04),
                 ],
               ),
             ),
@@ -191,23 +195,28 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Add contact logic here (e.g., opening dialer)
                       final contactNumber = job['contactNumber'] ?? "N/A";
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Contact Number: $contactNumber"),
-                        ),
-                      );
+                      if (contactNumber != "N/A") {
+                        _launchPhoneDialer(contactNumber);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('No contact number available')),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(vertical: heightFactor * 0.015),
+                      padding:
+                          EdgeInsets.symmetric(vertical: heightFactor * 0.015),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 5,
                     ),
-                    icon: const Icon(Icons.phone, color: Colors.white),
-                    label: const Text(
-                      "Contact Provider",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    icon: const Icon(Icons.phone),
+                    label: const Text("Contact Provider"),
                   ),
                 ),
                 SizedBox(width: widthFactor * 0.05),
@@ -230,23 +239,36 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightGreen,
-                      padding: EdgeInsets.symmetric(vertical: heightFactor * 0.015),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.orangeAccent,
+                      padding:
+                          EdgeInsets.symmetric(vertical: heightFactor * 0.015),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 5,
                     ),
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.white,
                     ),
-                    label: Text(
-                      isFavorite ? "Favorited" : "Add to Favorites",
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    label: Text(isFavorite ? "Favorited" : "Add to Favorites"),
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Helper function to build property info
+  Widget _buildPropertyInfo(String label, dynamic value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        "$label: ${value ?? 'N/A'}",
+        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
       ),
     );
   }

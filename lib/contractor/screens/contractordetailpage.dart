@@ -133,7 +133,8 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
   }
 
   // General Info Card (Phone, Email, etc.)
-  Widget buildInfoCard(IconData icon, String title, String content, Function() onTap) {
+  Widget buildInfoCard(
+      IconData icon, String title, String content, Function() onTap) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
