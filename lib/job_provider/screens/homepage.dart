@@ -185,7 +185,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
                                     contractor['experience'] ?? 'No Experience',
                                 skills: contractor['skill'] ?? 'No Skill',
                                 profilePictureUrl:
-                                    contractor['profilePicture'] ?? null,
+                                    contractor['profilePicture'],
                               );
                             },
                           ),

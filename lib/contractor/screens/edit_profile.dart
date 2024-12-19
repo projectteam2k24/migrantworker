@@ -58,7 +58,7 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
             _roleController.text = data['role'] ?? '';
             _experienceController.text = data['experience'] ?? '';
             _expertiseController.text = data['skill'] ?? '';
-            _profilePictureUrl = data['profilePicture'] ?? null;
+            _profilePictureUrl = data['profilePicture'];
           });
         }
       }

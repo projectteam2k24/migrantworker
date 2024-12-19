@@ -46,9 +46,11 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
           .get();
 
       setState(() {
-        notifications = snapshot.docs
-            .map((doc) => doc.data() as Map<String, dynamic>)
-            .toList();
+        notifications = snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id; // Include document ID
+          return data;
+        }).toList();
       });
     } catch (e) {
       print("Error fetching notifications: $e");
@@ -179,26 +181,81 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
         final timestamp = notification['timestamp'] is Timestamp
             ? notification['timestamp']
             : Timestamp.now(); // Fallback to current time if missing
+        final notificationId = notification['id']; // Extracted document ID
+
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           elevation: 2.0,
-          child: ListTile(
-            leading: const Icon(Icons.notifications, color: Colors.green),
-            title: Text(
-              notification['message'] ?? 'No message content',
-              style:
-                  const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Container(
+            padding: const EdgeInsets.all(12.0),
+            child: Stack(
               children: [
-                Text(
-                  'From: ${notification['workerName'] ?? 'Unknown'}',
-                  style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      notification['message'] ?? 'No message content',
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'From: ${notification['workerName'] ?? 'Unknown'}',
+                      style:
+                          const TextStyle(fontSize: 14.0, color: Colors.grey),
+                    ),
+                    Text(
+                      'Sent on: ${_formatTimestamp(timestamp)}',
+                      style:
+                          const TextStyle(fontSize: 12.0, color: Colors.grey),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Sent on: ${_formatTimestamp(timestamp)}', // Display formatted timestamp
-                  style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Material(
+                    elevation: 4.0,
+                    borderRadius: BorderRadius.circular(30.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(30.0),
+                      onTap: () async {
+                        await _acceptRequest(notificationId);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          gradient: LinearGradient(
+                            colors: [Colors.green, Colors.lightGreen],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20.0,
+                            ),
+                            SizedBox(width: 5.0),
+                            Text(
+                              'Accept',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -206,5 +263,29 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
         );
       },
     );
+  }
+
+  // Accept the request
+  Future<void> _acceptRequest(String notificationId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'status': 'accepted'});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Request accepted.')),
+      );
+
+      // Refresh notifications
+      if (workerId != null) {
+        await _fetchNotifications(workerId!);
+      }
+    } catch (e) {
+      print("Error accepting request: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to accept the request.')),
+      );
+    }
   }
 }

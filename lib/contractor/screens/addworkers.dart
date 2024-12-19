@@ -50,6 +50,8 @@ class Worker {
 }
 
 class AddWorkers extends StatefulWidget {
+  const AddWorkers({super.key});
+
   @override
   _AddWorkersState createState() => _AddWorkersState();
 }
@@ -109,13 +111,13 @@ class _AddWorkersState extends State<AddWorkers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Workers to Team'),
+        title: const Text('Add Workers to Team'),
         backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: workers.isEmpty
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : ListView.builder(
                 itemCount: workers.length,
                 itemBuilder: (context, index) {
@@ -132,13 +134,12 @@ class WorkerCard extends StatelessWidget {
   final Worker worker;
   final Function(Worker) onRequest;
 
-  const WorkerCard({Key? key, required this.worker, required this.onRequest})
-      : super(key: key);
+  const WorkerCard({super.key, required this.worker, required this.onRequest});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: 12),
       elevation: 8,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -155,12 +156,12 @@ class WorkerCard extends StatelessWidget {
                     color: Colors.green[700],
                   ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text("Date of Birth: ${worker.dob}"),
             Text("Gender: ${worker.gender}"),
             Text("Phone: ${worker.phone}"),
             Text("Email: ${worker.email}"),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -171,10 +172,10 @@ class WorkerCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
-                  icon: Icon(Icons.send, color: Colors.white),
-                  label: Text(
+                  icon: const Icon(Icons.send, color: Colors.white),
+                  label: const Text(
                     "Send Request",
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.white),
