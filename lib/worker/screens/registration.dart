@@ -43,7 +43,7 @@ class _RegisterWorkerState extends State<RegisterWorker> {
   }
 
   // Sign-up handler that checks if the form is valid before printing the email
-  
+
   void RegisterWorkerHandler() {
     if (_formKey.currentState?.validate() ?? false) {
       print('Email: ${EmailController.text}');
@@ -505,7 +505,8 @@ class RegisterWorker1 extends StatefulWidget {
 
 class _RegisterWorker1State extends State<RegisterWorker1> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController ExpertiseController = TextEditingController(); // Key to manage the form state
+  TextEditingController ExpertiseController =
+      TextEditingController(); // Key to manage the form state
   TextEditingController ExcperienceController = TextEditingController();
   TextEditingController SalaryController = TextEditingController();
   TextEditingController LanguageController = TextEditingController();
@@ -523,9 +524,9 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
   }
 
   // Sign-up handler that checks if the form is valid before printing the email
-  void RegisterWorkerHandler() {
+  Future<void> RegisterWorkerHandler() async {
     if (_formKey.currentState?.validate() ?? false) {
-      WorkerAuthService().workerReg(
+      Future<bool> res = WorkerAuthService().workerReg(
           name: widget.name,
           dob: widget.dob,
           gender: widget.gender,
@@ -541,7 +542,16 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
           govtID: govtIdFile,
           AddressProof: AddressProofFile,
           context: context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkerHome(),));
+      if (await res) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WorkerHome(),
+            ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Registration failed. Email already in use.')));
+      }
     } else {
       print('Form is invalid');
     }
@@ -786,7 +796,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: 
+                        onPressed:
                             RegisterWorkerHandler, // Updated to call RegisterWorkerHandler
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(120, 40),

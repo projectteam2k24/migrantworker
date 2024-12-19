@@ -227,7 +227,7 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30.0),
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [Colors.green, Colors.lightGreen],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -235,9 +235,9 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                         ),
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 20.0),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Icon(
                               Icons.check,
                               color: Colors.white,
@@ -293,10 +293,8 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
       );
 
       // Refresh notifications
-      if (workerId != null) {
-        await _fetchNotifications(workerId!);
-      }
-    } catch (e) {
+      await _fetchNotifications(workerId!);
+        } catch (e) {
       print("Error accepting request: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to accept the request.')),

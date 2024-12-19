@@ -21,7 +21,11 @@ class JobProviderProfile extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilePage(),));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditProfilePage(),
+                  ));
             },
           ),
         ],
@@ -67,23 +71,13 @@ class JobProviderProfile extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: const CircleAvatar(
+                            child: CircleAvatar(
                               radius: 60,
-                              backgroundImage:
-                                  AssetImage('assets/profile_placeholder.png'),
+                              backgroundImage: profileData?['profile'] != null
+                                  ? NetworkImage(profileData?['profile'])
+                                  : const AssetImage(
+                                      'assets/profile_placeholder.png'),
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.camera_alt),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        "Image picker functionality not implemented yet")),
-                              );
-                            },
-                            iconSize: 30,
-                            color: Colors.green[700],
                           ),
                         ],
                       ),
@@ -130,7 +124,11 @@ class JobProviderProfile extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () async {
                           await FirebaseAuth.instance.signOut();
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const LogIn(),));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LogIn(),
+                              ));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700],
