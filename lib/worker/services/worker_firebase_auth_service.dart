@@ -44,7 +44,8 @@ class WorkerAuthService {
         'salary': salary,
         'experience': experience,
         'languages': languages,
-        'govtID': govtID
+        'govtID': govtID,
+        'assigned': null
       });
 
       firestoreDatabse

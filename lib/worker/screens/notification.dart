@@ -268,13 +268,28 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
   // Accept the request
   Future<void> _acceptRequest(String notificationId) async {
     try {
+      // Fetch notification data
+      final notification =
+          notifications.firstWhere((n) => n['id'] == notificationId);
+      final String workerId = notification['workerId'];
+      final String contractorId = notification['contractorId'];
+
+      // Update the notification status in Firestore
       await FirebaseFirestore.instance
           .collection('notifications')
           .doc(notificationId)
           .update({'status': 'accepted'});
 
+      // Update the worker's "assigned" field with the contractorId
+      await FirebaseFirestore.instance
+          .collection('Worker')
+          .doc(workerId)
+          .update({'assigned': contractorId});
+
+      // Notify success
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Request accepted.')),
+        const SnackBar(
+            content: Text('Request accepted. Worker assigned to contractor.')),
       );
 
       // Refresh notifications

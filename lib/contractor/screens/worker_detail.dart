@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:migrantworker/contractor/screens/addworkers.dart';
 import 'package:migrantworker/worker/screens/registration.dart';
 
@@ -10,33 +12,51 @@ class WorkerDetailsPage extends StatefulWidget {
 }
 
 class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
-  // State to track if the FAB is expanded
   bool isExpanded = false;
+  bool isLoading = true; // Track loading state
+  String? currentUserId;
+  List<Map<String, dynamic>> workers = [];
 
-  // Sample list of workers for demonstration
-  final List<Map<String, String>> workers = [
-    {
-      'fullName': 'John Doe',
-      'dob': '1990-01-01',
-      'gender': 'Male',
-      'phone': '+1 234 567 890',
-      'email': 'john.doe@example.com',
-    },
-    {
-      'fullName': 'Jane Smith',
-      'dob': '1992-05-10',
-      'gender': 'Female',
-      'phone': '+1 987 654 321',
-      'email': 'jane.smith@example.com',
-    },
-    {
-      'fullName': 'David Johnson',
-      'dob': '1988-03-15',
-      'gender': 'Male',
-      'phone': '+1 111 222 333',
-      'email': 'david.johnson@example.com',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUserId();
+  }
+
+  // Fetch the current logged-in user's ID
+  Future<void> _getCurrentUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
+      });
+      _fetchWorkersAssignedToUser(
+          user.uid); // Fetch workers assigned to the user
+    }
+  }
+
+  // Fetch workers whose assigned field matches the current user's UID
+  Future<void> _fetchWorkersAssignedToUser(String userId) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Worker')
+          .where('assigned',
+              isEqualTo: userId) // Filter workers assigned to current user
+          .get();
+
+      setState(() {
+        workers = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+        isLoading = false; // Data has been fetched, stop loading
+      });
+    } catch (e) {
+      print("Error fetching workers: $e");
+      setState(() {
+        isLoading = false; // Stop loading even if there's an error
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,70 +72,78 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: workers.length,
-        itemBuilder: (context, index) {
-          final worker = workers[index];
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Full Name: ${worker['fullName'] ?? ''}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+      body: isLoading
+          ? const Center(
+              child:
+                  CircularProgressIndicator()) // Show loading indicator while fetching
+          : workers.isEmpty
+              ? const Center(
+                  child: Text(
+                      'No workers assigned to you.')) // Show when no workers are fetched
+              : ListView.builder(
+                  itemCount: workers.length,
+                  itemBuilder: (context, index) {
+                    final worker = workers[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
+                      child: Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Full Name: ${worker['name'] ?? ''}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'DOB: ${worker['dob'] ?? ''}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Gender: ${worker['gender'] ?? ''}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Phone: ${worker['phone'] ?? ''}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Email: ${worker['email'] ?? ''}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'DOB: ${worker['dob'] ?? ''}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Gender: ${worker['gender'] ?? ''}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Phone: ${worker['phone'] ?? ''}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Email: ${worker['email'] ?? ''}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            ),
-          );
-        },
-      ),
       floatingActionButton: Stack(
         alignment: Alignment.bottomRight,
         children: [
