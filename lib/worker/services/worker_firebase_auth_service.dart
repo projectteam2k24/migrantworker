@@ -25,7 +25,7 @@ class WorkerAuthService {
       required String languages,
       required String? govtID,
       required String? AddressProof,
-      File? profile,
+      String? profile,
       required BuildContext context}) async {
     try {
       final user = await firebaseAuth.createUserWithEmailAndPassword(
@@ -46,6 +46,8 @@ class WorkerAuthService {
         'experience': experience,
         'languages': languages,
         'govtID': govtID,
+        'AddressProof': AddressProof,
+        'profilePic' : profile,
         'assigned': null
       });
 

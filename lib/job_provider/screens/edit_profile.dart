@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:cloudinary/cloudinary.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -24,8 +23,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? _profileImage;
   String _profileImageUrl = '';
   bool isLoading = true;
+  bool isUploading = false;
+  String userType = '';
 
-   final cloudinary = Cloudinary.signedConfig(
+  final cloudinary = Cloudinary.signedConfig(
     apiKey: '714694759259219',
     apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
     cloudName: 'diskdblly',
@@ -54,7 +55,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             phoneController.text = data?['phone'] ?? '';
             emailController.text = data?['email'] ?? '';
             addressController.text = data?['address'] ?? '';
-            userTypeController.text = data?['userType'] ?? '';
+            userType = data?['userType'] ?? '';
             _profileImageUrl = data?['profile'] ?? '';
             isLoading = false;
           });
@@ -80,17 +81,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         _profileImage = File(pickedFile.path);
       });
-
-      final imageUrl = await _uploadImageToCloudinary(_profileImage!);
-      if (imageUrl != null) {
-        setState(() {
-          _profileImageUrl = imageUrl;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to upload profile picture')),
-        );
-      }
     }
   }
 
@@ -115,47 +105,52 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _saveProfileDetails() async {
+    setState(() {
+      isUploading = true;
+    });
+
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
 
+      if (_profileImage != null) {
+        final imageUrl = await _uploadImageToCloudinary(_profileImage!);
+        if (imageUrl != null) {
+          _profileImageUrl = imageUrl;
+        } else {
+          throw Exception('Failed to upload profile image');
+        }
+      }
+
       if (userId != null) {
-        await FirebaseFirestore.instance
-            .collection('Job Provider')
-            .doc(userId)
-            .set({
+        await FirebaseFirestore.instance.collection('Job Provider').doc(userId).set({
           'name': fullNameController.text,
           'phone': phoneController.text,
           'email': emailController.text,
           'address': addressController.text,
-          'userType': userTypeController.text,
-          'profile': _profileImageUrl, // Save the new profile URL
+          'userType': userType,
+          'profile': _profileImageUrl,
         });
 
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Profile Saved'),
-            content: const Text('Your profile has been updated successfully.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const JobProviderHome(),
-                    ),
-                  );
-                },
-                child: const Text('Close'),
-              ),
-            ],
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully')),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const JobProviderHome()),
         );
       } else {
         print('User is not logged in');
       }
     } catch (e) {
       print('Error saving profile details: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to save profile details')),
+      );
+    } finally {
+      setState(() {
+        isUploading = false;
+      });
     }
   }
 
@@ -178,45 +173,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: _saveProfileDetails,
+            onPressed: isUploading ? null : _saveProfileDetails,
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage: _profileImageUrl.isNotEmpty
-                          ? NetworkImage(_profileImageUrl)
-                          : const AssetImage('assets/profile_placeholder.png')
-                              as ImageProvider,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundImage: _profileImageUrl.isNotEmpty
+                              ? NetworkImage(_profileImageUrl)
+                              : const AssetImage('assets/profile_placeholder.png')
+                                  as ImageProvider,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.camera_alt),
+                          onPressed: _pickImage,
+                          iconSize: 30,
+                          color: Colors.green[700],
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.camera_alt),
-                      onPressed: _pickImage,
-                      iconSize: 30,
-                      color: Colors.green[700],
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 30),
+                  _buildEditableProfileItem('Full Name', fullNameController),
+                  _buildEditableProfileItem('Phone Number', phoneController),
+                  _buildEditableProfileItem('Email Address', emailController),
+                  _buildEditableProfileItem('Address', addressController),
+                  _buildUserTypeDropdown(),
+                ],
               ),
-              const SizedBox(height: 30),
-              _buildEditableProfileItem('Full Name', fullNameController),
-              _buildEditableProfileItem('Phone Number', phoneController),
-              _buildEditableProfileItem('Email Address', emailController),
-              _buildEditableProfileItem('Address', addressController),
-              _buildUserTypeDropdown(),
-            ],
+            ),
           ),
-        ),
+          if (isUploading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -238,13 +244,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Widget _buildUserTypeDropdown() {
     return DropdownButtonFormField<String>(
-      value: userTypeController.text,
+      value: userType.isNotEmpty ? userType : null,
       items: ['Personal', 'Company'].map((type) {
         return DropdownMenuItem(value: type, child: Text(type));
       }).toList(),
       onChanged: (value) {
         setState(() {
-          userTypeController.text = value!;
+          userType = value!;
         });
       },
     );
