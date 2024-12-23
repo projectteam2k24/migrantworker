@@ -1,38 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class WorkingStatusPage extends StatelessWidget {
+class WorkingStatusPage extends StatefulWidget {
   const WorkingStatusPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Sample job data
-    final List<Map<String, dynamic>> jobList = [
-      {
-        'jobTitle': 'Painting - Residential',
-        'contractorName': 'John Doe Constructions',
-        'startDate': '01/11/2024',
-        'endDate': '10/11/2024',
-        'status': 'In Progress',
-        'progress': 1.0,
-      },
-      {
-        'jobTitle': 'Electrical Wiring',
-        'contractorName': 'Elite Electricians',
-        'startDate': '05/11/2024',
-        'endDate': '20/11/2024',
-        'status': 'Completed',
-        'progress': 1.0,
-      },
-      {
-        'jobTitle': 'Flooring Installation',
-        'contractorName': 'Modern Builders',
-        'startDate': '10/11/2024',
-        'endDate': '25/11/2024',
-        'status': 'Not Started',
-        'progress': 0.0,
-      },
-    ];
+  State<WorkingStatusPage> createState() => _WorkingStatusPageState();
+}
 
+class _WorkingStatusPageState extends State<WorkingStatusPage> {
+  final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+  String searchQuery = '';
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Working Status'),
@@ -43,146 +25,184 @@ class WorkingStatusPage extends StatelessWidget {
           },
         ),
         centerTitle: true,
-        elevation: 0,
+        elevation: 2,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Search Bar
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green, width: 1.5),
-              ),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search by Job Title...',
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      // Add search logic here
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(8),
-                          bottomRight: Radius.circular(8),
-                        ),
-                      ),
-                      child: const Icon(Icons.search, color: Colors.white),
-                    ),
-                  ),
-                ],
+            // Search bar
+            TextField(
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search jobs by type...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            // Job Cards
+            // Job list
             Expanded(
-              child: ListView.builder(
-                itemCount: jobList.length,
-                itemBuilder: (context, index) {
-                  final job = jobList[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            job['jobTitle'],
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(Icons.business,
-                                  size: 16, color: Colors.grey),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Contractor: ${job['contractorName']}',
-                                  style: const TextStyle(fontSize: 14),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_today,
-                                  size: 16, color: Colors.grey),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Start: ${job['startDate']}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                'End: ${job['endDate']}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(Icons.info,
-                                  size: 16, color: Colors.grey),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Status: ${job['progress'] == 0 ? 'Not Started' : job['progress'] == 1.0 ? 'Completed' : 'In Progress'}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: job['progress'] >= 0.85
-                                      ? Colors.green
-                                      : job['progress'] >= 0.25
-                                          ? Colors.orange
-                                          : Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          LinearProgressIndicator(
-                            value: job['progress'],
-                            backgroundColor: Colors.grey[300],
-                            color: job['progress'] >= 0.85
-                                ? Colors.green
-                                : job['progress'] >= 0.25
-                                    ? Colors.orange
-                                    : Colors.red,
-                          ),
-                          const SizedBox(height: 8),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              '${(job['progress'] * 100).toInt()}% Completed',
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ),
-                        ],
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('AssignedJobs')
+                    .where('jobProviderUid', isEqualTo: currentUserUid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No assigned jobs available.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
-                    ),
+                    );
+                  }
+
+                  // Filter jobs based on search query
+                  final jobs = snapshot.data!.docs.where((job) {
+                    final jobType = job['jobType']?.toString().toLowerCase();
+                    return jobType != null &&
+                        jobType.contains(searchQuery);
+                  }).toList();
+
+                  if (jobs.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No jobs match your search.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: jobs.length,
+                    itemBuilder: (context, index) {
+                      final job = jobs[index];
+                      final contractorUid = job['contractorUid'];
+                      final jobType = job['jobType'];
+                      final progress = (job['progress'] ?? 0.0).toDouble();
+                      final status = progress == 1.0
+                          ? 'Completed'
+                          : progress > 0.0
+                              ? 'In Progress'
+                              : 'Not Started';
+
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('Contractor')
+                            .doc(contractorUid)
+                            .get(),
+                        builder: (context, contractorSnapshot) {
+                          if (contractorSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SizedBox();
+                          }
+
+                          if (!contractorSnapshot.hasData ||
+                              !contractorSnapshot.data!.exists) {
+                            return const Center(
+                                child: Text('Contractor details not found.'));
+                          }
+
+                          final contractorName =
+                              contractorSnapshot.data!['name'] ?? 'Unknown';
+
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 12.0),
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    jobType,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.business,
+                                          size: 18, color: Colors.grey),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          'Contractor: $contractorName',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.info,
+                                          size: 18, color: Colors.grey),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Status: $status',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: progress == 1.0
+                                              ? Colors.green
+                                              : progress > 0.0
+                                                  ? Colors.orange
+                                                  : Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  LinearProgressIndicator(
+                                    value: progress,
+                                    backgroundColor: Colors.grey[300],
+                                    color: progress == 1.0
+                                        ? Colors.green
+                                        : progress > 0.0
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    minHeight: 6,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      '${(progress * 100).toStringAsFixed(0)}% Completed',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   );
                 },
               ),

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -223,37 +225,48 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
 
                 // Add to Favorite Button
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        isFavorite = !isFavorite;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            isFavorite
-                                ? "Added to Favorites"
-                                : "Removed from Favorites",
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.orangeAccent,
-                      padding:
-                          EdgeInsets.symmetric(vertical: heightFactor * 0.015),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 5,
-                    ),
-                    icon: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                    ),
-                    label: Text(isFavorite ? "Favorited" : "Add to Favorites"),
-                  ),
-                ),
+  child: ElevatedButton.icon(
+    onPressed: () async {
+      final String jobProviderUid = job['uid'] ?? ''; // Fetch the job provider's UID
+      final String contractorUid = FirebaseAuth.instance.currentUser!.uid; // Replace with actual contractor UID from authentication or state
+      final String notificationId = FirebaseFirestore.instance.collection('Notifications').doc().id;
+      final String jobId = FirebaseFirestore.instance.collection('Jobs').doc().id;
+      // Send Notification to Job Provider
+      await FirebaseFirestore.instance.collection('Notifications').doc(notificationId).set({
+        'notificationId': notificationId,      
+        'jobProviderUid': jobProviderUid,
+        'contractorUid': contractorUid,
+        'message':"You have a new request",
+        'jobId': jobId,
+        'jobDetails': {
+          'jobType': job['jobType'],
+          'address': job['address'],
+          'district': job['district'],
+          'contact': job['contactNumber'],
+        },
+        'status': 'pending', // Default status as pending
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      // Show SnackBar to indicate notification sent
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Job request sent to the provider.')),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Colors.green,
+      padding: EdgeInsets.symmetric(vertical: heightFactor * 0.015),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      elevation: 5,
+    ),
+    icon: const Icon(Icons.work),
+    label: const Text("Take Job"),
+  ),
+),
+
               ],
             ),
           ),

@@ -170,10 +170,6 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Chat"),
-        backgroundColor: Colors.green,
-      ),
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
