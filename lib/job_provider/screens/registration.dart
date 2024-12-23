@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloudinary/cloudinary.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,39 +24,85 @@ class _RegisterJobProviderState extends State<RegisterJobProvider> {
 
   bool ShowPass = true;
   File? _profileImage;
+  String? imageUrl;
+
+  final cloudinary = Cloudinary.signedConfig(
+    apiKey: '714694759259219',
+    apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
+    cloudName: 'diskdblly',
+  );
 
   // Function to pick an image from the gallery
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery, // Use ImageSource.camera for camera option
+      source: ImageSource.gallery,
       maxHeight: 200,
       maxWidth: 200,
     );
+
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
       });
+
+      // Upload image after picking
+      imageUrl = await _uploadImage(_profileImage!);
+      if (imageUrl != null) {
+        print('Image uploaded successfully: $imageUrl');
+        // You can store the imageUrl if needed
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload profile picture')),
+        );
+      }
     }
   }
 
-  void RegisterJobProviderHandler() {
+  // Function to upload image to Cloudinary
+  Future<String?> _uploadImage(File image) async {
+    try {
+      final response = await cloudinary.upload(
+        file: image.path,
+        fileBytes: image.readAsBytesSync(),
+        resourceType: CloudinaryResourceType.image,
+        folder: 'job_provider/profiles', // Optional folder name
+      );
+
+      if (response.isSuccessful) {
+        return response.secureUrl;
+      } else {
+        throw Exception('Failed to upload image: ${response.error}');
+      }
+    } catch (e) {
+      print('Cloudinary upload error: $e');
+      return null;
+    }
+  }
+
+  Future<void> RegisterJobProviderHandler() async {
     if (_formKey.currentState?.validate() ?? false) {
-      JobProviderFirebaseAuthService().jobProviderReg(
+      Future<bool> res = JobProviderFirebaseAuthService().jobProviderReg(
           name: FullNameController.text,
           phone: PhoneController.text,
           email: EmailController.text,
           address: AddressController.text,
           userType: UserType,
           password: PasswordController.text,
-          context: context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return const JobProviderHome();
-          },
-        ),
-      ); // Add further sign-up logic here, like calling an API
+          context: context,
+          profile: imageUrl);
+      if (await res) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const JobProviderHome();
+            },
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Registration failed. Email already in use')));
+      }
     } else {
       print('Form is invalid');
     }

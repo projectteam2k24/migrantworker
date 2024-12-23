@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:migrantworker/worker/services/worker_firebase_auth_service.dart';
+import 'package:cloudinary/cloudinary.dart';
 
 class RegisterWorker extends StatefulWidget {
   const RegisterWorker({super.key});
@@ -43,7 +44,7 @@ class _RegisterWorkerState extends State<RegisterWorker> {
   }
 
   // Sign-up handler that checks if the form is valid before printing the email
-  
+
   void RegisterWorkerHandler() {
     if (_formKey.currentState?.validate() ?? false) {
       print('Email: ${EmailController.text}');
@@ -505,13 +506,20 @@ class RegisterWorker1 extends StatefulWidget {
 
 class _RegisterWorker1State extends State<RegisterWorker1> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController ExpertiseController = TextEditingController(); // Key to manage the form state
+  TextEditingController ExpertiseController =
+      TextEditingController(); // Key to manage the form state
   TextEditingController ExcperienceController = TextEditingController();
   TextEditingController SalaryController = TextEditingController();
   TextEditingController LanguageController = TextEditingController();
   TextEditingController GovtController = TextEditingController();
 
   bool ShowPass = true;
+
+  final cloudinary = Cloudinary.signedConfig(
+    apiKey: '714694759259219',
+    apiSecret: '-yv1E3csFWNunS7jYdQn1eQatz4',
+    cloudName: 'diskdblly',
+  );
 
   // previous handler that helps to go back to the previous page
   void PrevHandler() {
@@ -523,29 +531,86 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
   }
 
   // Sign-up handler that checks if the form is valid before printing the email
-  void RegisterWorkerHandler() {
-    if (_formKey.currentState?.validate() ?? false) {
-      WorkerAuthService().workerReg(
-          name: widget.name,
-          dob: widget.dob,
-          gender: widget.gender,
-          phone: widget.phone,
-          email: widget.email,
-          address: widget.address,
-          emergencyContact: widget.emergencyContact,
-          duration: widget.duration,
-          password: widget.password,
-          skill: ExpertiseController.text,
-          salary: SalaryController.text,
-          languages: LanguageController.text,
-          govtID: govtIdFile,
-          AddressProof: AddressProofFile,
-          context: context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkerHome(),));
-    } else {
-      print('Form is invalid');
+// Updated RegisterWorkerHandler to handle file uploads
+Future<void> RegisterWorkerHandler() async {
+  if (_formKey.currentState?.validate() ?? false) {
+    try {
+      // Upload files to Cloudinary
+      String? profileUrl;
+      String? govtIdUrl;
+      String? addressProofUrl;
+
+      // Upload Profile Picture
+      if (widget.profilepic != null) {
+        final response = await cloudinary.upload(
+          file: widget.profilepic!.path,
+          resourceType: CloudinaryResourceType.image,
+          folder: 'worker/profile',
+        );
+        profileUrl = response.secureUrl;
+      }
+
+      // Upload Government ID
+      if (govtIdFile != null) {
+        final response = await cloudinary.upload(
+          file: govtIdFile!,
+          resourceType: CloudinaryResourceType.image,
+          folder: 'worker/govtIdFiles'
+        );
+        govtIdUrl = response.secureUrl;
+      }
+
+      // Upload Address Proof
+      if (AddressProofFile != null) {
+        final response = await cloudinary.upload(
+          file: AddressProofFile!,
+          resourceType: CloudinaryResourceType.image,
+          folder: 'worker/addressProofFiles'
+        );
+        addressProofUrl = response.secureUrl;
+      }
+
+      // Call the workerReg method with the uploaded URLs
+      Future<bool> res = WorkerAuthService().workerReg(
+        name: widget.name,
+        dob: widget.dob,
+        gender: widget.gender,
+        phone: widget.phone,
+        email: widget.email,
+        address: widget.address,
+        emergencyContact: widget.emergencyContact,
+        duration: widget.duration,
+        password: widget.password,
+        skill: ExpertiseController.text,
+        salary: SalaryController.text,
+        languages: LanguageController.text,
+        govtID: govtIdUrl,
+        AddressProof: addressProofUrl,
+        profile: profileUrl,
+        context: context,
+      );
+
+      if (await res) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WorkerHome(),
+            ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Registration failed. Email already in use.')));
+      }
+    } catch (e) {
+      print('Error during file upload: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to upload files.')),
+      );
     }
+  } else {
+    print('Form is invalid');
   }
+}
+
 
   String? govtIdFile;
   String? AddressProofFile;
@@ -786,7 +851,7 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: 
+                        onPressed:
                             RegisterWorkerHandler, // Updated to call RegisterWorkerHandler
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(120, 40),

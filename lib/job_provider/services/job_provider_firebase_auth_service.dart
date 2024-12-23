@@ -8,18 +8,19 @@ class JobProviderFirebaseAuthService {
 
   final firestoreDatabse = FirebaseFirestore.instance;
 
-  Future<void> jobProviderReg(
+  Future<bool> jobProviderReg(
       {required String name,
       required String phone,
       required String email,
       required String address,
       required String userType,
       required String password,
-      File? profile,
+      String? profile,
       required BuildContext context}) async {
     try {
-      final user = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      
+      final user = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
       firestoreDatabse.collection('Job Provider').doc(user.user?.uid).set({
         'name': name,
         'phone': phone,
@@ -27,17 +28,18 @@ class JobProviderFirebaseAuthService {
         'address': address,
         'userType': userType,
         'password': password,
+        'profile': profile,
       });
 
       firestoreDatabse
           .collection('role_tb')
           .add({'uid': user.user?.uid, 'role': 'job_provider'});
-      
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Registration Successful')));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration Successful')));
+      return true;
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Registration failed')));
+      return false;
     }
   }
 }

@@ -333,6 +333,7 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                     ),
                   ],
                 ),
+<<<<<<< HEAD
               ),
             );
           } else {
@@ -341,6 +342,58 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
             );
           }
         });
+=======
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Material(
+                    elevation: 4.0,
+                    borderRadius: BorderRadius.circular(30.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(30.0),
+                      onTap: () async {
+                        await _acceptRequest(notificationId);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          gradient: const LinearGradient(
+                            colors: [Colors.green, Colors.lightGreen],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20.0,
+                            ),
+                            SizedBox(width: 5.0),
+                            Text(
+                              'Accept',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+>>>>>>> 2222d2794f48955eb5156b4e846dbc2dbcf219e2
   }
 
 // Accept the request
@@ -392,11 +445,17 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
         ),
       );
 
+<<<<<<< HEAD
       // Remove the notification from the list
       setState(() {
         notifications.removeWhere((n) => n['id'] == notificationId);
       });
     } catch (e) {
+=======
+      // Refresh notifications
+      await _fetchNotifications(workerId!);
+        } catch (e) {
+>>>>>>> 2222d2794f48955eb5156b4e846dbc2dbcf219e2
       print("Error accepting request: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to accept the request.')),

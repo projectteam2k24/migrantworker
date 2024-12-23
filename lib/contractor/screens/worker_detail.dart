@@ -46,7 +46,7 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
 
       setState(() {
         workers = snapshot.docs
-            .map((doc) => doc.data() as Map<String, dynamic>)
+            .map((doc) => doc.data())
             .toList();
         isLoading = false; // Data has been fetched, stop loading
       });
@@ -176,7 +176,7 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddWorkers(),
+                      builder: (context) => const AddWorkers(),
                     ),
                   );
                 },

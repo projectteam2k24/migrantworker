@@ -74,24 +74,12 @@ class _WorkerProfileState extends State<WorkerProfile> {
                               ],
                               shape: BoxShape.circle,
                             ),
-                            child: const CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                                  AssetImage('assets/profile_placeholder.png'),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _editProfilePicture();
-                            },
                             child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor: Colors.green[700],
-                              child: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 18,
-                              ),
+                              radius: 65,
+                              backgroundImage: profileData['profilePic'] != null
+                                  ? NetworkImage(profileData['profilePic'])
+                                  : const AssetImage('assets/placeholder.png')
+                                      as ImageProvider,
                             ),
                           ),
                         ],
@@ -122,12 +110,18 @@ class _WorkerProfileState extends State<WorkerProfile> {
                     _buildBox(
                       title: 'Personal Information',
                       children: [
-                        _buildProfileItem('Full Name', profileData['name'] ?? 'N/A'),
-                        _buildProfileItem('Date of Birth', profileData['dob'] ?? 'N/A'),
-                        _buildProfileItem('Gender', profileData['gender'] ?? 'N/A'),
-                        _buildProfileItem('Phone Number', profileData['phone'] ?? 'N/A'),
-                        _buildProfileItem('Email Address', profileData['email'] ?? 'N/A'),
-                        _buildProfileItem('Address', profileData['address'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Full Name', profileData['name'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Date of Birth', profileData['dob'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Gender', profileData['gender'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Phone Number', profileData['phone'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Email Address', profileData['email'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Address', profileData['address'] ?? 'N/A'),
                       ],
                     ),
 
@@ -139,11 +133,12 @@ class _WorkerProfileState extends State<WorkerProfile> {
                       children: [
                         _buildProfileItem('Emergency Contact Number',
                             profileData['emergencyContact'] ?? 'N/A'),
-                        _buildProfileItem(
-                            'Duration of Stay',
+                        _buildProfileItem('Duration of Stay',
                             '${profileData['stayDuration'] ?? 0} Months'),
-                        _buildProfileItem('Skill', profileData['skill'] ?? 'N/A'),
-                        _buildProfileItem('Experience', profileData['experience'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Skill', profileData['skill'] ?? 'N/A'),
+                        _buildProfileItem(
+                            'Experience', profileData['experience'] ?? 'N/A'),
                       ],
                     ),
 
@@ -154,9 +149,9 @@ class _WorkerProfileState extends State<WorkerProfile> {
                       title: 'Uploaded Documents',
                       children: [
                         _buildDocumentItem('Government-issued ID',
-                            profileData['govtID'] ?? 'Not Uploaded'),
+                            profileData['govtID'] == null ? 'Not Uploaded' : 'Uploaded'),
                         _buildDocumentItem('Proof of Address',
-                            profileData['addressProof'] ?? 'Not Uploaded'),
+                            profileData['AddressProof'] == null ? 'Not Uploaded' : 'Uploaded'),
                       ],
                     ),
 
@@ -179,7 +174,10 @@ class _WorkerProfileState extends State<WorkerProfile> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text('Log Out', style: TextStyle(color: Colors.white),),
+                        child: const Text(
+                          'Log Out',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -275,7 +273,8 @@ class _WorkerProfileState extends State<WorkerProfile> {
   void _editProfilePicture() {
     // Logic to handle profile picture update (e.g., opening a file picker or camera)
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Edit Profile Picture feature coming soon!')),
+      const SnackBar(
+          content: Text('Edit Profile Picture feature coming soon!')),
     );
   }
 }
