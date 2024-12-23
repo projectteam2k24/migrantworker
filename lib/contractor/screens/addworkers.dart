@@ -40,6 +40,10 @@ class Worker {
   // Create a Worker from a Firestore document
   factory Worker.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+
+    // Safely access 'assigned' field
+    String? assigned = data['assigned'];
+
     return Worker(
       workerId: doc.id, // Firestore Document ID as workerId
       name: data['name'] ?? '',
@@ -48,7 +52,9 @@ class Worker {
       phone: data['phone'] ?? '',
       email: data['email'] ?? '',
       deviceToken: data['deviceToken'] ?? '',
-      assigned: data['assigned'], // Retrieve assigned field
+      assigned: assigned == null || assigned == ""
+          ? null
+          : assigned, // Handle null or empty strings
     );
   }
 }
@@ -65,7 +71,7 @@ class _AddWorkersState extends State<AddWorkers> {
   List<Worker> workers = [];
   bool isLoading = true; // Track loading state
 
-  // Fetch unassigned workers (workers where 'assigned' field is null or missing)
+  // Fetch unassigned workers (workers where 'assigned' field is null or empty string)
   Future<void> fetchUnassignedWorkers() async {
     try {
       // Fetch all workers from the Firestore collection
@@ -74,7 +80,11 @@ class _AddWorkersState extends State<AddWorkers> {
       // Filter workers where 'assigned' is null or an empty string
       setState(() {
         workers = snapshot.docs
-            .where((doc) => doc['assigned'] == null || doc['assigned'] == "")
+            .where((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              // Check if the 'assigned' field is either missing, null, or empty
+              return data['assigned'] == null || data['assigned'] == "";
+            })
             .map((doc) => Worker.fromFirestore(doc))
             .toList();
         isLoading = false; // Data has been fetched, stop loading
@@ -113,14 +123,21 @@ class _AddWorkersState extends State<AddWorkers> {
           ? contractorSnapshot.get('name') ?? 'Unknown Contractor'
           : 'Unknown Contractor';
 
-      // Create a notification with the workerId and contractorName
+      // Fetch the current user's name (contractor's name)
+      String currentUserName = user.displayName ??
+          'Unknown User'; // This gets the user's name from Firebase Authentication
+
+      // Create a notification with the workerId, contractorName, and currentUserName
       await _firestore.collection('notifications').add({
         'workerName': worker.name,
-        'message': 'You have a new job request from $contractorName.',
+        'message':
+            'You have a new job request from $contractorName ($currentUserName).',
         'workerId': worker.workerId,
         'timestamp': FieldValue.serverTimestamp(),
         'contractorId': user.uid, // Send contractor's UID in the notification
         'contractorName': contractorName, // Add contractor name in notification
+        'currentUserName':
+            currentUserName, // Add current user's name in notification
       });
 
       // Show feedback

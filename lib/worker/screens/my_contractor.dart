@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class MyContractor extends StatefulWidget {
@@ -8,6 +11,47 @@ class MyContractor extends StatefulWidget {
 }
 
 class _MyContractorState extends State<MyContractor> {
+  late Future<Map<String, dynamic>> contractorDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    contractorDetails = fetchContractorDetails();
+  }
+
+  Future<Map<String, dynamic>> fetchContractorDetails() async {
+    try {
+      // Fetch the current user's UID
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User not logged in');
+      }
+
+      // Fetch the assignment for the current user
+      var assignmentSnapshot = await FirebaseFirestore.instance
+          .collection('assignments')
+          .doc(user.uid) // Use current user's UID to fetch the assignment
+          .get();
+
+      if (assignmentSnapshot.exists) {
+        String contractorId = assignmentSnapshot.data()?['contractorId'];
+
+        // Fetch the contractor details using the contractor ID
+        var contractorSnapshot = await FirebaseFirestore.instance
+            .collection('Contractor')
+            .doc(contractorId)
+            .get();
+
+        if (contractorSnapshot.exists) {
+          return contractorSnapshot.data()!;
+        }
+      }
+    } catch (e) {
+      print('Error fetching contractor details: $e');
+    }
+    return {};
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,10 +65,10 @@ class _MyContractorState extends State<MyContractor> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back,
-              color: Colors.white, // Set the back button color to white
+              color: Colors.white,
             ),
             onPressed: () {
-              Navigator.pop(context); // Navigates to the previous page
+              Navigator.pop(context);
             },
           ),
           title: const Text(
@@ -38,66 +82,87 @@ class _MyContractorState extends State<MyContractor> {
           centerTitle: true,
           elevation: 0,
         ),
-        body: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor:
-                          Colors.green, // Set background color to green
-                      child: Icon(
-                        Icons.person_2_outlined,
-                        size: 60, // Increased icon size
-                        color: Colors.white, // Set the icon color to white
+        body: FutureBuilder<Map<String, dynamic>>(
+          future: contractorDetails,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text("No contractor assigned"));
+            }
+
+            var contractorData = snapshot.data!;
+
+            return Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.green,
+                          child: Icon(
+                            Icons.person_2_outlined,
+                            size: 60,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Center(
-                    child: Text(
-                      'John Doe', // Contractor name
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                        fontFamily: 'Times New Roman',
+                      const SizedBox(height: 20),
+                      Center(
+                        child: Text(
+                          contractorData['name'] ?? 'No Name',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                            fontFamily: 'Times New Roman',
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const Center(
-                    child: Text(
-                      'Experienced Contractor', // Role or specialization
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
+                      Center(
+                        child: Text(
+                          contractorData['role'] ?? 'No Role',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 30),
+                      _buildSectionTitle('Personal Information'),
+                      _buildProfileItem(
+                          'Full Name', contractorData['name'] ?? ''),
+                      _buildProfileItem(
+                          'Date of Birth', contractorData['dob'] ?? ''),
+                      _buildProfileItem(
+                          'Gender', contractorData['gender'] ?? ''),
+                      _buildProfileItem(
+                          'Phone Number', contractorData['phone'] ?? ''),
+                      _buildProfileItem(
+                          'Email Address', contractorData['email'] ?? ''),
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('Professional Details'),
+                      _buildProfileItem(
+                          'Company Name', contractorData['companyName'] ?? ''),
+                      _buildProfileItem(
+                          'Role/Position', contractorData['role'] ?? ''),
+                      _buildProfileItem(
+                          'Experience', contractorData['experience'] ?? ''),
+                      _buildProfileItem(
+                          'Expertise', contractorData['expertise'] ?? ''),
+                    ],
                   ),
-                  const SizedBox(height: 30),
-                  _buildSectionTitle('Personal Information'),
-                  _buildProfileItem('Full Name', 'John Doe'),
-                  _buildProfileItem('Date of Birth', '12/12/1980'),
-                  _buildProfileItem('Gender', 'Male'),
-                  _buildProfileItem('Phone Number', '+1 234 567 8901'),
-                  _buildProfileItem('Email Address', 'johndoe@example.com'),
-                  _buildProfileItem('Address', '123 Main St, Springfield'),
-                  const SizedBox(height: 20),
-                  _buildSectionTitle('Professional Details'),
-                  _buildProfileItem('Company Name', 'Doe Constructions'),
-                  _buildProfileItem('Role/Position', 'Senior Contractor'),
-                  _buildProfileItem('Experience', '15 Years'),
-                  _buildProfileItem('Expertise', 'Carpentry, Electrical Work'),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

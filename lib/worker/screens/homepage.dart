@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:migrantworker/contractor/screens/contractordetailpage.dart';
 import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/exchange_contractor.dart';
 import 'package:migrantworker/worker/screens/my_contractor.dart';
@@ -130,41 +133,124 @@ class _WorkerHomeState extends State<WorkerHome> {
         drawer: ProfileMenu(widthFactor: widthFactor),
         body: Padding(
           padding: EdgeInsets.all(widthFactor * 0.04),
-          child: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return Container(
-                height: heightFactor * 0.15,
-                margin: EdgeInsets.only(bottom: heightFactor * 0.02),
-                decoration: BoxDecoration(
-                  color: Colors.lightGreen[100],
-                  borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5.0,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.category,
-                      size: widthFactor * 0.12,
-                      color: Colors.green,
-                    ),
-                    SizedBox(width: widthFactor * 0.02),
-                    Text(
-                      "Card ${index + 1}",
-                      style: TextStyle(
-                        fontSize: widthFactor * 0.04,
-                        fontWeight: FontWeight.bold,
+          child: FutureBuilder<QuerySnapshot>(
+            future: FirebaseFirestore.instance.collection('Contractor').get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No contractors available.'));
+              }
+
+              var contractorDocs = snapshot.data!.docs;
+
+              return ListView.builder(
+                itemCount: contractorDocs.length,
+                itemBuilder: (context, index) {
+                  var contractor =
+                      contractorDocs[index].data() as Map<String, dynamic>;
+                  String profileImageUrl = contractor['profilePicture'] ?? '';
+                  String name = contractor['name'] ?? 'No Name';
+                  String role = contractor['role'] ?? 'No Role';
+                  String contact = contractor['phone'] ?? 'No Contact';
+                  String email = contractor['email'] ?? 'No Email';
+
+                  return GestureDetector(
+                    onTap: () {
+                      print(contractor['skill']);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ContractorAddetailPage(
+                              contractorId:
+                                  contractorDocs[index].id, // Pass document ID
+                              name: contractor['name'] ?? 'No Name',
+                              jobType: contractor['role'] ?? 'No Role',
+                              phone: contractor['phone'] ?? 'No Phone Number',
+                              email: contractor['email'] ?? 'No Email',
+                              companyName:
+                                  contractor['companyName'] ?? 'No Company',
+                              experience:
+                                  contractor['experience'] ?? 'No Experience',
+                              skills: contractor['skill'] ?? 'No Skill',
+                              profilePictureUrl: contractor['profilePicture'],
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: heightFactor * 0.15,
+                      margin: EdgeInsets.only(bottom: heightFactor * 0.02),
+                      decoration: BoxDecoration(
+                        color: Colors.lightGreen[100],
+                        borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5.0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // Left side: Profile image or default icon
+                          Container(
+                            width: widthFactor * 0.23,
+                            height: heightFactor * 0.10,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: profileImageUrl.isNotEmpty
+                                  ? DecorationImage(
+                                      image: NetworkImage(profileImageUrl),
+                                      fit: BoxFit.cover)
+                                  : null,
+                              color: Colors.grey[300],
+                            ),
+                            child: profileImageUrl.isEmpty
+                                ? Icon(Icons.person,
+                                    size: widthFactor * 0.12,
+                                    color: Colors.green)
+                                : null,
+                          ),
+                          SizedBox(width: widthFactor * 0.02),
+                          // Right side: Contractor details
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: TextStyle(
+                                      fontSize: widthFactor * 0.05,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(role,
+                                    style: TextStyle(
+                                        fontSize: widthFactor * 0.04,
+                                        color: Colors.grey)),
+                                Text(contact,
+                                    style: TextStyle(
+                                        fontSize: widthFactor * 0.04,
+                                        color: Colors.grey)),
+                                Text(email,
+                                    style: TextStyle(
+                                        fontSize: widthFactor * 0.04,
+                                        color: Colors.grey)),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),
@@ -223,18 +309,64 @@ class _WorkerHomeState extends State<WorkerHome> {
   }
 }
 
-class ProfileMenu extends StatelessWidget {
+class ProfileMenu extends StatefulWidget {
   final double widthFactor;
+
   const ProfileMenu({super.key, required this.widthFactor});
+
+  @override
+  State<ProfileMenu> createState() => _ProfileMenuState();
+}
+
+class _ProfileMenuState extends State<ProfileMenu> {
+  late String userName;
+
+  @override
+  void initState() {
+    super.initState();
+    userName = 'Loading...'; // Initial value for userName
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('Worker') // Replace with your Firestore collection name
+            .doc(userId)
+            .get();
+
+        if (snapshot.exists) {
+          setState(() {
+            userName = snapshot.data()?['name'] ?? 'Unknown User';
+          });
+        } else {
+          setState(() {
+            userName = 'User Not Found';
+          });
+        }
+      } else {
+        setState(() {
+          userName = 'Not Logged In';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        userName = 'Error Loading Name';
+      });
+      print('Error fetching user name: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: widthFactor * 0.8,
+      width: widget.widthFactor * 0.8,
       child: Container(
         color: Colors.green.shade100,
         padding: EdgeInsets.symmetric(
-          horizontal: widthFactor * 0.05,
+          horizontal: widget.widthFactor * 0.05,
           vertical: 20.0,
         ),
         child: Column(
@@ -242,11 +374,11 @@ class ProfileMenu extends StatelessWidget {
           children: [
             Center(
               child: CircleAvatar(
-                radius: widthFactor * 0.13,
+                radius: widget.widthFactor * 0.13,
                 backgroundColor: Colors.green,
                 child: Icon(
                   Icons.person,
-                  size: widthFactor * 0.13,
+                  size: widget.widthFactor * 0.13,
                   color: Colors.white,
                 ),
               ),
@@ -254,9 +386,9 @@ class ProfileMenu extends StatelessWidget {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                'Jais Roy',
+                userName,
                 style: TextStyle(
-                  fontSize: widthFactor * 0.055,
+                  fontSize: widget.widthFactor * 0.055,
                   fontWeight: FontWeight.bold,
                 ),
               ),
