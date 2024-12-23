@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class WorkerChatScreen extends StatefulWidget {
-  // Recipient ID to identify the chat
-
   WorkerChatScreen();
 
   @override
@@ -20,6 +18,8 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
 
   String? recipt;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -33,27 +33,22 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
       setState(() {
         loading = true;
       });
-      // Fetch the document for the given contractor ID
+
       final documentSnapshot = await FirebaseFirestore.instance
           .collection('Worker')
-          .doc(FirebaseAuth
-              .instance.currentUser?.uid) // Access the specific document
+          .doc(FirebaseAuth.instance.currentUser?.uid)
           .get();
 
-      // Check if the document exists
       if (documentSnapshot.exists) {
         final data = documentSnapshot.data();
-
         recipt = data!['assigned'];
-        return data as Map<String, dynamic>?; // Return the data as a Map
+        return data as Map<String, dynamic>?;
       } else {
-        return null; // Return null if no document exists
+        return null;
       }
     } catch (e) {
       print("Error fetching worker data: $e");
       rethrow;
-
-      // Re-throw the error for external handling
     } finally {
       setState(() {
         loading = false;
@@ -63,7 +58,7 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
 
   // Send message to Firestore
   Future<void> _sendMessage() async {
-    if (_messageController.text.isNotEmpty) {
+    if (_messageController.text.isNotEmpty && recipt != null) {
       await messagesCollection.add({
         'senderId': currentUserId,
         'recipientId': recipt,
@@ -71,22 +66,44 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
         'timestamp': FieldValue.serverTimestamp(),
       });
       _messageController.clear();
+      _scrollToBottom();
+    }
+  }
+
+  // Scroll to the latest message
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 
   // Build the message list
   Widget _buildMessageList() {
+    if (recipt == null) {
+      return const Center(
+        child: Text('No recipient assigned for this chat.'),
+      );
+    }
+
     return StreamBuilder<QuerySnapshot>(
       stream: messagesCollection
-          .where('recipientId', whereIn: [currentUserId, recipt]).snapshots(),
+          .where('senderId', whereIn: [currentUserId, recipt])
+          .where('recipientId', whereIn: [currentUserId, recipt])
+          .orderBy('timestamp', descending: false) // Chronological order
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
         final messages = snapshot.data!.docs;
+
         return ListView.builder(
-          reverse: true,
+          controller: _scrollController,
           itemCount: messages.length,
           itemBuilder: (context, index) {
             final message = messages[index];
@@ -94,36 +111,53 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
             final text = message['message'];
             final timestamp = message['timestamp']?.toDate() ?? DateTime.now();
 
-            return ListTile(
-              title: Align(
-                alignment: senderId == currentUserId
+            final isSentByCurrentUser = senderId == currentUserId;
+
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+              child: Align(
+                alignment: isSentByCurrentUser
                     ? Alignment.centerRight
                     : Alignment.centerLeft,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
-                  decoration: BoxDecoration(
-                    color: senderId == currentUserId
-                        ? Colors.green
-                        : Colors.grey[300],
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                        color: senderId == currentUserId
-                            ? Colors.white
-                            : Colors.black),
-                  ),
-                ),
-              ),
-              subtitle: Align(
-                alignment: senderId == currentUserId
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Text(
-                  '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                child: Column(
+                  crossAxisAlignment: isSentByCurrentUser
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 14.0),
+                      decoration: BoxDecoration(
+                        color: isSentByCurrentUser
+                            ? Colors.green
+                            : Colors.grey[300],
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(16.0),
+                          topRight: const Radius.circular(16.0),
+                          bottomLeft: isSentByCurrentUser
+                              ? const Radius.circular(16.0)
+                              : Radius.zero,
+                          bottomRight: isSentByCurrentUser
+                              ? Radius.zero
+                              : const Radius.circular(16.0),
+                        ),
+                      ),
+                      child: Text(
+                        text,
+                        style: TextStyle(
+                          color: isSentByCurrentUser
+                              ? Colors.white
+                              : Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
+                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -141,15 +175,10 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
         backgroundColor: Colors.green,
       ),
       body: loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Message List
                 Expanded(child: _buildMessageList()),
-
-                // Message Input Area
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -175,82 +204,6 @@ class _WorkerChatScreenState extends State<WorkerChatScreen> {
                   ),
                 ),
               ],
-            ),
-    );
-  }
-}
-
-class WorkerListScreen extends StatefulWidget {
-  @override
-  _WorkerListScreenState createState() => _WorkerListScreenState();
-}
-
-class _WorkerListScreenState extends State<WorkerListScreen> {
-  late String contractorId;
-  late List<Map<String, dynamic>> assignedWorkers;
-
-  @override
-  void initState() {
-    super.initState();
-    contractorId = FirebaseAuth.instance.currentUser!.uid;
-    assignedWorkers = [];
-    _fetchAssignedWorkers();
-  }
-
-  // Fetch assigned workers for the contractor
-  Future<void> _fetchAssignedWorkers() async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('Worker')
-          .where('assigned', isEqualTo: contractorId)
-          .get();
-
-      setState(() {
-        assignedWorkers = snapshot.docs.map((doc) {
-          final data = doc.data();
-          data['id'] = doc.id; // Include document ID
-          return data;
-        }).toList();
-      });
-    } catch (e) {
-      print("Error fetching assigned workers: $e");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Assigned Workers'),
-        backgroundColor: Colors.green,
-      ),
-      body: assignedWorkers.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: assignedWorkers.length,
-              itemBuilder: (context, index) {
-                final worker = assignedWorkers[index];
-                final workerName = worker['name'] ?? 'Unknown Worker';
-                final workerId = worker['id'];
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  elevation: 2.0,
-                  child: ListTile(
-                    leading: const Icon(Icons.person, color: Colors.green),
-                    title: Text(workerName),
-                    onTap: () {
-                      // Navigate to WorkerChatScreen and pass recipientId
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WorkerChatScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
             ),
     );
   }
