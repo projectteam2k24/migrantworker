@@ -378,6 +378,27 @@ class _ContractorHomeState extends State<ContractorHome> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
+        floatingActionButton: SizedBox(
+          height: widthFactor * 0.15,
+          width: widthFactor * 0.15,
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return const WorkerDetailsPage();
+                },
+              ));
+            },
+            shape: const CircleBorder(),
+            backgroundColor: Colors.lightGreen,
+            child: Icon(
+              Icons.add,
+              size: widthFactor * 0.09,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
