@@ -193,12 +193,13 @@ class JobCardList extends StatelessWidget {
           itemBuilder: (context, index) {
             final job = jobs[index].data() as Map<String, dynamic>;
             final imageUrls = job['images'] ?? [];
+             final jobId = jobs[index].id;
 
             return GestureDetector(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return JobDetailsPage(job: job);
+                    return JobDetailsPage(job: job, jobId: jobId,);
                   },
                 ));
               },
