@@ -24,6 +24,7 @@ class _ContractorHomeState extends State<ContractorHome> {
   int _selectedIndex = 0;
   String profilePictureUrl = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
