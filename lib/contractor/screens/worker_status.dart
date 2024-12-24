@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:migrantworker/contractor/screens/assignWorker.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 
 class WorkerStatusPage extends StatefulWidget {
@@ -19,7 +20,8 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
   }
 
   Future<void> _fetchJobProviders() async {
-    final providerDocs = await FirebaseFirestore.instance.collection('Job Provider').get();
+    final providerDocs =
+        await FirebaseFirestore.instance.collection('Job Provider').get();
     setState(() {
       for (var doc in providerDocs.docs) {
         providerNames[doc.id] = doc.get('name') ?? 'Unknown';
@@ -55,7 +57,8 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
       body: Padding(
         padding: EdgeInsets.all(widthFactor * 0.04),
         child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('AssignedJobs').snapshots(),
+          stream:
+              FirebaseFirestore.instance.collection('AssignedJobs').snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -76,7 +79,8 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                 String status = currentProgress == 100.0
                     ? "Completed"
                     : (currentProgress > 0.0 ? "In Progress" : "Not Started");
-                final providerName = providerNames[jobProviderUid] ?? 'Loading...';
+                final providerName =
+                    providerNames[jobProviderUid] ?? 'Loading...';
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 500),
@@ -176,10 +180,33 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                               'progress': newValue,
                               'status': newValue == 100.0
                                   ? "Completed"
-                                  : (newValue > 0.0 ? "In Progress" : "Not Started"),
+                                  : (newValue > 0.0
+                                      ? "In Progress"
+                                      : "Not Started"),
                             });
                             setState(() {});
                           },
+                        ),
+                        // Add Assign Worker button
+                        SizedBox(height: heightFactor * 0.02),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // Navigate to the AssignWorkerPage
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AssignWorkerPage(jobId: job.id),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue, // Button color
+                          ),
+                          child: Text(
+                            'Assign Worker',
+                            style: TextStyle(fontSize: widthFactor * 0.045),
+                          ),
                         ),
                       ],
                     ),

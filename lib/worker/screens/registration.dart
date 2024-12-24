@@ -51,16 +51,17 @@ class _RegisterWorkerState extends State<RegisterWorker> {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
           return RegisterWorker1(
-              name: FullNameController.text,
-              profilepic: _profileImage,
-              dob: DOBController.text,
-              gender: GenderController.text,
-              phone: PhoneController.text,
-              email: EmailController.text,
-              address: AddressController.text,
-              emergencyContact: EmergencyPhoneController.text,
-              duration: int.parse(StayController.text),
-              password: PasswordController.text);
+            name: FullNameController.text,
+            profilepic: _profileImage,
+            dob: DOBController.text,
+            gender: GenderController.text,
+            phone: PhoneController.text,
+            email: EmailController.text,
+            address: AddressController.text,
+            emergencyContact: EmergencyPhoneController.text,
+            duration: int.parse(StayController.text),
+            password: PasswordController.text,
+          );
         },
       )); // You can add further sign-up logic here, like calling an API
     } else {
@@ -532,85 +533,82 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
 
   // Sign-up handler that checks if the form is valid before printing the email
 // Updated RegisterWorkerHandler to handle file uploads
-Future<void> RegisterWorkerHandler() async {
-  if (_formKey.currentState?.validate() ?? false) {
-    try {
-      // Upload files to Cloudinary
-      String? profileUrl;
-      String? govtIdUrl;
-      String? addressProofUrl;
+  Future<void> RegisterWorkerHandler() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        // Upload files to Cloudinary
+        String? profileUrl;
+        String? govtIdUrl;
+        String? addressProofUrl;
 
-      // Upload Profile Picture
-      if (widget.profilepic != null) {
-        final response = await cloudinary.upload(
-          file: widget.profilepic!.path,
-          resourceType: CloudinaryResourceType.image,
-          folder: 'worker/profile',
+        // Upload Profile Picture
+        if (widget.profilepic != null) {
+          final response = await cloudinary.upload(
+            file: widget.profilepic!.path,
+            resourceType: CloudinaryResourceType.image,
+            folder: 'worker/profile',
+          );
+          profileUrl = response.secureUrl;
+        }
+
+        // Upload Government ID
+        if (govtIdFile != null) {
+          final response = await cloudinary.upload(
+              file: govtIdFile!,
+              resourceType: CloudinaryResourceType.image,
+              folder: 'worker/govtIdFiles');
+          govtIdUrl = response.secureUrl;
+        }
+
+        // Upload Address Proof
+        if (AddressProofFile != null) {
+          final response = await cloudinary.upload(
+              file: AddressProofFile!,
+              resourceType: CloudinaryResourceType.image,
+              folder: 'worker/addressProofFiles');
+          addressProofUrl = response.secureUrl;
+        }
+
+        // Call the workerReg method with the uploaded URLs
+        Future<bool> res = WorkerAuthService().workerReg(
+          name: widget.name,
+          dob: widget.dob,
+          gender: widget.gender,
+          phone: widget.phone,
+          email: widget.email,
+          address: widget.address,
+          emergencyContact: widget.emergencyContact,
+          duration: widget.duration,
+          password: widget.password,
+          skill: ExpertiseController.text,
+          salary: SalaryController.text,
+          languages: LanguageController.text,
+          govtID: govtIdUrl,
+          AddressProof: addressProofUrl,
+          profile: profileUrl,
+          context: context,
         );
-        profileUrl = response.secureUrl;
-      }
 
-      // Upload Government ID
-      if (govtIdFile != null) {
-        final response = await cloudinary.upload(
-          file: govtIdFile!,
-          resourceType: CloudinaryResourceType.image,
-          folder: 'worker/govtIdFiles'
+        if (await res) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WorkerHome(),
+              ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Registration failed. Email already in use.')));
+        }
+      } catch (e) {
+        print('Error during file upload: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload files.')),
         );
-        govtIdUrl = response.secureUrl;
       }
-
-      // Upload Address Proof
-      if (AddressProofFile != null) {
-        final response = await cloudinary.upload(
-          file: AddressProofFile!,
-          resourceType: CloudinaryResourceType.image,
-          folder: 'worker/addressProofFiles'
-        );
-        addressProofUrl = response.secureUrl;
-      }
-
-      // Call the workerReg method with the uploaded URLs
-      Future<bool> res = WorkerAuthService().workerReg(
-        name: widget.name,
-        dob: widget.dob,
-        gender: widget.gender,
-        phone: widget.phone,
-        email: widget.email,
-        address: widget.address,
-        emergencyContact: widget.emergencyContact,
-        duration: widget.duration,
-        password: widget.password,
-        skill: ExpertiseController.text,
-        salary: SalaryController.text,
-        languages: LanguageController.text,
-        govtID: govtIdUrl,
-        AddressProof: addressProofUrl,
-        profile: profileUrl,
-        context: context,
-      );
-
-      if (await res) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const WorkerHome(),
-            ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Registration failed. Email already in use.')));
-      }
-    } catch (e) {
-      print('Error during file upload: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to upload files.')),
-      );
+    } else {
+      print('Form is invalid');
     }
-  } else {
-    print('Form is invalid');
   }
-}
-
 
   String? govtIdFile;
   String? AddressProofFile;

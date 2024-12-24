@@ -44,7 +44,6 @@ class _ContractorHomeState extends State<ContractorHome> {
     _fetchProfilePicture();
     _fetchAssignedJobIds();
   }
-  
 
   Future<void> _fetchProfilePicture() async {
     try {
