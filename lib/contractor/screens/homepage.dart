@@ -22,7 +22,8 @@ class ContractorHome extends StatefulWidget {
 
 class _ContractorHomeState extends State<ContractorHome> {
   int _selectedIndex = 0;
-
+  String profilePictureUrl = '';
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -34,6 +35,42 @@ class _ContractorHomeState extends State<ContractorHome> {
             MaterialPageRoute(builder: (context) => const WorkerStatusPage()));
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfilePicture();
+  }
+
+  Future<void> _fetchProfilePicture() async {
+    try {
+      final userId = _auth.currentUser?.uid;
+      if (userId != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('Contractor') // Replace with your collection name
+            .doc(userId)
+            .get();
+
+        if (snapshot.exists) {
+          final data = snapshot.data();
+          print('Fetched data: $data'); // Debug log
+          setState(() {
+            profilePictureUrl = data?['profilePicture'] ?? '';
+          });
+        } else {
+          print('No user data found');
+          setState(() {
+            profilePictureUrl = ''; // Default placeholder
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching profile picture: $e');
+      setState(() {
+        profilePictureUrl = ''; // Default placeholder
+      });
+    }
   }
 
   @override
@@ -82,10 +119,12 @@ class _ContractorHomeState extends State<ContractorHome> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(
-                          Icons.account_circle,
-                          color: Colors.green,
-                          size: widthFactor * 0.15,
+                        icon: CircleAvatar(
+                          backgroundImage: profilePictureUrl.isNotEmpty
+                              ? NetworkImage(profilePictureUrl)
+                              : const AssetImage('assets/placeer.png')
+                                  as ImageProvider,
+                          radius: 25,
                         ),
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
@@ -349,11 +388,13 @@ class ProfileMenu extends StatefulWidget {
 
 class _ProfileMenuState extends State<ProfileMenu> {
   String userName = 'Loading...';
+  String profilePictureUrl = '';
 
   @override
   void initState() {
     super.initState();
     _fetchUserName();
+    _fetchProfilePicture();
   }
 
   Future<void> _fetchUserName() async {
@@ -388,6 +429,36 @@ class _ProfileMenuState extends State<ProfileMenu> {
     }
   }
 
+  Future<void> _fetchProfilePicture() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('Contractor') // Replace with your collection name
+            .doc(userId)
+            .get();
+
+        if (snapshot.exists) {
+          final data = snapshot.data();
+          print('Fetched data: $data'); // Debug log
+          setState(() {
+            profilePictureUrl = data?['profilePicture'] ?? '';
+          });
+        } else {
+          print('No user data found');
+          setState(() {
+            profilePictureUrl = ''; // Default placeholder
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching profile picture: $e');
+      setState(() {
+        profilePictureUrl = ''; // Default placeholder
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -403,13 +474,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
           children: [
             Center(
               child: CircleAvatar(
-                radius: widget.widthFactor * 0.13,
-                backgroundColor: Colors.green,
-                child: Icon(
-                  Icons.person,
-                  size: widget.widthFactor * 0.13,
-                  color: Colors.white,
-                ),
+                backgroundImage: profilePictureUrl.isNotEmpty
+                    ? NetworkImage(profilePictureUrl)
+                    : const AssetImage('assets/placeholder.png')
+                        as ImageProvider, // Placeholder image
+                radius: 55,
               ),
             ),
             const SizedBox(height: 10),
