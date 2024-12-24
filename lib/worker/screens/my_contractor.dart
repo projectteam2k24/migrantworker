@@ -102,15 +102,15 @@ class _MyContractorState extends State<MyContractor> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Center(
+                      Center(
                         child: CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.green,
-                          child: Icon(
-                            Icons.person_2_outlined,
-                            size: 60,
-                            color: Colors.white,
-                          ),
+                          backgroundImage: contractorData['profilePicture'] !=
+                                      null &&
+                                  contractorData['profilePicture'].isNotEmpty
+                              ? NetworkImage(contractorData['profilePicture'])
+                              : const AssetImage('assets/placeholder.png')
+                                  as ImageProvider,
+                          radius: 55,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -122,15 +122,6 @@ class _MyContractorState extends State<MyContractor> {
                             fontWeight: FontWeight.bold,
                             color: Colors.green,
                             fontFamily: 'Times New Roman',
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          contractorData['role'] ?? 'No Role',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
                           ),
                         ),
                       ),
@@ -154,8 +145,6 @@ class _MyContractorState extends State<MyContractor> {
                           'Role/Position', contractorData['role'] ?? ''),
                       _buildProfileItem(
                           'Experience', contractorData['experience'] ?? ''),
-                      _buildProfileItem(
-                          'Expertise', contractorData['expertise'] ?? ''),
                     ],
                   ),
                 ),
