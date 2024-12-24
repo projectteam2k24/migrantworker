@@ -6,7 +6,7 @@ import 'package:migrantworker/chat_page.dart';
 import 'package:migrantworker/worker/screens/chatscreen.dart';
 
 class WorkerNotificationHub extends StatefulWidget {
-  WorkerNotificationHub({super.key, required this.toggle});
+  const WorkerNotificationHub({super.key, required this.toggle});
 
   final bool toggle;
 

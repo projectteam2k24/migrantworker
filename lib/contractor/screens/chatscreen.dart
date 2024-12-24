@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 class ChatScreen extends StatefulWidget {
   final String recipientId; // Recipient ID to identify the chat
 
-  ChatScreen({required this.recipientId});
+  const ChatScreen({super.key, required this.recipientId});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  TextEditingController _messageController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
   late String currentUserId;
   late CollectionReference messagesCollection;
   final ScrollController _scrollController = ScrollController();

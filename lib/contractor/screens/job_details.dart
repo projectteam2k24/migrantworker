@@ -4,21 +4,45 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
+import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailsPage extends StatefulWidget {
   final Map<String, dynamic> job;
-
-  const JobDetailsPage({super.key, required this.job});
+  final String jobId;
+  const JobDetailsPage({super.key, required this.job, required this.jobId});
 
   @override
   _JobDetailsPageState createState() => _JobDetailsPageState();
 }
 
 class _JobDetailsPageState extends State<JobDetailsPage> {
-  bool isFavorite = false;
+  bool isJobAssigned = false; // Track if the job has been assigned.
 
-  // Function to launch phone dialer
+  @override
+  void initState() {
+    super.initState();
+    _checkJobStatus();
+  }
+
+  // Check if the job has been assigned
+  Future<void> _checkJobStatus() async {
+    final String jobId = widget.jobId; // Use the jobId passed in the widget
+    final String contractorUid = FirebaseAuth.instance.currentUser!.uid;
+
+    final jobDoc = await FirebaseFirestore.instance
+        .collection('jobAssignments')
+        .where('jobId', isEqualTo: jobId)
+        .where('contractorId', isEqualTo: contractorUid)
+        .get();
+
+    setState(() {
+      if (jobDoc.docs.isNotEmpty) {
+        isJobAssigned = true; // Job is already assigned to this contractor
+      }
+    });
+  }
+
+  // Launch phone dialer
   Future<void> _launchPhoneDialer(String phoneNumber) async {
     final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(phoneUri)) {
@@ -30,13 +54,66 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
     }
   }
 
+  // Handle "Take Job" button press
+  Future<void> _handleTakeJob() async {
+    final String jobProviderUid =
+        widget.job['uid'] ?? ''; // UID of the job provider
+    final String contractorUid =
+        FirebaseAuth.instance.currentUser!.uid; // UID of the current contractor
+    final String jobId = widget.jobId;
+    final jobAssignmentId =
+        FirebaseFirestore.instance.collection('jobAssignments').doc().id;
+
+    // Add job assignment to 'JobAssignments' collection
+    await FirebaseFirestore.instance
+        .collection('jobAssignments')
+        .doc(jobAssignmentId)
+        .set({
+      'jobAssignmentId': jobAssignmentId,
+      'jobId': jobId,
+      'contractorId': contractorUid,
+      'jobProviderUid': jobProviderUid,
+      'status': 'assigned', // Job is assigned to this contractor
+      'timestamp': FieldValue.serverTimestamp(),
+      'jobType': widget.job['jobType'],
+      'address': widget.job['address'],
+      'district': widget.job['district'],
+      'contact': widget.job['contactNumber'],
+    });
+
+    // Send a notification to the job provider
+    await FirebaseFirestore.instance.collection('Notifications').add({
+      'jobProviderUid': jobProviderUid,
+      'contractorUid': contractorUid,
+      'jobId': jobId,
+      'message':
+          'A contractor has accepted your job: ${widget.job['jobType']} at ${widget.job['address']}',
+      'jobDetails': {
+        'jobType': widget.job['jobType'],
+        'address': widget.job['address'],
+        'district': widget.job['district'],
+        'contact': widget.job['contactNumber'],
+      },
+      'timestamp': FieldValue.serverTimestamp(),
+      'status': 'pending', // Job provider has not acted on the notification yet
+    });
+
+    setState(() {
+      isJobAssigned = true; // Mark job as assigned in the UI
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Job assigned to you successfully!')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final job = widget.job;
     double widthFactor = MediaQuery.of(context).size.width;
     double heightFactor = MediaQuery.of(context).size.height;
 
-    final List<dynamic> imageUrls = job['images'] ?? []; // Extract image URLs
+    final List<dynamic> imageUrls = job['images'] ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -101,8 +178,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                                             const BouncingScrollPhysics(),
                                         backgroundDecoration:
                                             const BoxDecoration(
-                                          color: Colors.black,
-                                        ),
+                                                color: Colors.black),
                                         pageController: PageController(
                                             initialPage:
                                                 imageUrls.indexOf(imageUrl)),
@@ -223,50 +299,25 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
                 ),
                 SizedBox(width: widthFactor * 0.05),
 
-                // Add to Favorite Button
+                // Take Job Button
                 Expanded(
-  child: ElevatedButton.icon(
-    onPressed: () async {
-      final String jobProviderUid = job['uid'] ?? ''; // Fetch the job provider's UID
-      final String contractorUid = FirebaseAuth.instance.currentUser!.uid; // Replace with actual contractor UID from authentication or state
-      final String notificationId = FirebaseFirestore.instance.collection('Notifications').doc().id;
-      final String jobId = FirebaseFirestore.instance.collection('Jobs').doc().id;
-      // Send Notification to Job Provider
-      await FirebaseFirestore.instance.collection('Notifications').doc(notificationId).set({
-        'notificationId': notificationId,      
-        'jobProviderUid': jobProviderUid,
-        'contractorUid': contractorUid,
-        'message':"You have a new request",
-        'jobId': jobId,
-        'jobDetails': {
-          'jobType': job['jobType'],
-          'address': job['address'],
-          'district': job['district'],
-          'contact': job['contactNumber'],
-        },
-        'status': 'pending', // Default status as pending
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      // Show SnackBar to indicate notification sent
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Job request sent to the provider.')),
-      );
-    },
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.green,
-      padding: EdgeInsets.symmetric(vertical: heightFactor * 0.015),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-      elevation: 5,
-    ),
-    icon: const Icon(Icons.work),
-    label: const Text("Take Job"),
-  ),
-),
-
+                  child: ElevatedButton.icon(
+                    onPressed: isJobAssigned ? null : _handleTakeJob,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor:
+                          isJobAssigned ? Colors.grey : Colors.blueAccent,
+                      padding:
+                          EdgeInsets.symmetric(vertical: heightFactor * 0.015),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 5,
+                    ),
+                    icon: const Icon(Icons.assignment),
+                    label: Text(isJobAssigned ? "Job Taken" : "Take Job"),
+                  ),
+                ),
               ],
             ),
           ),
@@ -275,13 +326,15 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
     );
   }
 
-  // Helper function to build property info
-  Widget _buildPropertyInfo(String label, dynamic value) {
+  Widget _buildPropertyInfo(String title, String? value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Text(
-        "$label: ${value ?? 'N/A'}",
-        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+        "$title: ${value ?? 'N/A'}",
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black,
+        ),
       ),
     );
   }

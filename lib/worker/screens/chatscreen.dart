@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class WorkerChatScreen extends StatefulWidget {
-  WorkerChatScreen();
+  const WorkerChatScreen({super.key});
 
   @override
   _WorkerChatScreenState createState() => _WorkerChatScreenState();
 }
 
 class _WorkerChatScreenState extends State<WorkerChatScreen> {
-  TextEditingController _messageController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
   late String currentUserId;
   late CollectionReference messagesCollection;
 
