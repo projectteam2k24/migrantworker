@@ -18,7 +18,7 @@ class ContractorExchangePage extends StatelessWidget {
             },
           ),
           title: const Text(
-            'Contractor Exchange',
+            'Contractor Change',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
