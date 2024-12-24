@@ -24,7 +24,7 @@ class _ContractorHomeState extends State<ContractorHome> {
   int _selectedIndex = 0;
   String profilePictureUrl = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+  List<String> assignedJobIds = [];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -42,7 +42,9 @@ class _ContractorHomeState extends State<ContractorHome> {
   void initState() {
     super.initState();
     _fetchProfilePicture();
+    _fetchAssignedJobIds();
   }
+  
 
   Future<void> _fetchProfilePicture() async {
     try {
@@ -71,6 +73,21 @@ class _ContractorHomeState extends State<ContractorHome> {
       setState(() {
         profilePictureUrl = ''; // Default placeholder
       });
+    }
+  }
+
+  // Fetch the assigned job IDs from the AssignedJobs collection
+  Future<void> _fetchAssignedJobIds() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('AssignedJobs').get();
+      final assignedJobs = snapshot.docs;
+      final List<String> jobIds = assignedJobs.map((doc) => doc.id).toList();
+      setState(() {
+        assignedJobIds = jobIds;
+      });
+    } catch (e) {
+      print('Error fetching assigned job IDs: $e');
     }
   }
 
@@ -177,13 +194,23 @@ class _ContractorHomeState extends State<ContractorHome> {
                   itemCount: jobs.length,
                   itemBuilder: (context, index) {
                     final job = jobs[index].data() as Map<String, dynamic>;
+                    final jobId = jobs[index].id;
+
+                    // Skip jobs that are already assigned
+                    if (assignedJobIds.contains(jobId)) {
+                      return SizedBox.shrink();
+                    }
+
                     final imageUrls = job['images'] ?? [];
 
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return JobDetailsPage(job: job);
+                            return JobDetailsPage(
+                              job: job,
+                              jobId: jobId,
+                            );
                           },
                         ));
                       },
@@ -343,37 +370,15 @@ class _ContractorHomeState extends State<ContractorHome> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.work,
+                Icons.check_circle,
                 color: Colors.green,
               ),
-              label: "Working Status",
+              label: "Worker Status",
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.lightGreen,
           onTap: _onItemTapped,
         ),
-        floatingActionButton: SizedBox(
-          height: widthFactor * 0.15,
-          width: widthFactor * 0.15,
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return const WorkerDetailsPage();
-                },
-              ));
-            },
-            shape: const CircleBorder(),
-            backgroundColor: Colors.lightGreen,
-            child: Icon(
-              Icons.add,
-              size: widthFactor * 0.09,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

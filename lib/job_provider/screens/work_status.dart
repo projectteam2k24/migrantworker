@@ -71,8 +71,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                   // Filter jobs based on search query
                   final jobs = snapshot.data!.docs.where((job) {
                     final jobType = job['jobType']?.toString().toLowerCase();
-                    return jobType != null &&
-                        jobType.contains(searchQuery);
+                    return jobType != null && jobType.contains(searchQuery);
                   }).toList();
 
                   if (jobs.isEmpty) {
@@ -91,7 +90,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                       final contractorUid = job['contractorUid'];
                       final jobType = job['jobType'];
                       final progress = (job['progress'] ?? 0.0).toDouble();
-                      final status = progress == 1.0
+                      final status = progress == 100.0
                           ? 'Completed'
                           : progress > 0.0
                               ? 'In Progress'
@@ -165,7 +164,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: progress == 1.0
+                                          color: progress == 100.0
                                               ? Colors.green
                                               : progress > 0.0
                                                   ? Colors.orange
@@ -175,10 +174,12 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 16),
+                                  // Adjusted width for the progress bar
                                   LinearProgressIndicator(
-                                    value: progress,
+                                    value: progress /
+                                        100, // Ensure value is between 0 and 1
                                     backgroundColor: Colors.grey[300],
-                                    color: progress == 1.0
+                                    color: progress == 100.0
                                         ? Colors.green
                                         : progress > 0.0
                                             ? Colors.orange
@@ -189,7 +190,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      '${(progress * 100).toStringAsFixed(0)}% Completed',
+                                      '${(progress).toStringAsFixed(0)}% Completed',
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,

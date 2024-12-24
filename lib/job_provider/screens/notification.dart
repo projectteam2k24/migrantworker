@@ -107,7 +107,8 @@ class _JobProviderNotificationHubState
 
   // Fetch notifications dynamically from Firestore
   Widget _buildNotificationsList() {
-    final currentUserId = FirebaseAuth.instance.currentUser?.uid; // Replace with actual user ID
+    final currentUserId =
+        FirebaseAuth.instance.currentUser?.uid; // Replace with actual user ID
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -130,7 +131,8 @@ class _JobProviderNotificationHubState
           itemBuilder: (context, index) {
             final notification = notifications[index];
             final contractorUid = notification['contractorUid'];
-            final jobDetails = notification['jobDetails'];
+            final jobId =
+                notification['jobId']; // Get the jobId from notification
 
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
@@ -152,6 +154,13 @@ class _JobProviderNotificationHubState
                 final contractorName =
                     contractorSnapshot.data!.get('name') ?? 'Unknown';
 
+                // Check if job details exist, else use individual fields
+                final jobDetails = notification['jobDetails'] ?? {};
+                final jobType = jobDetails['jobType'] ?? 'N/A';
+                final address = jobDetails['address'] ?? 'N/A';
+                final district = jobDetails['district'] ?? 'N/A';
+                final contact = jobDetails['contact'] ?? 'N/A';
+
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
                   elevation: 2.0,
@@ -168,10 +177,10 @@ class _JobProviderNotificationHubState
                       children: [
                         Text("From: $contractorName"),
                         Text(
-                          "Job Type: ${jobDetails['jobType']}\n"
-                          "Address: ${jobDetails['address']}\n"
-                          "District: ${jobDetails['district']}\n"
-                          "Contact: ${jobDetails['contact']}",
+                          "Job Type: $jobType\n"
+                          "Address: $address\n"
+                          "District: $district\n"
+                          "Contact: $contact",
                         ),
                       ],
                     ),
@@ -180,19 +189,26 @@ class _JobProviderNotificationHubState
                       children: [
                         ElevatedButton(
                           onPressed: () async {
-                            // Accept Job
+                            // Accept Job and pass jobId to AssignedJobs
                             await FirebaseFirestore.instance
                                 .collection('AssignedJobs')
                                 .add({
-                              'jobType': jobDetails['jobType'],
-                              'address': jobDetails['address'],
-                              'district': jobDetails['district'],
-                              'contact': jobDetails['contact'],
+                              'jobId': jobId, // Add jobId to AssignedJobs
+                              'jobType': jobType,
+                              'address': address,
+                              'district': district,
+                              'contact': contact,
                               'jobProviderUid': notification['jobProviderUid'],
                               'contractorUid': notification['contractorUid'],
-                              'progress':0.0,
+                              'progress': 0.0,
                               'timestamp': FieldValue.serverTimestamp(),
                             });
+
+                            // Delete Job from Jobs collection
+                            await FirebaseFirestore.instance
+                                .collection('Jobs')
+                                .doc(jobId)
+                                .delete();
 
                             // Delete Notification
                             await FirebaseFirestore.instance
@@ -200,10 +216,12 @@ class _JobProviderNotificationHubState
                                 .doc(notification.id)
                                 .delete();
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Job accepted successfully.')),
-                            );
+                            if (context.mounted)
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Job accepted successfully.')),
+                              );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
