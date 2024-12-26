@@ -9,6 +9,7 @@ import 'package:migrantworker/contractor/screens/profile.dart';
 import 'package:migrantworker/contractor/screens/registration.dart';
 import 'package:migrantworker/contractor/screens/worker_status.dart';
 import 'package:migrantworker/firebase_options.dart';
+import 'package:migrantworker/job_provider/screens/feedback.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
@@ -30,4 +31,3 @@ Future<void> main() async {
   );
   runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
 }
-

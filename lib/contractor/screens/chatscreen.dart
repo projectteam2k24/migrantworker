@@ -56,7 +56,10 @@ class _ChatScreenState extends State<ChatScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: messagesCollection
           .orderBy('timestamp', descending: true) // Order messages by timestamp
-          .where('recipientId',
+          .where('senderId', whereIn: [
+        currentUserId,
+        widget.recipientId
+      ]).where('recipientId',
               whereIn: [currentUserId, widget.recipientId]).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {

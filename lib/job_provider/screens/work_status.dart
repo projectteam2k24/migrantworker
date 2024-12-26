@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:migrantworker/job_provider/screens/feedback.dart';
 
 class WorkingStatusPage extends StatefulWidget {
   const WorkingStatusPage({super.key});
@@ -31,11 +32,11 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Search bar
+            // Search bar for filtering jobs
             TextField(
               onChanged: (value) {
                 setState(() {
-                  searchQuery = value.toLowerCase();
+                  searchQuery = value.trim().toLowerCase();  // Handling extra whitespace
                 });
               },
               decoration: InputDecoration(
@@ -47,7 +48,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
               ),
             ),
             const SizedBox(height: 16),
-            // Job list
+            // Display list of jobs
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -68,7 +69,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                     );
                   }
 
-                  // Filter jobs based on search query
+                  // Filter jobs based on search query (case insensitive)
                   final jobs = snapshot.data!.docs.where((job) {
                     final jobType = job['jobType']?.toString().toLowerCase();
                     return jobType != null && jobType.contains(searchQuery);
@@ -174,10 +175,8 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 16),
-                                  // Adjusted width for the progress bar
                                   LinearProgressIndicator(
-                                    value: progress /
-                                        100, // Ensure value is between 0 and 1
+                                    value: progress / 100,
                                     backgroundColor: Colors.grey[300],
                                     color: progress == 100.0
                                         ? Colors.green
@@ -197,6 +196,18 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                                       ),
                                     ),
                                   ),
+                                  if (progress == 100.0)
+                                    const SizedBox(height: 12),
+                                  if (progress == 100.0)
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _sendFeedback(contractorUid, job.id);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                      ),
+                                      child: const Text('Send Feedback'),
+                                    ),
                                 ],
                               ),
                             ),
@@ -209,6 +220,19 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _sendFeedback(String contractorUid, String jobId) {
+    // Navigate to the feedback page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FeedbackPage(
+          contractorUid: contractorUid,
+          jobId: jobId, userName: '',
         ),
       ),
     );

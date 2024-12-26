@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:migrantworker/contractor/screens/job_details.dart';
+import 'package:migrantworker/contractor/screens/viewfeedback.dart';
 
 import 'profile.dart';
 import 'edit_profile.dart';
@@ -197,7 +198,7 @@ class _ContractorHomeState extends State<ContractorHome> {
 
                     // Skip jobs that are already assigned
                     if (assignedJobIds.contains(jobId)) {
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     }
 
                     final imageUrls = job['images'] ?? [];
@@ -577,6 +578,18 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     },
                   ),
                   ListTile(
+                    leading: const Icon(Icons.thumb_up),
+                    title: const Text('View Feedback'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return FeedbackViewPage();
+                        },
+                      ));
+                    },
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.notifications),
                     title: const Text('Notification Hub'),
                     trailing: const Icon(Icons.arrow_forward_ios),
@@ -626,7 +639,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AddExistingWorker(),
+                      builder: (context) => const WorkerDetailsPage(),
                     )); // Adjust route as necessary
               },
               style: OutlinedButton.styleFrom(

@@ -171,6 +171,8 @@ class _SearchJobPageState extends State<SearchJobPage> {
 }
 
 class JobCardList extends StatelessWidget {
+  const JobCardList({super.key});
+
   @override
   Widget build(BuildContext context) {
     double widthFactor = MediaQuery.of(context).size.width;
@@ -180,7 +182,7 @@ class JobCardList extends StatelessWidget {
       stream: FirebaseFirestore.instance.collection('Jobs').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {

@@ -37,7 +37,7 @@ class _WorkerHomeState extends State<WorkerHome> {
   void Notification() {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
-        return WorkerNotificationHub(
+        return const WorkerNotificationHub(
           toggle: false,
         );
       },
@@ -516,7 +516,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return WorkerNotificationHub(
+                          return const WorkerNotificationHub(
                             toggle: true,
                           );
                         },
@@ -530,7 +530,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return WorkerNotificationHub(
+                          return const WorkerNotificationHub(
                             toggle: false,
                           );
                         },

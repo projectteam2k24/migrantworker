@@ -331,7 +331,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Text(
         "$title: ${value ?? 'N/A'}",
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: Colors.black,
         ),

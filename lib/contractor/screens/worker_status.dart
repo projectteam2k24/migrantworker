@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:migrantworker/contractor/screens/assignWorker.dart';
+import 'package:migrantworker/contractor/screens/viewfeedback.dart'; // Make sure to import your feedback page
 import 'package:migrantworker/contractor/screens/homepage.dart';
+import 'package:migrantworker/job_provider/screens/feedback.dart';
 
 class WorkerStatusPage extends StatefulWidget {
   const WorkerStatusPage({super.key});
@@ -187,24 +189,38 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                             setState(() {});
                           },
                         ),
-                        // Add Assign Worker button
+                        // Update Assign Worker button based on progress
                         SizedBox(height: heightFactor * 0.02),
                         ElevatedButton(
                           onPressed: () async {
-                            // Navigate to the AssignWorkerPage
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AssignWorkerPage(jobId: job.id),
-                              ),
-                            );
+                            if (currentProgress == 100.0) {
+                              // Navigate to the FeedbackPage if the job is completed
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FeedbackViewPage(
+                                      // Pass job ID to FeedbackPage
+                                      ),
+                                ),
+                              );
+                            } else {
+                              // Navigate to the AssignWorkerPage if the job is in progress
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AssignWorkerPage(jobId: job.id),
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue, // Button color
                           ),
                           child: Text(
-                            'Assign Worker',
+                            currentProgress == 100.0
+                                ? 'View Feedback'
+                                : 'Assign Worker',
                             style: TextStyle(fontSize: widthFactor * 0.045),
                           ),
                         ),

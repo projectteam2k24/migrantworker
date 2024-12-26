@@ -115,7 +115,7 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                   child: Container(
                     padding: const EdgeInsets.all(16.0),
                     child: showMessages
-                        ? WorkerChatScreen()
+                        ? const WorkerChatScreen()
                         : _buildNotificationsList(),
                   ),
                 ),
