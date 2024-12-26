@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
 
@@ -31,6 +32,7 @@ class ContractorAddetailPage extends StatefulWidget {
 
 class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
   late Map<String, dynamic> contractorData;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -55,6 +57,12 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     } else {
       throw 'Could not launch $phone';
     }
+  }
+
+  // Function to format timestamps
+  String _formatTimestamp(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    return '${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}';
   }
 
   @override
@@ -82,6 +90,116 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
               // You can implement email functionality here if needed
             }),
             buildCompanyDetailsCard(),
+
+            const SizedBox(height: 24),
+
+            // Feedback Section
+            StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('feedbacks')
+                  .where('contractorUid', isEqualTo: widget.contractorId)
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      'Failed to load feedback. Please try again later.',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No feedback available.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                final feedbacks = snapshot.data!.docs;
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: feedbacks.length,
+                  itemBuilder: (context, index) {
+                    final feedback = feedbacks[index];
+                    final data = feedback.data() as Map<String, dynamic>;
+
+                    return Card(
+                      elevation: 3,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.green.shade700,
+                          backgroundImage: data['profileImage'] != null
+                              ? NetworkImage(data['profileImage'])
+                              : null,
+                          child: data['profileImage'] == null
+                              ? Text(
+                                  data['name'] != null &&
+                                          data['name']!.isNotEmpty
+                                      ? data['name']![0].toUpperCase()
+                                      : '?',
+                                  style: const TextStyle(color: Colors.white),
+                                )
+                              : null,
+                        ),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              data['jobProviderName'] ??
+                                  'Anonymous', // Job provider name
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Row(
+                              children: List.generate(5, (i) {
+                                return Icon(
+                                  i < (data['rating'] ?? 0)
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.amber,
+                                  size: 20,
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Text(
+                              data['message'] ??
+                                  'No feedback provided.', // Feedback message
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black87),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Submitted on: ${_formatTimestamp(data['timestamp'])}',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),

@@ -363,7 +363,6 @@ class _ProfileMenuState extends State<ProfileMenu> {
   String profilePictureUrl = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
   @override
   void initState() {
     super.initState();
@@ -403,7 +402,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
     }
   }
 
-   Future<void> _fetchProfilePicture() async {
+  Future<void> _fetchProfilePicture() async {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId != null) {

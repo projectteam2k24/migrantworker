@@ -309,7 +309,8 @@ class PostJobPage1 extends StatefulWidget {
 
 class _PostJobPage1State extends State<PostJobPage1> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController propertyDescriptionController = TextEditingController();
+  final TextEditingController propertyDescriptionController =
+      TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
   // Cloudinary configuration
@@ -343,7 +344,9 @@ class _PostJobPage1State extends State<PostJobPage1> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${_imageUrls.length} images uploaded successfully!')),
+        SnackBar(
+            content:
+                Text('${_imageUrls.length} images uploaded successfully!')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -515,7 +518,9 @@ class _PostJobPage1State extends State<PostJobPage1> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, TextEditingController controller, {int maxLines = 1}) {
+  Widget _buildTextField(
+      String label, String hint, TextEditingController controller,
+      {int maxLines = 1}) {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
