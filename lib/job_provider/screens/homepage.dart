@@ -10,6 +10,7 @@ import 'package:migrantworker/job_provider/screens/profile.dart';
 import 'package:migrantworker/job_provider/screens/search.dart';
 import 'package:migrantworker/job_provider/screens/work_status.dart';
 import 'package:migrantworker/login.dart';
+import 'package:migrantworker/worker/screens/chatscreen.dart';
 
 class JobProviderHome extends StatefulWidget {
   const JobProviderHome({super.key});
@@ -418,7 +419,7 @@ class ProfileMenu extends StatefulWidget {
 class _ProfileMenuState extends State<ProfileMenu> {
   late String userName;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String  profilePictureUrl = '';
+  String profilePictureUrl = '';
 
   @override
   void initState() {
@@ -460,7 +461,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
     }
   }
 
-   Future<void> _fetchProfilePicture() async {
+  Future<void> _fetchProfilePicture() async {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId != null) {
@@ -576,6 +577,18 @@ class _ProfileMenuState extends State<ProfileMenu> {
                           return const JobProviderNotificationHub(
                             toggle: false,
                           );
+                        },
+                      ));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.notifications),
+                    title: const Text('Chat with AI'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ChatbotScreen();
                         },
                       ));
                     },

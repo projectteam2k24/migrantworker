@@ -95,11 +95,13 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                     selectedBorderColor: Colors.green,
                     children: const [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: Text("Messages"),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: Text("Notifications"),
                       ),
                     ],
@@ -108,14 +110,6 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                         showMessages = index == 0;
                       });
                     },
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: showMessages
-                        ? const WorkerChatScreen()
-                        : _buildNotificationsList(),
                   ),
                 ),
               ],
@@ -199,22 +193,36 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
     try {
       setState(() => loading = true);
 
-      final notification = notifications.firstWhere((n) => n['id'] == notificationId);
+      final notification =
+          notifications.firstWhere((n) => n['id'] == notificationId);
       final String workerId = notification['workerId'];
       final String contractorId = notification['contractorId'];
 
-      await FirebaseFirestore.instance.collection('notifications').doc(notificationId).update({'status': 'accepted'});
-      await FirebaseFirestore.instance.collection('Worker').doc(workerId).update({'assigned': contractorId});
-      await FirebaseFirestore.instance.collection('assignments').doc(workerId).set({
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'status': 'accepted'});
+      await FirebaseFirestore.instance
+          .collection('Worker')
+          .doc(workerId)
+          .update({'assigned': contractorId});
+      await FirebaseFirestore.instance
+          .collection('assignments')
+          .doc(workerId)
+          .set({
         'workerId': workerId,
         'contractorId': contractorId,
         'status': 'assigned',
         'timestamp': Timestamp.now(),
       });
 
-      await FirebaseFirestore.instance.collection('notifications').doc(notificationId).delete();
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationId)
+          .delete();
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request accepted.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Request accepted.')));
       setState(() {
         notifications.removeWhere((n) => n['id'] == notificationId);
         loading = false;
@@ -229,19 +237,30 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
     try {
       setState(() => loading = true);
 
-      final notification = notifications.firstWhere((n) => n['id'] == notificationId);
+      final notification =
+          notifications.firstWhere((n) => n['id'] == notificationId);
 
-      await FirebaseFirestore.instance.collection('notifications').doc(notificationId).update({'status': 'rejected'});
-      await FirebaseFirestore.instance.collection('assignments').doc(notification['workerId']).set({
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'status': 'rejected'});
+      await FirebaseFirestore.instance
+          .collection('assignments')
+          .doc(notification['workerId'])
+          .set({
         'workerId': notification['workerId'],
         'contractorId': notification['contractorId'],
         'status': 'rejected',
         'timestamp': Timestamp.now(),
       });
 
-      await FirebaseFirestore.instance.collection('notifications').doc(notificationId).delete();
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationId)
+          .delete();
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request rejected.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Request rejected.')));
       setState(() {
         notifications.removeWhere((n) => n['id'] == notificationId);
         loading = false;

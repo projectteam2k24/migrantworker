@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'ChatScreen.dart'; // Import ChatScreen
+import 'package:migrantworker/contractor/screens/chatscreen.dart';
 
+// ignore: must_be_immutable
 class ContractorNotificationHub extends StatefulWidget {
   ContractorNotificationHub({super.key, required this.toggle});
 
@@ -168,7 +169,6 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
                 MaterialPageRoute(
                   builder: (context) => ChatScreen(
                     recipientId: workerId,
-                    
                   ),
                 ),
               );

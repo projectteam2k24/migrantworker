@@ -1,206 +1,80 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class WorkerChatScreen extends StatefulWidget {
-  const WorkerChatScreen({super.key});
-
+class ChatbotScreen extends StatefulWidget {
   @override
-  _WorkerChatScreenState createState() => _WorkerChatScreenState();
+  _ChatbotScreenState createState() => _ChatbotScreenState();
 }
 
-class _WorkerChatScreenState extends State<WorkerChatScreen> {
-  final TextEditingController _messageController = TextEditingController();
-  late String currentUserId;
-  late CollectionReference messagesCollection;
-
-  bool loading = false;
-
-  String? recipt;
-
-  final ScrollController _scrollController = ScrollController();
+class _ChatbotScreenState extends State<ChatbotScreen> {
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    messagesCollection = FirebaseFirestore.instance.collection('chats');
-    getWorkerData();
-  }
-
-  Future<Map<String, dynamic>?> getWorkerData() async {
-    try {
-      setState(() {
-        loading = true;
-      });
-
-      final documentSnapshot = await FirebaseFirestore.instance
-          .collection('Worker')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .get();
-
-      if (documentSnapshot.exists) {
-        final data = documentSnapshot.data();
-        recipt = data!['assigned'];
-        return data as Map<String, dynamic>?;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      print("Error fetching worker data: $e");
-      rethrow;
-    } finally {
-      setState(() {
-        loading = false;
-      });
-    }
-  }
-
-  // Send message to Firestore
-  Future<void> _sendMessage() async {
-    if (_messageController.text.isNotEmpty && recipt != null) {
-      await messagesCollection.add({
-        'senderId': currentUserId,
-        'recipientId': recipt,
-        'message': _messageController.text,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      _messageController.clear();
-      _scrollToBottom();
-    }
-  }
-
-  // Scroll to the latest message
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  // Build the message list
-  Widget _buildMessageList() {
-    if (recipt == null) {
-      return const Center(
-        child: Text('No recipient assigned for this chat.'),
-      );
-    }
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: messagesCollection
-          .where('senderId', whereIn: [currentUserId, recipt])
-          .where('recipientId', whereIn: [currentUserId, recipt])
-          .orderBy('timestamp', descending: false) // Chronological order
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final messages = snapshot.data!.docs;
-
-        return ListView.builder(
-          controller: _scrollController,
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            final message = messages[index];
-            final senderId = message['senderId'];
-            final text = message['message'];
-            final timestamp = message['timestamp']?.toDate() ?? DateTime.now();
-
-            final isSentByCurrentUser = senderId == currentUserId;
-
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-              child: Align(
-                alignment: isSentByCurrentUser
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: isSentByCurrentUser
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 14.0),
-                      decoration: BoxDecoration(
-                        color: isSentByCurrentUser
-                            ? Colors.green
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(16.0),
-                          topRight: const Radius.circular(16.0),
-                          bottomLeft: isSentByCurrentUser
-                              ? const Radius.circular(16.0)
-                              : Radius.zero,
-                          bottomRight: isSentByCurrentUser
-                              ? Radius.zero
-                              : const Radius.circular(16.0),
-                        ),
-                      ),
-                      child: Text(
-                        text,
-                        style: TextStyle(
-                          color: isSentByCurrentUser
-                              ? Colors.white
-                              : Colors.black87,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
-                      style: const TextStyle(fontSize: 10, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            );
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Optional: Update a progress bar or loader if required.
           },
-        );
-      },
-    );
+          onPageStarted: (String url) {
+            print('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            print('Page finished loading: $url');
+          },
+          onWebResourceError: (WebResourceError error) {
+            print('Error loading resource: ${error.description}');
+          },
+        ),
+      )
+      ..loadHtmlString('''
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Chatbot</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f0f0;
+              }
+              iframe {
+                width: 100%;
+                max-width: 400px;
+                height: 90vh;
+                border: none;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+              }
+            </style>
+          </head>
+          <body>
+            <iframe
+              src="https://www.chatbase.co/chatbot-iframe/chatid"
+              allow="camera; microphone; autoplay; encrypted-media"
+            ></iframe>
+          </body>
+          </html>
+      ''');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(child: _buildMessageList()),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          decoration: InputDecoration(
-                            hintText: 'Type a message...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 16.0),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.send, color: Colors.green),
-                        onPressed: _sendMessage,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+      appBar: AppBar(
+        title: Text('Chatbot'),
+        backgroundColor: Colors.deepPurpleAccent,
+      ),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
