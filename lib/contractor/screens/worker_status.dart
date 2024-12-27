@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:migrantworker/contractor/screens/assignWorker.dart';
+import 'package:migrantworker/contractor/screens/viewIncident.dart';
 import 'package:migrantworker/contractor/screens/viewfeedback.dart'; // Make sure to import your feedback page
 import 'package:migrantworker/contractor/screens/homepage.dart';
-import 'package:migrantworker/job_provider/screens/feedback.dart';
 
 class WorkerStatusPage extends StatefulWidget {
   const WorkerStatusPage({super.key});
@@ -100,138 +100,164 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                     ],
                   ),
                   child: Container(
-                    padding: EdgeInsets.all(widthFactor * 0.05),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          providerName,
-                          style: TextStyle(
-                            fontSize: widthFactor * 0.05,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green[900],
-                          ),
-                        ),
-                        SizedBox(height: heightFactor * 0.01),
-                        Text(
-                          "Current Job: ${job['jobType']}",
-                          style: TextStyle(
-                            fontSize: widthFactor * 0.045,
-                            color: Colors.green[800],
-                          ),
-                        ),
-                        SizedBox(height: heightFactor * 0.015),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      padding: EdgeInsets.all(widthFactor * 0.05),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Status:",
+                              providerName,
                               style: TextStyle(
-                                fontSize: widthFactor * 0.045,
+                                fontSize: widthFactor * 0.05,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.green[900],
                               ),
                             ),
+                            SizedBox(height: heightFactor * 0.01),
                             Text(
-                              status,
+                              "Current Job: ${job['jobType']}",
                               style: TextStyle(
                                 fontSize: widthFactor * 0.045,
-                                color: status == "Completed"
-                                    ? Colors.green[700]
-                                    : (status == "In Progress"
-                                        ? Colors.orange[700]
-                                        : Colors.red[700]),
-                                fontWeight: FontWeight.w500,
+                                color: Colors.green[800],
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: heightFactor * 0.02),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Completion:",
-                              style: TextStyle(
-                                fontSize: widthFactor * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "${currentProgress.toInt()}%",
-                              style: TextStyle(
-                                fontSize: widthFactor * 0.045,
-                                color: Colors.green[700],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Slider(
-                          value: currentProgress,
-                          min: 0.0,
-                          max: 100.0,
-                          divisions: 100,
-                          activeColor: Colors.green,
-                          inactiveColor: Colors.green.withOpacity(0.3),
-                          label: "${currentProgress.toInt()}%",
-                          onChanged: (double newValue) async {
-                            await FirebaseFirestore.instance
-                                .collection('AssignedJobs')
-                                .doc(job.id)
-                                .update({
-                              'progress': newValue,
-                              'status': newValue == 100.0
-                                  ? "Completed"
-                                  : (newValue > 0.0
-                                      ? "In Progress"
-                                      : "Not Started"),
-                            });
-                            setState(() {});
-                          },
-                        ),
-                        // Update Assign Worker button based on progress
-                        SizedBox(height: heightFactor * 0.02),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (currentProgress == 100.0) {
-                              // Navigate to the FeedbackPage if the job is completed
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FeedbackViewPage(
-                                      // Pass job ID to FeedbackPage
-                                      ),
+                            SizedBox(height: heightFactor * 0.015),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Status:",
+                                  style: TextStyle(
+                                    fontSize: widthFactor * 0.045,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              );
-                            } else {
-                              // Navigate to the AssignWorkerPage if the job is in progress
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AssignWorkerPage(jobId: job.id),
+                                Text(
+                                  status,
+                                  style: TextStyle(
+                                    fontSize: widthFactor * 0.045,
+                                    color: status == "Completed"
+                                        ? Colors.green[700]
+                                        : (status == "In Progress"
+                                            ? Colors.orange[700]
+                                            : Colors.red[700]),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue, // Button color
-                          ),
-                          child: Text(
-                            currentProgress == 100.0
-                                ? 'View Feedback'
-                                : 'Assign Worker',
-                            style: TextStyle(fontSize: widthFactor * 0.045),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                              ],
+                            ),
+                            SizedBox(height: heightFactor * 0.02),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Completion:",
+                                  style: TextStyle(
+                                    fontSize: widthFactor * 0.045,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "${currentProgress.toInt()}%",
+                                  style: TextStyle(
+                                    fontSize: widthFactor * 0.045,
+                                    color: Colors.green[700],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Slider(
+                              value: currentProgress,
+                              min: 0.0,
+                              max: 100.0,
+                              divisions: 100,
+                              activeColor: Colors.green,
+                              inactiveColor: Colors.green.withOpacity(0.3),
+                              label: "${currentProgress.toInt()}%",
+                              onChanged: (double newValue) async {
+                                await FirebaseFirestore.instance
+                                    .collection('AssignedJobs')
+                                    .doc(job.id)
+                                    .update({
+                                  'progress': newValue,
+                                  'status': newValue == 100.0
+                                      ? "Completed"
+                                      : (newValue > 0.0
+                                          ? "In Progress"
+                                          : "Not Started"),
+                                });
+                                setState(() {});
+                              },
+                            ),
+                            // Update Assign Worker button based on progress
+                            SizedBox(height: heightFactor * 0.02),
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    if (currentProgress == 100.0) {
+                                      // Navigate to the FeedbackPage if the job is completed
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FeedbackViewPage(
+                                                  // Pass job ID to FeedbackPage
+                                                  ),
+                                        ),
+                                      );
+                                    } else {
+                                      // Navigate to the AssignWorkerPage if the job is in progress
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AssignWorkerPage(jobId: job.id),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Colors.blue, // Button color
+                                  ),
+                                  child: Text(
+                                    currentProgress == 100.0
+                                        ? 'View Feedback'
+                                        : 'Assign Worker',
+                                    style: TextStyle(
+                                        fontSize: widthFactor * 0.045),
+                                  ),
+                                ),
+                                SizedBox(width: widthFactor * 0.2),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _viewIncident();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 255, 0, 0),
+                                  ),
+                                  child: const Text('View Incident'),
+                                ),
+                              ],
+                            ),
+                          ])),
                 );
               },
             );
           },
         ),
+      ),
+    );
+  }
+
+  void _viewIncident() {
+    // Navigate to the Accident Report page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ViewIncidentsPage(),
       ),
     );
   }

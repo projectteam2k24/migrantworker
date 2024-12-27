@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FeedbackViewPage extends StatefulWidget {
+  const FeedbackViewPage({super.key});
+
   @override
   _FeedbackViewPageState createState() => _FeedbackViewPageState();
 }

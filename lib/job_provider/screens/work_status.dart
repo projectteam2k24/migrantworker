@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart'; // For date and time validation
+import 'package:migrantworker/job_provider/screens/accidentreporting.dart';
 import 'package:migrantworker/job_provider/screens/feedback.dart';
 
 class WorkingStatusPage extends StatefulWidget {
@@ -36,7 +38,8 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
             TextField(
               onChanged: (value) {
                 setState(() {
-                  searchQuery = value.trim().toLowerCase();  // Handling extra whitespace
+                  searchQuery =
+                      value.trim().toLowerCase(); // Handling extra whitespace
                 });
               },
               decoration: InputDecoration(
@@ -196,18 +199,37 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
                                       ),
                                     ),
                                   ),
-                                  if (progress == 100.0)
-                                    const SizedBox(height: 12),
-                                  if (progress == 100.0)
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _sendFeedback(contractorUid, job.id);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue,
-                                      ),
-                                      child: const Text('Send Feedback'),
-                                    ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      if (progress == 100.0)
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            _sendFeedback(
+                                                contractorUid, job.id);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue,
+                                          ),
+                                          child: const Text('Send Feedback'),
+                                        ),
+                                      if (progress < 100.0)
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            _reportIncident(
+                                                contractorUid, job.id);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 255, 0, 0),
+                                          ),
+                                          child: const Text('Report Incident'),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -232,8 +254,20 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
       MaterialPageRoute(
         builder: (context) => FeedbackPage(
           contractorUid: contractorUid,
-          jobId: jobId, userName: '',
+          jobId: jobId,
+          userName: '',
         ),
+      ),
+    );
+  }
+
+  void _reportIncident(String contractorUid, String jobId) {
+    // Navigate to the Accident Report page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            AccidentReportPage(contractorId: contractorUid, jobId: jobId),
       ),
     );
   }

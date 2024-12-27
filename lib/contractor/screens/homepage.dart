@@ -11,7 +11,6 @@ import 'notification.dart';
 import 'worker_detail.dart';
 import 'search_jobs.dart';
 import 'worker_status.dart';
-import 'worker_registration.dart';
 import 'package:migrantworker/login.dart';
 
 class ContractorHome extends StatefulWidget {

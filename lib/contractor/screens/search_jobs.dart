@@ -160,7 +160,7 @@ class _SearchJobPageState extends State<SearchJobPage> {
             SizedBox(height: heightFactor * 0.02),
 
             // Fetching and displaying job cards
-            Expanded(
+            const Expanded(
               child: JobCardList(),
             ),
           ],
