@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:migrantworker/chat_page.dart';
 import 'package:migrantworker/worker/screens/chatscreen.dart';
 
 class WorkerNotificationHub extends StatefulWidget {
@@ -110,6 +111,14 @@ class _WorkerNotificationHubState extends State<WorkerNotificationHub> {
                         showMessages = index == 0;
                       });
                     },
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    child: showMessages
+                        ? WorkerChatScreen()
+                        : _buildNotificationsList(),
                   ),
                 ),
               ],

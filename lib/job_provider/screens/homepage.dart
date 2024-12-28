@@ -586,11 +586,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     title: const Text('Chat with AI'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return ChatbotScreen();
-                        },
-                      ));
+                      // Navigator.push(context, MaterialPageRoute(
+                      //   builder: (context) {
+                      //     return ChatbotScreen();
+                      //   },
+                      // ));
                     },
                   ),
                   ListTile(
