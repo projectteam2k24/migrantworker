@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:migrantworker/admin/homepage.dart';
 import 'package:migrantworker/selectuser.dart';
 import 'package:migrantworker/services/login_service_fire.dart';
+
+// Define the AdminHomePage
+class AdminHomePage extends StatelessWidget {
+  const AdminHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Admin Home'),
+        backgroundColor: Colors.green,
+      ),
+      body: const Center(
+        child: Text(
+          'Welcome to Admin Home Page!',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+}
 
 void main() {
   runApp(const LogIn());
@@ -41,15 +63,26 @@ class _LoginPageState extends State<LoginPage> {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    // Call the login function
-    await LoginServiceFire().LoginService(
-      email: email,
-      password: password,
-      context: context,
-    );
-    setState(() {
-      loading = false;
-    });
+    // Default credentials check (admin login)
+    if (email == 'admin@gmail.com' && password == '123456') {
+      setState(() {
+        loading = false;
+      });
+      // Navigate to AdminHomePage
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return AdminScreen();
+      }));
+    } else {
+      // Call the login function (for other users)
+      await LoginServiceFire().LoginService(
+        email: email,
+        password: password,
+        context: context,
+      );
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override
