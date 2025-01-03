@@ -1,167 +1,186 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class Contractor {
-  final String name;
-  final String profession;
-  final String contactDetails;
-  final String photoUrl;
-  final String about;
-  final String location;
-  final String skills;
-  final List<String> certifications;
-  final List<String> portfolioLinks;
-  final List<String> reviews;
-  final String phoneNumber;
-  final String email;
+class ContractorSearchPage extends StatefulWidget {
+  const ContractorSearchPage({super.key, required String query});
 
-  const Contractor({
-    required this.name,
-    required this.profession,
-    required this.contactDetails,
-    required this.photoUrl,
-    required this.about,
-    required this.location,
-    required this.skills,
-    required this.certifications,
-    required this.portfolioLinks,
-    required this.reviews,
-    required this.phoneNumber,
-    required this.email,
-  });
+  @override
+  _ContractorSearchPageState createState() => _ContractorSearchPageState();
 }
 
-class ContractorSearch extends StatelessWidget {
-  // Sample contractor with additional fields
-  final Contractor contractor = const Contractor(
-    name: 'John Doe',
-    profession: 'Plumber',
-    contactDetails: 'john.doe@email.com\n(555) 123-4567',
-    photoUrl:
-        'assets/john_doe.jpg', // Make sure this image exists in the assets
-    about:
-        'Experienced plumber specializing in residential and commercial plumbing services.',
-    location: 'New York, NY',
-    skills: 'Plumbing, Pipe Installation, Leak Detection, Bathroom Renovation',
-    certifications: [
-      'Certified Plumbing Technician',
-      'Licensed Master Plumber'
-    ],
-    portfolioLinks: [
-      'https://portfolio.com/johndoe',
-      'https://github.com/johndoe'
-    ],
-    reviews: ['Great work! Highly recommend.', 'Professional and reliable.'],
-    phoneNumber: '(555) 123-4567',
-    email: 'john.doe@email.com',
-  );
-
-  const ContractorSearch({super.key});
+class _ContractorSearchPageState extends State<ContractorSearchPage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  TextEditingController _searchController = TextEditingController();
+  String searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Contractor Search',
-      theme: ThemeData(primarySwatch: Colors.green),
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.green[700],
-          title: const Text(
-            'Contractor Search',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Times New Roman',
-            ),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,  // Changed the AppBar color to green
+        title: const Text(
+          'Contractor Search',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Roboto',
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildContractorCard(contractor, context),
-              ],
-            ),
-          ),
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSearchBar(),
+            const SizedBox(height: 16),
+            Expanded(child: _buildContractorList()),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildContractorCard(Contractor contractor, BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ContractorDetailPage(contractor: contractor),
-          ),
-        );
+  Widget _buildSearchBar() {
+    return TextField(
+      controller: _searchController,
+      onChanged: (value) {
+        setState(() {
+          searchQuery = value;
+        });
       },
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        elevation: 5,
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              // Contractor's photo
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage(contractor.photoUrl),
-              ),
-              const SizedBox(width: 16),
-              // Contractor's details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      style: const TextStyle(fontSize: 16),
+      decoration: InputDecoration(
+        labelText: 'Search by Contractor Name',
+        hintText: 'Enter name to search...',
+        prefixIcon: const Icon(Icons.search),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Colors.teal, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Colors.teal, width: 2),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContractorList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('Contractor').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text(
+              'Failed to load contractors. Please try again later.',
+              style: TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text(
+              'No contractors found.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
+        }
+
+        final contractors = snapshot.data!.docs.where((doc) {
+          return doc['name']
+              .toString()
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase());
+        }).toList();
+
+        return ListView.builder(
+          itemCount: contractors.length,
+          itemBuilder: (context, index) {
+            final contractor = contractors[index];
+            return Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
                   children: [
-                    Text(
-                      contractor.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundImage: contractor['profilePicture'] != null
+                              ? NetworkImage(contractor['profilePicture'])
+                              : const AssetImage('assets/person_icon.png') as ImageProvider,
+                        ),
+                      ],
                     ),
-                    Text(
-                      contractor.profession,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.green,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            contractor['name'] ?? 'No Name',
+                            style: const TextStyle(
+                              fontSize: 24,  // Increased font size for name
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            contractor['companyName'] ?? 'No Company Name',
+                            style: const TextStyle(
+                              fontSize: 20,  // Increased font size for company name
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            contractor['address'] ?? 'No Address',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            contractor['email'] ?? 'No Email',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            contractor['phone'] ?? 'No Phone',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      contractor.contactDetails,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
               ),
-              // View Details button (Arrow icon)
-              const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.green,
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }
 
 class ContractorDetailPage extends StatelessWidget {
-  final Contractor contractor;
+  final QueryDocumentSnapshot contractor;
 
   const ContractorDetailPage({super.key, required this.contractor});
 
@@ -169,155 +188,75 @@ class ContractorDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green[700],
-        title: Text('${contractor.name} Profile'),
+        backgroundColor: Colors.green,  // Changed the AppBar color to green
+        title: Text('${contractor['name']} Profile'),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        // Wrapping the body with SingleChildScrollView
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Profile Picture and Details
-              CircleAvatar(
-                radius: 60,
-                backgroundImage: AssetImage(contractor.photoUrl),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                contractor.name,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                contractor.profession,
-                style: const TextStyle(fontSize: 20, color: Colors.green),
-              ),
-              const SizedBox(height: 20),
-              // About Section
-              _buildProfileSection(
-                title: 'About Me',
-                content: contractor.about,
-              ),
-              const SizedBox(height: 20),
-              // Location Section
-              _buildProfileSection(
-                title: 'Location',
-                content: contractor.location,
-              ),
-              const SizedBox(height: 20),
-              // Skills Section
-              _buildProfileSection(
-                title: 'Skills',
-                content: contractor.skills,
-              ),
-              const SizedBox(height: 20),
-              // Certifications Section
-              _buildProfileSection(
-                title: 'Certifications',
-                content: contractor.certifications.join(', '),
-              ),
-              const SizedBox(height: 20),
-              // Portfolio Links
-              _buildProfileSection(
-                title: 'Portfolio',
-                content: contractor.portfolioLinks.join(', '),
-              ),
-              const SizedBox(height: 20),
-              // Reviews Section
-              _buildProfileSection(
-                title: 'Reviews',
-                content: contractor.reviews.join('\n'),
-              ),
-              const SizedBox(height: 30),
-              // Call Button
-              ElevatedButton.icon(
-                onPressed: () {
-                  _makeCall(contractor.phoneNumber);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[700],
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                ),
-                icon: const Icon(Icons.phone),
-                label: const Text('Call Contractor'),
-              ),
-              const SizedBox(height: 20),
-              // Message Button
-              ElevatedButton.icon(
-                onPressed: () {
-                  _sendEmail(contractor.email);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[700],
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                ),
-                icon: const Icon(Icons.email),
-                label: const Text('Message Contractor'),
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            CircleAvatar(
+              radius: 70,
+              backgroundImage: contractor['profilePicture'] != null
+                  ? NetworkImage(contractor['profilePicture'])
+                  : const AssetImage('assets/person_icon.png') as ImageProvider,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              contractor['name'] ?? 'No Name',
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              contractor['companyName'] ?? 'No Company Name',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.green),
+            ),
+            const SizedBox(height: 20),
+            _buildDetailSection(contractor['address']),
+            _buildDetailSection(contractor['email']),
+            _buildDetailSection(contractor['phone']),
+            _buildDetailSection(contractor['dob']),
+            _buildDetailSection(contractor['experience']),
+            _buildDetailSection(contractor['gender']),
+            _buildDetailSection(contractor['skill']),
+            _buildDetailSection(contractor['companyCertificate']),
+            _buildDetailSection(contractor['govtID']),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileSection(
-      {required String title, required String content}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.green.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.green[700],
+  Widget _buildDetailSection(dynamic content) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE0F2F1), // Light Teal Color
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              offset: Offset(2, 2),
+              blurRadius: 6,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            content,
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                content ?? 'Not available',
+                style: const TextStyle(fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-  Future<void> _makeCall(String phoneNumber) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    } else {
-      throw 'Could not launch $phoneNumber';
-    }
-  }
-
-  Future<void> _sendEmail(String email) async {
-    final Uri emailUri = Uri(scheme: 'mailto', path: email);
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
-    } else {
-      throw 'Could not send email to $email';
-    }
-  }
-}
-
-void main() {
-  runApp(const ContractorSearch());
 }

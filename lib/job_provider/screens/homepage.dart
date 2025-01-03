@@ -32,7 +32,7 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return const ContractorSearch();
+              return const ContractorSearchPage(query: '',);
             },
           ),
         );
@@ -434,8 +434,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
         final snapshot = await FirebaseFirestore.instance
-            .collection(
-                'Job Provider') // Replace with your Firestore collection name
+            .collection('Job Provider') // Replace with your Firestore collection name
             .doc(userId)
             .get();
 
@@ -625,7 +624,13 @@ class _ProfileMenuState extends State<ProfileMenu> {
             ),
             const SizedBox(height: 10),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const PostJobPage();
+                  },
+                ));
+              },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.green),
                 padding: const EdgeInsets.symmetric(vertical: 15.0),

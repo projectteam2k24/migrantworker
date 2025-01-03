@@ -33,6 +33,7 @@ class ContractorAddetailPage extends StatefulWidget {
 class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
   late Map<String, dynamic> contractorData;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool isReported = false; // Flag to check if contractor has been reported
 
   @override
   void initState() {
@@ -65,6 +66,53 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     return '${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}';
   }
 
+  // Function to report the contractor
+  void _reportContractor() async {
+    // Show a simple dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Report Contractor'),
+          content:
+              const Text('Are you sure you want to report this contractor?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Add the report to Firestore
+                await _firestore.collection('Reports').add({
+                  'contractorId': widget.contractorId,
+                  'reportedAt': FieldValue.serverTimestamp(),
+                  'reportedBy': 'user', // Adjust this based on your user management
+                });
+
+                // Set the reported flag to true and disable the button
+                setState(() {
+                  isReported = true;
+                });
+
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Contractor reported successfully.'),
+                  ),
+                );
+              },
+              child: const Text('Report'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +138,27 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
               // You can implement email functionality here if needed
             }),
             buildCompanyDetailsCard(),
+
+            const SizedBox(height: 24),
+
+            // Report Button Container with reduced size
+            // Report Button Container with reduced width
+            Container(
+              color: Colors.red[50], // Light red color background
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: isReported ? null : _reportContractor, // Disable if already reported
+                child: const Text('Report Contractor'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: Size(
+                    MediaQuery.of(context).size.width / 2,
+                    48,
+                  ), // Set width to half of the screen width
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
 
             const SizedBox(height: 24),
 
@@ -158,8 +227,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              data['jobProviderName'] ??
-                                  'Anonymous', // Job provider name
+                              data['jobProviderName'] ?? 'Anonymous', // Job provider name
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
@@ -181,8 +249,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
                           children: [
                             const SizedBox(height: 4),
                             Text(
-                              data['message'] ??
-                                  'No feedback provided.', // Feedback message
+                              data['message'] ?? 'No feedback provided.', // Feedback message
                               style: const TextStyle(
                                   fontSize: 14, color: Colors.black87),
                             ),
