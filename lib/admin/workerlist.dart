@@ -9,6 +9,8 @@ void main() async {
 }
 
 class AdminModuleApp extends StatelessWidget {
+  const AdminModuleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,8 +18,8 @@ class AdminModuleApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green, // Green theme
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        scaffoldBackgroundColor: Color(0xFFE8F5E9), // Light green background
-        appBarTheme: AppBarTheme(
+        scaffoldBackgroundColor: const Color(0xFFE8F5E9), // Light green background
+        appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF2C6B2F), // Dark green app bar background
           foregroundColor: Colors.white, // White text in the app bar
           elevation: 4, // Add elevation for better shadow effect
@@ -28,7 +30,7 @@ class AdminModuleApp extends StatelessWidget {
             letterSpacing: 1.5, // For a more spacious title
           ),
         ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.green, // Green bottom navigation bar
           selectedItemColor: Colors.white, // White selected icon color
           unselectedItemColor:
@@ -41,6 +43,8 @@ class AdminModuleApp extends StatelessWidget {
 }
 
 class WorkerListScreen extends StatelessWidget {
+  const WorkerListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,11 +55,11 @@ class WorkerListScreen extends StatelessWidget {
         stream: FirebaseFirestore.instance.collection('Worker').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Something went wrong'));
+            return const Center(child: Text('Something went wrong'));
           }
 
           final contractors = snapshot.data?.docs ?? [];
@@ -99,11 +103,11 @@ class WorkerListScreen extends StatelessWidget {
                       radius: 30,
                       backgroundImage: profilePicture.isNotEmpty
                           ? NetworkImage(profilePicture)
-                          : AssetImage('assets/default_profile.png')
+                          : const AssetImage('assets/default_profile.png')
                               as ImageProvider,
                       backgroundColor: Colors.green.shade100,
                     ),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
 
                     // Contractor details section
                     Expanded(
@@ -119,7 +123,7 @@ class WorkerListScreen extends StatelessWidget {
                               color: Colors.green.shade700,
                             ),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             'Company: $companyName',
                             style: TextStyle(
@@ -149,7 +153,7 @@ class WorkerListScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -169,7 +173,7 @@ class WorkerListScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -189,7 +193,7 @@ class WorkerListScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -209,7 +213,7 @@ class WorkerListScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -229,7 +233,7 @@ class WorkerListScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           // Delete button
                           Align(
                             alignment: Alignment.centerRight,

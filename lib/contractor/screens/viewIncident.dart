@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ViewIncidentsPage extends StatefulWidget {
-  const ViewIncidentsPage({Key? key}) : super(key: key);
+  const ViewIncidentsPage({super.key});
 
   @override
   State<ViewIncidentsPage> createState() => _ViewIncidentsPageState();

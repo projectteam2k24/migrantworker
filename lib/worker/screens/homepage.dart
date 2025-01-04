@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/contractordetailpage.dart';
+import 'package:migrantworker/job_provider/screens/search.dart';
 import 'package:migrantworker/login.dart';
 import 'package:migrantworker/worker/screens/exchange_contractor.dart';
 import 'package:migrantworker/worker/screens/my_contractor.dart';
@@ -37,7 +38,7 @@ class _WorkerHomeState extends State<WorkerHome> {
   void Notification() {
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
-        return WorkerNotificationHub(
+        return const WorkerNotificationHub(
           toggle: false,
         );
       },
@@ -330,7 +331,7 @@ class _WorkerHomeState extends State<WorkerHome> {
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return const ContractorSearchPage();
+                  return const ContractorSearchPage(query: '',);
                 },
               ));
             },
@@ -515,7 +516,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return WorkerNotificationHub(
+                          return const WorkerNotificationHub(
                             toggle: true,
                           );
                         },
@@ -529,7 +530,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return WorkerNotificationHub(
+                          return const WorkerNotificationHub(
                             toggle: false,
                           );
                         },

@@ -583,7 +583,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return FeedbackViewPage();
+                          return const FeedbackViewPage();
                         },
                       ));
                     },

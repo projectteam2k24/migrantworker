@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ViewReportScreen extends StatelessWidget {
-  const ViewReportScreen({Key? key}) : super(key: key);
+  const ViewReportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,13 +11,13 @@ class ViewReportScreen extends StatelessWidget {
         backgroundColor: Colors.green,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: () {
               // Add your refresh logic here
             },
           ),
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               // Add your search logic here
             },
@@ -66,12 +66,12 @@ class ReportCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const ReportCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.date,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class ReportCard extends StatelessWidget {
       onTap: onTap,
       child: Card(
         elevation: 5,
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -94,7 +94,7 @@ class ReportCard extends StatelessWidget {
                   color: Colors.green.shade700,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 description,
                 style: TextStyle(
@@ -102,7 +102,7 @@ class ReportCard extends StatelessWidget {
                   color: Colors.green.shade600,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(

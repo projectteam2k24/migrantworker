@@ -8,10 +8,10 @@ class AccidentReportPage extends StatefulWidget {
   final String jobId;
 
   const AccidentReportPage({
-    Key? key,
+    super.key,
     required this.contractorId,
     required this.jobId,
-  }) : super(key: key);
+  });
 
   @override
   State<AccidentReportPage> createState() => _AccidentReportPageState();

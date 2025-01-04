@@ -9,6 +9,8 @@ void main() {
 }
 
 class AdminModuleApp extends StatelessWidget {
+  const AdminModuleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,12 +18,12 @@ class AdminModuleApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green, // Green theme
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        scaffoldBackgroundColor: Color(0xFFE8F5E9), // Light green background
-        appBarTheme: AppBarTheme(
+        scaffoldBackgroundColor: const Color(0xFFE8F5E9), // Light green background
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.green, // Green app bar background
           foregroundColor: Colors.white, // White text in the app bar
         ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.green, // Green bottom navigation bar
           selectedItemColor: Colors.white, // White selected icon color
           unselectedItemColor:
@@ -34,6 +36,8 @@ class AdminModuleApp extends StatelessWidget {
 }
 
 class AdminScreen extends StatefulWidget {
+  const AdminScreen({super.key});
+
   @override
   _AdminScreenState createState() => _AdminScreenState();
 }
@@ -81,7 +85,7 @@ class _AdminScreenState extends State<AdminScreen> {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen();
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +94,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildRoleCard(
             context,
             'Contractor',
@@ -144,7 +148,7 @@ class HomeScreen extends StatelessWidget {
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         color: Colors.white,
-        margin: EdgeInsets.symmetric(vertical: 12),
+        margin: const EdgeInsets.symmetric(vertical: 12),
         child: Container(
           width: double.infinity,
           height: 200,
@@ -167,7 +171,7 @@ class HomeScreen extends StatelessWidget {
                 size: 80,
                 color: Colors.green.shade700, // Icon color
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 title,
                 style: TextStyle(
@@ -176,7 +180,7 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.green.shade700,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 description,
                 style: TextStyle(

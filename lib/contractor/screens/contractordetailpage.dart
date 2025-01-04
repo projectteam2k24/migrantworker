@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:migrantworker/reporting.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
 
 class ContractorAddetailPage extends StatefulWidget {
@@ -32,8 +32,6 @@ class ContractorAddetailPage extends StatefulWidget {
 
 class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
   late Map<String, dynamic> contractorData;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  bool isReported = false; // Flag to check if contractor has been reported
 
   @override
   void initState() {
@@ -60,56 +58,13 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     }
   }
 
-  // Function to format timestamps
-  String _formatTimestamp(Timestamp timestamp) {
-    final date = timestamp.toDate();
-    return '${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}';
-  }
-
-  // Function to report the contractor
-  void _reportContractor() async {
-    // Show a simple dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Report Contractor'),
-          content:
-              const Text('Are you sure you want to report this contractor?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Add the report to Firestore
-                await _firestore.collection('Reports').add({
-                  'contractorId': widget.contractorId,
-                  'reportedAt': FieldValue.serverTimestamp(),
-                  'reportedBy': 'user', // Adjust this based on your user management
-                });
-
-                // Set the reported flag to true and disable the button
-                setState(() {
-                  isReported = true;
-                });
-
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Contractor reported successfully.'),
-                  ),
-                );
-              },
-              child: const Text('Report'),
-            ),
-          ],
-        );
-      },
+  // Navigate to the reporting page
+  void _navigateToReportPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportContractorPage(),
+      ),
     );
   }
 
@@ -147,8 +102,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
               color: Colors.red[50], // Light red color background
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: isReported ? null : _reportContractor, // Disable if already reported
-                child: const Text('Report Contractor'),
+                onPressed: _navigateToReportPage,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   minimumSize: Size(
@@ -156,117 +110,15 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
                     48,
                   ), // Set width to half of the screen width
                   textStyle: const TextStyle(fontSize: 16),
-                ),
+                ), // Navigate to the report page
+                child: const Text('Report Contractor'),
               ),
             ),
 
             const SizedBox(height: 24),
 
             // Feedback Section
-            StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('feedbacks')
-                  .where('contractorUid', isEqualTo: widget.contractorId)
-                  .orderBy('timestamp', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text(
-                      'Failed to load feedback. Please try again later.',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No feedback available.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  );
-                }
-
-                final feedbacks = snapshot.data!.docs;
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: feedbacks.length,
-                  itemBuilder: (context, index) {
-                    final feedback = feedbacks[index];
-                    final data = feedback.data() as Map<String, dynamic>;
-
-                    return Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.green.shade700,
-                          backgroundImage: data['profileImage'] != null
-                              ? NetworkImage(data['profileImage'])
-                              : null,
-                          child: data['profileImage'] == null
-                              ? Text(
-                                  data['name'] != null &&
-                                          data['name']!.isNotEmpty
-                                      ? data['name']![0].toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(color: Colors.white),
-                                )
-                              : null,
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              data['jobProviderName'] ?? 'Anonymous', // Job provider name
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Row(
-                              children: List.generate(5, (i) {
-                                return Icon(
-                                  i < (data['rating'] ?? 0)
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  color: Colors.amber,
-                                  size: 20,
-                                );
-                              }),
-                            ),
-                          ],
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 4),
-                            Text(
-                              data['message'] ?? 'No feedback provided.', // Feedback message
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.black87),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Submitted on: ${_formatTimestamp(data['timestamp'])}',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+            // You can modify this as per your needs, it is currently without Firebase logic.
           ],
         ),
       ),

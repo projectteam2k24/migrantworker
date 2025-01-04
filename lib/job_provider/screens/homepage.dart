@@ -10,7 +10,6 @@ import 'package:migrantworker/job_provider/screens/profile.dart';
 import 'package:migrantworker/job_provider/screens/search.dart';
 import 'package:migrantworker/job_provider/screens/work_status.dart';
 import 'package:migrantworker/login.dart';
-import 'package:migrantworker/worker/screens/chatscreen.dart';
 
 class JobProviderHome extends StatefulWidget {
   const JobProviderHome({super.key});
@@ -627,7 +626,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return const PostJobPage();
+                    return const WorkingStatusPage();
                   },
                 ));
               },

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class WorkerChatScreen extends StatefulWidget {
-  const WorkerChatScreen({Key? key}) : super(key: key);
+  const WorkerChatScreen({super.key});
 
   @override
   WorkerChatScreenState createState() => WorkerChatScreenState();

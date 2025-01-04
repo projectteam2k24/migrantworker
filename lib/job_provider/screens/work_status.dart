@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // For date and time validation
+// For date and time validation
 import 'package:migrantworker/job_provider/screens/accidentreporting.dart';
 import 'package:migrantworker/job_provider/screens/feedback.dart';
 

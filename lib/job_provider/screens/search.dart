@@ -10,7 +10,7 @@ class ContractorSearchPage extends StatefulWidget {
 
 class _ContractorSearchPageState extends State<ContractorSearchPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String searchQuery = '';
 
   @override
@@ -237,7 +237,7 @@ class ContractorDetailPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFE0F2F1), // Light Teal Color
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               offset: Offset(2, 2),
