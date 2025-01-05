@@ -42,6 +42,7 @@ class _PostJobPageState extends State<PostJobPage> {
 
   // Form field controllers
   final TextEditingController jobTypeController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController landmarkController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
@@ -114,6 +115,9 @@ class _PostJobPageState extends State<PostJobPage> {
                         selectedTown = value;
                       });
                     }, selectedTown),
+                    _buildTextField('Company/House Name',
+                        'Enter Company/House Name', nameController,
+                        required: false),
                     _buildTextField('Landmark',
                         'Enter nearby landmark (optional)', landmarkController,
                         required: false),
@@ -154,6 +158,7 @@ class _PostJobPageState extends State<PostJobPage> {
                               jobType: jobTypeController.text,
                               selectedDistrict: selectedDistrict,
                               selectedTown: selectedTown,
+                              name : nameController,
                               landMark: landmarkController.text,
                               address: addressController.text,
                               phone: contactController.text,
@@ -277,6 +282,7 @@ class _PostJobPageState extends State<PostJobPage> {
   }
 }
 
+
 class PostJobPage1 extends StatefulWidget {
   const PostJobPage1({
     super.key,
@@ -284,6 +290,7 @@ class PostJobPage1 extends StatefulWidget {
     required this.jobType,
     required this.selectedDistrict,
     required this.selectedTown,
+    required this.name,
     required this.landMark,
     required this.address,
     required this.phone,
@@ -302,6 +309,8 @@ class PostJobPage1 extends StatefulWidget {
   final String plotSize;
   final String rooms;
   final String floors;
+  
+  final dynamic name;
 
   @override
   State<PostJobPage1> createState() => _PostJobPage1State();
@@ -377,6 +386,7 @@ class _PostJobPage1State extends State<PostJobPage1> {
           'jobType': widget.jobType,
           'district': widget.selectedDistrict,
           'town': widget.selectedTown,
+          'name' : widget.name,
           'landmark': widget.landMark,
           'address': widget.address,
           'contactNumber': widget.phone,

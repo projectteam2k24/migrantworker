@@ -13,6 +13,7 @@ import 'package:migrantworker/firebase_options.dart';
 import 'package:migrantworker/job_provider/screens/feedback.dart';
 import 'package:migrantworker/job_provider/screens/homepage.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
+import 'package:migrantworker/job_provider/screens/post_job.dart';
 import 'package:migrantworker/job_provider/screens/profile.dart';
 import 'package:migrantworker/job_provider/screens/search.dart';
 import 'package:migrantworker/job_provider/screens/work_status.dart';
@@ -33,5 +34,5 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: PostJobPage()));
 }

@@ -103,7 +103,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Job assigned to you successfully!')),
+      const SnackBar(content: Text('Job request sent to Provider')),
     );
   }
 
