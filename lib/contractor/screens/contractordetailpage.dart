@@ -63,7 +63,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ReportContractorPage(),
+        builder: (context) => const ReportContractorPage(),
       ),
     );
   }

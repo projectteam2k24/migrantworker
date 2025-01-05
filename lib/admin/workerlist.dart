@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(AdminModuleApp());
+  runApp(const AdminModuleApp());
 }
 
 class AdminModuleApp extends StatelessWidget {
@@ -37,7 +37,7 @@ class AdminModuleApp extends StatelessWidget {
               Colors.white60, // Lighter white for unselected icons
         ),
       ),
-      home: WorkerListScreen(),
+      home: const WorkerListScreen(),
     );
   }
 }

@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       // Navigate to AdminHomePage
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return AdminScreen();
+        return const AdminScreen();
       }));
     } else {
       // Call the login function (for other users)

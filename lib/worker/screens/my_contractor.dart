@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:migrantworker/worker/screens/reportmycontractor.dart';
 
 class MyContractor extends StatefulWidget {
   const MyContractor({super.key});
@@ -20,22 +21,19 @@ class _MyContractorState extends State<MyContractor> {
 
   Future<Map<String, dynamic>> fetchContractorDetails() async {
     try {
-      // Fetch the current user's UID
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         throw Exception('User not logged in');
       }
 
-      // Fetch the assignment for the current user
       var assignmentSnapshot = await FirebaseFirestore.instance
           .collection('assignments')
-          .doc(user.uid) // Use current user's UID to fetch the assignment
+          .doc(user.uid)
           .get();
 
       if (assignmentSnapshot.exists) {
         String contractorId = assignmentSnapshot.data()?['contractorId'];
 
-        // Fetch the contractor details using the contractor ID
         var contractorSnapshot = await FirebaseFirestore.instance
             .collection('Contractor')
             .doc(contractorId)
@@ -94,59 +92,100 @@ class _MyContractorState extends State<MyContractor> {
 
             var contractorData = snapshot.data!;
 
-            return Container(
-              color: Colors.white,
+            return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: CircleAvatar(
-                          backgroundImage: contractorData['profilePicture'] !=
-                                      null &&
-                                  contractorData['profilePicture'].isNotEmpty
-                              ? NetworkImage(contractorData['profilePicture'])
-                              : const AssetImage('assets/placeholder.png')
-                                  as ImageProvider,
-                          radius: 55,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: CircleAvatar(
+                        backgroundImage:
+                            contractorData['profilePicture'] != null &&
+                                    contractorData['profilePicture'].isNotEmpty
+                                ? NetworkImage(contractorData['profilePicture'])
+                                : const AssetImage('assets/placeholder.png')
+                                    as ImageProvider,
+                        radius: 55,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        contractorData['name'] ?? 'No Name',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                          fontFamily: 'Times New Roman',
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: Text(
-                          contractorData['name'] ?? 'No Name',
-                          style: const TextStyle(
-                            fontSize: 24,
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            offset: const Offset(0, 4),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle('Personal Information'),
+                          _buildProfileItem(
+                              'Full Name', contractorData['name'] ?? ''),
+                          _buildProfileItem(
+                              'Date of Birth', contractorData['dob'] ?? ''),
+                          _buildProfileItem(
+                              'Gender', contractorData['gender'] ?? ''),
+                          _buildProfileItem(
+                              'Phone Number', contractorData['phone'] ?? ''),
+                          _buildProfileItem(
+                              'Email Address', contractorData['email'] ?? ''),
+                          const SizedBox(height: 20),
+                          _buildSectionTitle('Professional Details'),
+                          _buildProfileItem('Company Name',
+                              contractorData['companyName'] ?? ''),
+                          _buildProfileItem(
+                              'Role/Position', contractorData['role'] ?? ''),
+                          _buildProfileItem(
+                              'Experience', contractorData['experience'] ?? ''),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Correctly navigating to the report page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ReportMyContractorPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                            fontFamily: 'Times New Roman',
                           ),
                         ),
+                        child: const Text('Report Contractor'),
                       ),
-                      const SizedBox(height: 30),
-                      _buildSectionTitle('Personal Information'),
-                      _buildProfileItem(
-                          'Full Name', contractorData['name'] ?? ''),
-                      _buildProfileItem(
-                          'Date of Birth', contractorData['dob'] ?? ''),
-                      _buildProfileItem(
-                          'Gender', contractorData['gender'] ?? ''),
-                      _buildProfileItem(
-                          'Phone Number', contractorData['phone'] ?? ''),
-                      _buildProfileItem(
-                          'Email Address', contractorData['email'] ?? ''),
-                      const SizedBox(height: 20),
-                      _buildSectionTitle('Professional Details'),
-                      _buildProfileItem(
-                          'Company Name', contractorData['companyName'] ?? ''),
-                      _buildProfileItem(
-                          'Role/Position', contractorData['role'] ?? ''),
-                      _buildProfileItem(
-                          'Experience', contractorData['experience'] ?? ''),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );

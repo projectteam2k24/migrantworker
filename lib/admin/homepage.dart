@@ -5,7 +5,7 @@ import 'package:migrantworker/admin/viewreports.dart';
 import 'package:migrantworker/admin/workerlist.dart';
 
 void main() {
-  runApp(AdminModuleApp());
+  runApp(const AdminModuleApp());
 }
 
 class AdminModuleApp extends StatelessWidget {
@@ -30,7 +30,7 @@ class AdminModuleApp extends StatelessWidget {
               Colors.white60, // Lighter white for unselected icons
         ),
       ),
-      home: AdminScreen(),
+      home: const AdminScreen(),
     );
   }
 }
@@ -103,7 +103,7 @@ class HomeScreen extends StatelessWidget {
             () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return ContractorListScreen();
+                  return const ContractorListScreen();
                 },
               ));
             },
@@ -116,7 +116,7 @@ class HomeScreen extends StatelessWidget {
             () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return WorkerListScreen();
+                  return const WorkerListScreen();
                 },
               ));
             },
@@ -129,7 +129,7 @@ class HomeScreen extends StatelessWidget {
             () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return JobProviderListScreen();
+                  return const JobProviderListScreen();
                 },
               ));
             },

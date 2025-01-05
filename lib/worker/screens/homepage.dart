@@ -9,7 +9,6 @@ import 'package:migrantworker/worker/screens/my_contractor.dart';
 import 'package:migrantworker/worker/screens/notification.dart';
 import 'package:migrantworker/worker/screens/profile.dart';
 import 'package:migrantworker/worker/screens/edit_profile.dart';
-import 'package:migrantworker/worker/screens/search_contractor.dart';
 import 'package:migrantworker/worker/screens/view_current_job.dart';
 
 class WorkerHome extends StatefulWidget {
