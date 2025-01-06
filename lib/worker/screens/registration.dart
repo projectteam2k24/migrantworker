@@ -249,13 +249,11 @@ class _RegisterWorkerState extends State<RegisterWorker> {
                                     },
                                   );
 
-                                  if (selectedDate != null) {
-                                    // Format the date and set it to the controller
-                                    DOBController.text =
-                                        "${selectedDate.toLocal()}"
-                                            .split(' ')[0]; // YYYY-MM-DD
-                                  }
-                                },
+                                  // Format the date and set it to the controller
+                                  DOBController.text =
+                                      "${selectedDate!.toLocal()}"
+                                          .split(' ')[0]; // YYYY-MM-DD
+                                                                },
                                 readOnly:
                                     true, // To prevent typing in the text field
                               ),

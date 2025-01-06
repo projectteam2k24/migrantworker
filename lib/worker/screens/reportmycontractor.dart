@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ReportMyContractorPage extends StatefulWidget {
   const ReportMyContractorPage({super.key});
@@ -9,54 +11,68 @@ class ReportMyContractorPage extends StatefulWidget {
 
 class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
   final _formKey = GlobalKey<FormState>();
-  final Map<String, dynamic> _formData = {
-    "primaryConcern": "",
-    "cheatingFraudulent": false,
-    "nonPayment": false,
-    "unprofessionalConduct": false,
-    "fakeJobIdentity": false,
-    "additionalDetails": "",
-  };
+  final TextEditingController _commentController = TextEditingController();
+  String? _selectedReportType;
+  bool _isSubmitting = false;
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+  // Sample contractor user ID for demonstration
+  final String _contractorUserId = "sample_contractor_id";
 
-      // Simulate a form submission
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Your report has been submitted successfully!")),
-      );
+  final List<String> _reportTypes = [
+    "Cheating or Fraudulent Activity",
+    "Non-Payment Issues",
+    "Unprofessional Conduct",
+    "Fake Job or False Identity",
+  ];
 
-      // Clear the form (optional)
-      _formKey.currentState!.reset();
+  Future<void> _submitReport() async {
+    if (_formKey.currentState!.validate() && _selectedReportType != null) {
       setState(() {
-        _formData.updateAll((key, value) => value is bool ? false : "");
+        _isSubmitting = true;
       });
-    }
-  }
 
-  Widget _buildQuestionCheckbox({
-    required String title,
-    required String formFieldKey,
-  }) {
-    return Row(
-      children: [
-        Checkbox(
-          value: _formData[formFieldKey],
-          onChanged: (bool? value) {
-            setState(() {
-              _formData[formFieldKey] = value ?? false;
-            });
-          },
-        ),
-        Expanded(
-          child: Text(
-            title,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
-    );
+      try {
+        final currentUser = FirebaseAuth.instance.currentUser;
+
+        if (currentUser == null) {
+          throw Exception("User is not logged in.");
+        }
+
+        // Save the report to Firestore
+        await FirebaseFirestore.instance.collection('Reports').add({
+          'type': _selectedReportType,
+          'comment': _commentController.text.trim(),
+          'reportedBy': currentUser.uid,
+          'reportedUser': _contractorUserId,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Your report has been submitted successfully!")),
+        );
+
+        // Clear the form
+        _formKey.currentState!.reset();
+        _commentController.clear();
+        setState(() {
+          _selectedReportType = null;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error submitting report: $e")),
+        );
+      } finally {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    } else if (_selectedReportType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a report type.")),
+      );
+    }
   }
 
   @override
@@ -97,70 +113,55 @@ class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
                 ),
                 const SizedBox(height: 20),
 
-                // Question 1: Primary Concern (Mandatory)
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: '1. What is your primary reason for reporting the contractor?',
-                    hintText: 'Provide a clear and detailed reason.',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                // Report Type Selection
+                const Text(
+                  "1. Select the type of issue you want to report:",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                for (String type in _reportTypes)
+                  RadioListTile<String>(
+                    title: Text(type, style: const TextStyle(fontSize: 16)),
+                    value: type,
+                    groupValue: _selectedReportType,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedReportType = value;
+                      });
+                    },
                   ),
-                  maxLines: 3,
-                  onSaved: (value) => _formData["primaryConcern"] = value?.trim(),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "This field is required.";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-
-                // Question 2: Cheating or Fraudulent Activity
-                _buildQuestionCheckbox(
-                  title: "Did the contractor engage in any cheating or fraudulent activity?",
-                  formFieldKey: "cheatingFraudulent",
-                ),
-
-                // Question 3: Non-Payment Issues
-                _buildQuestionCheckbox(
-                  title: "Has the contractor failed to make agreed-upon payments?",
-                  formFieldKey: "nonPayment",
-                ),
-
-                // Question 4: Unprofessional Conduct
-                _buildQuestionCheckbox(
-                  title: "Did the contractor exhibit unprofessional or inappropriate behavior?",
-                  formFieldKey: "unprofessionalConduct",
-                ),
-
-                // Question 5: Fake Job or False Identity
-                _buildQuestionCheckbox(
-                  title: "Do you believe the contractor's job post or identity is fake?",
-                  formFieldKey: "fakeJobIdentity",
-                ),
+                if (_selectedReportType == null)
+                  const Text(
+                    "Please select a report type.",
+                    style: TextStyle(color: Colors.red, fontSize: 14),
+                  ),
 
                 const SizedBox(height: 20),
 
-                // Additional Details (Optional)
+                // Post Comment
                 TextFormField(
+                  controller: _commentController,
                   decoration: InputDecoration(
-                    labelText: 'Additional Details (Optional)',
+                    labelText: 'Post a comment (Optional)',
                     hintText: 'Provide any extra information or evidence.',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   maxLines: 3,
-                  onSaved: (value) => _formData["additionalDetails"] = value?.trim(),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please provide some details.";
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
 
                 // Submit Button
                 Center(
                   child: ElevatedButton(
-                    onPressed: _submitForm,
+                    onPressed: _isSubmitting ? null : _submitReport,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       padding: const EdgeInsets.symmetric(
@@ -171,10 +172,12 @@ class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      "Submit Report",
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    child: _isSubmitting
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Submit Report",
+                            style: TextStyle(fontSize: 18),
+                          ),
                   ),
                 ),
               ],

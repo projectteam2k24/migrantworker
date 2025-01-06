@@ -148,11 +148,9 @@ class _AddExistingWorkerState extends State<AddExistingWorker> {
                                     },
                                   );
 
-                                  if (selectedDate != null) {
-                                    dobController.text = "${selectedDate.toLocal()}"
-                                        .split(' ')[0]; // YYYY-MM-DD
-                                  }
-                                },
+                                  dobController.text = "${selectedDate!.toLocal()}"
+                                      .split(' ')[0]; // YYYY-MM-DD
+                                                                },
                                 readOnly: true, // Prevent manual text input
                               ),
                             ),
