@@ -267,7 +267,7 @@ class _WorkingStatusPageState extends State<WorkingStatusPage> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            AccidentReportPage(contractorId: contractorUid, jobId: jobId),
+            AccidentReportPage(contractorId: contractorUid, jobId: jobId, contractorname: '',),
       ),
     );
   }

@@ -10,7 +10,7 @@ class AccidentReportPage extends StatefulWidget {
   const AccidentReportPage({
     super.key,
     required this.contractorId,
-    required this.jobId,
+    required this.jobId, required String contractorname,
   });
 
   @override
@@ -26,6 +26,72 @@ class _AccidentReportPageState extends State<AccidentReportPage> {
   final TextEditingController _timeController = TextEditingController();
 
   bool _isLoading = false;
+  String? _contractorName;
+  String? _jobProviderName;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchContractorName();
+    _fetchJobProviderName();
+  }
+
+  Future<void> _fetchContractorName() async {
+    try {
+      DocumentSnapshot contractorDoc = await FirebaseFirestore.instance
+          .collection('Contractor')
+          .doc(widget.contractorId)
+          .get();
+
+      if (contractorDoc.exists) {
+        setState(() {
+          _contractorName = contractorDoc['name'] ?? 'Unknown Contractor';
+        });
+      } else {
+        setState(() {
+          _contractorName = 'Unknown Contractor';
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching contractor name: $e')),
+      );
+      setState(() {
+        _contractorName = 'Unknown Contractor';
+      });
+    }
+  }
+
+  Future<void> _fetchJobProviderName() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception("User not logged in");
+      }
+
+      DocumentSnapshot jobProviderDoc = await FirebaseFirestore.instance
+          .collection('Job Provider')
+          .doc(currentUser.uid)
+          .get();
+
+      if (jobProviderDoc.exists) {
+        setState(() {
+          _jobProviderName = jobProviderDoc['name'] ?? 'Unknown Job Provider';
+        });
+      } else {
+        setState(() {
+          _jobProviderName = 'Unknown Job Provider';
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching job provider name: $e')),
+      );
+      setState(() {
+        _jobProviderName = 'Unknown Job Provider';
+      });
+    }
+  }
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
@@ -36,7 +102,7 @@ class _AccidentReportPageState extends State<AccidentReportPage> {
     );
     if (picked != null) {
       setState(() {
-        _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _dateController.text = DateFormat('dd-MM-yyyy').format(picked);
       });
     }
   }
@@ -67,7 +133,9 @@ class _AccidentReportPageState extends State<AccidentReportPage> {
 
         await FirebaseFirestore.instance.collection('accidentReports').add({
           'jobProviderId': currentUser.uid,
+          'jobProviderName': _jobProviderName ?? 'Unknown Job Provider',
           'contractorId': widget.contractorId,
+          'contractorName': _contractorName ?? 'Unknown Contractor',
           'jobId': widget.jobId,
           'incidentDescription': _incidentDescriptionController.text,
           'injuries': _injuriesController.text,
@@ -117,6 +185,11 @@ class _AccidentReportPageState extends State<AccidentReportPage> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
+              Text(
+                "Reported by: ${_jobProviderName ?? 'Loading...'}",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _incidentDescriptionController,
                 maxLines: 3,
@@ -150,7 +223,7 @@ class _AccidentReportPageState extends State<AccidentReportPage> {
                 controller: _dateController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  labelText: "Date of Incident (YYYY-MM-DD)",
+                  labelText: "Date of Incident (DD-MM-YYYY)",
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
@@ -182,6 +255,11 @@ class _AccidentReportPageState extends State<AccidentReportPage> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Reported to/about: ${_contractorName ?? 'Loading...'}",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
               Center(

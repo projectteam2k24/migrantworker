@@ -3,11 +3,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/admin/homepage.dart';
+import 'package:migrantworker/admin/viewreports.dart';
 import 'package:migrantworker/chat_page.dart';
 import 'package:migrantworker/contractor/screens/addworkers.dart';
 import 'package:migrantworker/contractor/screens/homepage.dart';
 import 'package:migrantworker/contractor/screens/profile.dart';
 import 'package:migrantworker/contractor/screens/registration.dart';
+import 'package:migrantworker/contractor/screens/viewIncident.dart';
 import 'package:migrantworker/contractor/screens/worker_status.dart';
 import 'package:migrantworker/firebase_options.dart';
 import 'package:migrantworker/job_provider/screens/feedback.dart';
@@ -34,5 +36,5 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: PostJobPage()));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: LogIn()));
 }

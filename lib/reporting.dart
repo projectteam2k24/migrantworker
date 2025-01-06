@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ReportContractorPage extends StatefulWidget {
   const ReportContractorPage({super.key});
@@ -20,7 +21,39 @@ class _ReportContractorPageState extends State<ReportContractorPage> {
   String? profilePictureExplanation;
   String? otherConcerns;
 
+  String _jobProviderName = "";  // Initialize as empty
+  String _reportedByName = "";  // Name of the person who reported
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Fetch the logged-in user's name from the role_tb collection
+  Future<void> _getReportedByName() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      try {
+        DocumentSnapshot roleDoc = await _firestore
+            .collection('role_tb')
+            .doc(user.uid)  // Use the current user's UID to find their document
+            .get();
+
+        if (roleDoc.exists) {
+          // Assuming the 'name' field in the role_tb document stores the user's name
+          setState(() {
+            _reportedByName = roleDoc['name'] ?? 'Unknown';  // Default to 'Unknown' if no name found
+          });
+        }
+      } catch (e) {
+        print("Error fetching reported by name: $e");
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getReportedByName();  // Fetch the logged-in user's name when the page is loaded
+  }
 
   Future<void> submitReport() async {
     // Check if the first question (reason for reporting) is not empty
@@ -42,6 +75,7 @@ class _ReportContractorPageState extends State<ReportContractorPage> {
         'isProfilePictureAuthentic': isProfilePictureAuthentic ?? true, // Default to true if null
         'profilePictureExplanation': profilePictureExplanation ?? '',
         'otherConcerns': otherConcerns ?? '',
+        'reportedBy': _reportedByName,  // Store the name of the person who reported
         'timestamp': FieldValue.serverTimestamp(),  // Add timestamp to record
       };
 
