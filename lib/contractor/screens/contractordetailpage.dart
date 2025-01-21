@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/reporting.dart';
+import 'package:migrantworker/worker/screens/reportmycontractor.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
 
 class ContractorAddetailPage extends StatefulWidget {
@@ -58,15 +59,15 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     }
   }
 
-  // Navigate to the reporting page
-  void _navigateToReportPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReportContractorPage(),
-      ),
-    );
-  }
+  // // Navigate to the reporting page
+  // void _navigateToReportPage() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => const ReportContractorPage(contractorName: ,),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +122,15 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
             // You can modify this as per your needs, it is currently without Firebase logic.
           ],
         ),
+      ),
+    );
+  }
+  // Navigate to the reporting page
+  void _navigateToReportPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportContractorPage(contractorName: contractorData['name'] ?? 'No name provided',),
       ),
     );
   }

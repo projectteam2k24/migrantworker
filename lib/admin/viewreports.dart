@@ -13,10 +13,43 @@ class ViewReportScreen extends StatelessWidget {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('Reports').get();
 
-    // Convert querySnapshot to a List of maps
-    return querySnapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
+    List<Map<String, dynamic>> reports = [];
+
+    for (var doc in querySnapshot.docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      final reportedByUid = data['reportedBy'];
+
+      String? reporterName;
+
+      // Fetch the reporter's name from "Job Provider" or "Worker" collections
+      if (reportedByUid != null) {
+        DocumentSnapshot? jobProviderSnapshot = await FirebaseFirestore.instance
+            .collection('Job Provider')
+            .doc(reportedByUid)
+            .get();
+
+        if (jobProviderSnapshot.exists) {
+          reporterName = jobProviderSnapshot['name'];
+        } else {
+          DocumentSnapshot? workerSnapshot = await FirebaseFirestore.instance
+              .collection('Worker')
+              .doc(reportedByUid)
+              .get();
+
+          if (workerSnapshot.exists) {
+            reporterName = workerSnapshot['name'];
+          }
+        }
+      }
+
+      // Add the fetched name to the report
+      reports.add({
+        ...data,
+        'reportedByName': reporterName ?? 'Unknown',
+      });
+    }
+
+    return reports;
   }
 
   @override
@@ -24,21 +57,7 @@ class ViewReportScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('View Reports'),
-        backgroundColor: Colors.red.shade800, // accident/alert theme
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              // Add your refresh logic here
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Add your search logic here
-            },
-          ),
-        ],
+        backgroundColor: Colors.red,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchReports(),
@@ -60,12 +79,12 @@ class ViewReportScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final report = snapshot.data![index];
               return ReportCard(
-                contractorName: report['contractorName'] ?? 'Unknown',
-                date: report['date'] ?? 'N/A',
+                contractorName: report['reportedUser'] ?? 'Unknown',
+                date: report['timestamp']?.toDate().toString() ?? 'N/A',
                 incidentDescription:
-                    report['incidentDescription'] ?? 'No description available',
-                injuries: report['injuries']?.toString() ?? '0',
-                jobProviderName: report['jobProviderName'] ?? 'Unknown',
+                    report['comment'] ?? 'No description available',
+                injuries: report['type']?.toString() ?? '0',
+                jobProviderName: report['reportedByName'] ?? 'Unknown',
                 onTap: () {
                   // Handle the tap event for detailed view
                 },
@@ -104,14 +123,14 @@ class ReportCard extends StatelessWidget {
         elevation: 8,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        color: Colors.red.shade50, // Accidents/fake theme
+        color: Colors.red.shade50,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Contractor: $contractorName', // Null-safe check
+                'TYPE: $injuries',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -120,32 +139,24 @@ class ReportCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Date: $date', // Null-safe check
+                'Incident Description: $incidentDescription',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.red.shade600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Incident Description: $incidentDescription', // Null-safe check
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Injuries: $injuries', // Null-safe check
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
                   color: Colors.red.shade700,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Job Provider: $jobProviderName', // Null-safe check
+                'Reported User: $contractorName',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Reported By: $jobProviderName',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

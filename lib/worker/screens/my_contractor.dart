@@ -100,12 +100,11 @@ class _MyContractorState extends State<MyContractor> {
                   children: [
                     Center(
                       child: CircleAvatar(
-                        backgroundImage:
-                            contractorData['profilePicture'] != null &&
-                                    contractorData['profilePicture'].isNotEmpty
-                                ? NetworkImage(contractorData['profilePicture'])
-                                : const AssetImage('assets/placeholder.png')
-                                    as ImageProvider,
+                        backgroundImage: contractorData['profilePicture'] != null &&
+                                contractorData['profilePicture'].isNotEmpty
+                            ? NetworkImage(contractorData['profilePicture'])
+                            : const AssetImage('assets/placeholder.png')
+                                as ImageProvider,
                         radius: 55,
                       ),
                     ),
@@ -155,8 +154,8 @@ class _MyContractorState extends State<MyContractor> {
                               contractorData['companyName'] ?? ''),
                           _buildProfileItem(
                               'Role/Position', contractorData['role'] ?? ''),
-                          _buildProfileItem(
-                              'Experience', contractorData['experience'] ?? ''),
+                          _buildProfileItem('Experience',
+                              contractorData['experience'] ?? ''),
                         ],
                       ),
                     ),
@@ -165,12 +164,14 @@ class _MyContractorState extends State<MyContractor> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Correctly navigating to the report page
+                          String contractorName =
+                              contractorData['name'] ?? 'Unknown Contractor';
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const ReportMyContractorPage(),
+                              builder: (context) => ReportContractorPage(
+                                contractorName: contractorName,
+                              ),
                             ),
                           );
                         },

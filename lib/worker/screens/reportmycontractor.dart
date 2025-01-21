@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ReportMyContractorPage extends StatefulWidget {
-  const ReportMyContractorPage({super.key});
+class ReportContractorPage extends StatefulWidget {
+  final String contractorName; // Dynamically passed contractor's name
+
+
+  const ReportContractorPage({
+    super.key,
+    required this.contractorName,
+  });
 
   @override
-  _ReportMyContractorPageState createState() => _ReportMyContractorPageState();
+  _ReportContractorPageState createState() => _ReportContractorPageState();
 }
 
-class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
+class _ReportContractorPageState extends State<ReportContractorPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _commentController = TextEditingController();
   String? _selectedReportType;
   bool _isSubmitting = false;
-
-  // Sample contractor user ID for demonstration
-  final String _contractorUserId = "sample_contractor_id";
 
   final List<String> _reportTypes = [
     "Cheating or Fraudulent Activity",
@@ -43,7 +46,7 @@ class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
           'type': _selectedReportType,
           'comment': _commentController.text.trim(),
           'reportedBy': currentUser.uid,
-          'reportedUser': _contractorUserId,
+          'reportedUser': widget.contractorName,
           'timestamp': FieldValue.serverTimestamp(),
         });
 
@@ -79,9 +82,9 @@ class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Report Contractor',
-          style: TextStyle(
+        title: Text(
+          'Report ${widget.contractorName}', // Display contractor's name
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -129,11 +132,6 @@ class _ReportMyContractorPageState extends State<ReportMyContractorPage> {
                         _selectedReportType = value;
                       });
                     },
-                  ),
-                if (_selectedReportType == null)
-                  const Text(
-                    "Please select a report type.",
-                    style: TextStyle(color: Colors.red, fontSize: 14),
                   ),
 
                 const SizedBox(height: 20),

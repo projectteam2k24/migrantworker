@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/contractordetailpage.dart';
 import 'package:migrantworker/job_provider/screens/search.dart';
 import 'package:migrantworker/login.dart';
-import 'package:migrantworker/worker/screens/exchange_contractor.dart';
 import 'package:migrantworker/worker/screens/my_contractor.dart';
 import 'package:migrantworker/worker/screens/notification.dart';
 import 'package:migrantworker/worker/screens/profile.dart';
@@ -567,24 +566,23 @@ class _ProfileMenuState extends State<ProfileMenu> {
               child: const Text('View Current Job'),
             ),
             const SizedBox(height: 10),
-            OutlinedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return const ContractorExchangePage();
-                  },
-                ));
-              },
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.green),
-                padding: const EdgeInsets.symmetric(vertical: 15.0),
-              ),
-              child: const Text(
-                'Contractor Change Request',
-                style: TextStyle(color: Colors.green),
-              ),
-            ),
-            const SizedBox(height: 20),
+            // OutlinedButton(
+            //   onPressed: () {
+            //     Navigator.push(context, MaterialPageRoute(
+            //       builder: (context) {
+            //         return const ContractorExchangePage();
+            //       },
+            //     ));
+            //   },
+            //   style: OutlinedButton.styleFrom(
+            //     side: const BorderSide(color: Colors.green),
+            //     padding: const EdgeInsets.symmetric(vertical: 15.0),
+            //   ),
+              // child: const Text(
+              //   'Contractor Change Request',
+              //   style: TextStyle(color: Colors.green),
+              // ),
+            // ),
             const Center(
               child: Text(
                 'About\n~',
