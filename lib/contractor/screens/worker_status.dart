@@ -229,7 +229,7 @@ class _WorkerStatusPageState extends State<WorkerStatusPage> {
                                         fontSize: widthFactor * 0.045),
                                   ),
                                 ),
-                                SizedBox(width: widthFactor * 0.2),
+                                const SizedBox(width: 19),
                                 ElevatedButton(
                                   onPressed: () {
                                     _viewIncident();

@@ -372,7 +372,7 @@ class _ContractorHomeState extends State<ContractorHome> {
                 Icons.check_circle,
                 color: Colors.green,
               ),
-              label: "Worker Status",
+              label: "Work Status",
             ),
           ],
           currentIndex: _selectedIndex,

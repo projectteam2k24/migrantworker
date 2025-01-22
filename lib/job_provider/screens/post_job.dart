@@ -158,7 +158,7 @@ class _PostJobPageState extends State<PostJobPage> {
                               jobType: jobTypeController.text,
                               selectedDistrict: selectedDistrict,
                               selectedTown: selectedTown,
-                              name : nameController,
+                              name: nameController.text,
                               landMark: landmarkController.text,
                               address: addressController.text,
                               phone: contactController.text,
@@ -282,7 +282,6 @@ class _PostJobPageState extends State<PostJobPage> {
   }
 }
 
-
 class PostJobPage1 extends StatefulWidget {
   const PostJobPage1({
     super.key,
@@ -309,8 +308,8 @@ class PostJobPage1 extends StatefulWidget {
   final String plotSize;
   final String rooms;
   final String floors;
-  
-  final dynamic name;
+
+  final String name;
 
   @override
   State<PostJobPage1> createState() => _PostJobPage1State();
@@ -369,7 +368,9 @@ class _PostJobPage1State extends State<PostJobPage1> {
   }
 
   Future<void> _postJob() async {
+    print('Post Job button pressed.');
     if (_formKey.currentState!.validate()) {
+      print('Form validated.');
       setState(() {
         _isLoading = true;
       });
@@ -379,6 +380,7 @@ class _PostJobPage1State extends State<PostJobPage1> {
         if (user == null) {
           throw Exception('User not authenticated');
         }
+        print('User authenticated: ${user.uid}');
 
         final jobData = {
           'uid': user.uid,
@@ -386,32 +388,34 @@ class _PostJobPage1State extends State<PostJobPage1> {
           'jobType': widget.jobType,
           'district': widget.selectedDistrict,
           'town': widget.selectedTown,
-          'name' : widget.name,
+          'name': widget.name,
           'landmark': widget.landMark,
           'address': widget.address,
           'contactNumber': widget.phone,
           'plotSize': widget.plotSize,
           'rooms': widget.rooms,
           'floors': widget.floors,
-          'propertyDescription': propertyDescriptionController.text,
+          'propertyDescription':
+              propertyDescriptionController.text,
           'images': _imageUrls,
           'createdAt': FieldValue.serverTimestamp(),
         };
 
-        // Save to Firestore
         await FirebaseFirestore.instance.collection('Jobs').add(jobData);
+        print('Job posted successfully.');
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Job Posted Successfully!')),
         );
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const JobProviderHome(),
           ),
         );
       } catch (e) {
+        print('Error posting job: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
@@ -420,6 +424,8 @@ class _PostJobPage1State extends State<PostJobPage1> {
           _isLoading = false;
         });
       }
+    } else {
+      print('Form validation failed.');
     }
   }
 
