@@ -267,7 +267,6 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
                       _buildTextField('Date of Birth', _dobController),
                       _buildTextField('Gender', _genderController),
                       _buildTextField('Phone Number', _phoneController),
-                      _buildTextField('Email Address', _emailController),
                       _buildTextField('Address', _addressController),
                     ]),
                     const SizedBox(height: 20),

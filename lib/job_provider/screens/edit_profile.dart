@@ -16,9 +16,10 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController userTypeController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>(); // Added form key for validation
 
   File? _profileImage;
   String _profileImageUrl = '';
@@ -53,7 +54,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           setState(() {
             fullNameController.text = data?['name'] ?? '';
             phoneController.text = data?['phone'] ?? '';
-            emailController.text = data?['email'] ?? '';
             addressController.text = data?['address'] ?? '';
             userType = data?['userType'] ?? '';
             _profileImageUrl = data?['profile'] ?? '';
@@ -125,7 +125,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         await FirebaseFirestore.instance.collection('Job Provider').doc(userId).set({
           'name': fullNameController.text,
           'phone': phoneController.text,
-          'email': emailController.text,
           'address': addressController.text,
           'userType': userType,
           'profile': _profileImageUrl,
@@ -182,36 +181,38 @@ class _EditProfilePageState extends State<EditProfilePage> {
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundImage: _profileImageUrl.isNotEmpty
-                              ? NetworkImage(_profileImageUrl)
-                              : const AssetImage('assets/profile_placeholder.png')
-                                  as ImageProvider,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.camera_alt),
-                          onPressed: _pickImage,
-                          iconSize: 30,
-                          color: Colors.green[700],
-                        ),
-                      ],
+              child: Form( // Wrap in a Form widget
+                key: _formKey, // Assign the form key here
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundImage: _profileImageUrl.isNotEmpty
+                                ? NetworkImage(_profileImageUrl)
+                                : const AssetImage('assets/profile_placeholder.png')
+                                    as ImageProvider,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.camera_alt),
+                            onPressed: _pickImage,
+                            iconSize: 30,
+                            color: Colors.green[700],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  _buildEditableProfileItem('Full Name', fullNameController),
-                  _buildEditableProfileItem('Phone Number', phoneController),
-                  _buildEditableProfileItem('Email Address', emailController),
-                  _buildEditableProfileItem('Address', addressController),
-                  _buildUserTypeDropdown(),
-                ],
+                    const SizedBox(height: 30),
+                    _buildEditableProfileItem('Full Name', fullNameController),
+                    _buildPhoneNumberField(), // Updated phone number field
+                    _buildEditableProfileItem('Address', addressController),
+                    _buildUserTypeDropdown(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -237,6 +238,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
           Text(label),
           const SizedBox(height: 8),
           TextField(controller: controller),
+        ],
+      ),
+    );
+  }
+
+  // Updated method for phone number validation
+  Widget _buildPhoneNumberField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Phone Number'),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: phoneController,
+            keyboardType: TextInputType.phone,
+            validator: (value) {
+               if (value == null || value.isEmpty) {
+                              return 'Please enter your phone number';
+                            } else if (!RegExp(r'^[0-9]{10}$')
+                                .hasMatch(value)) {
+                              return 'Phone number must be 10 digits';
+                            }
+                            return null;
+            },
+          ),
         ],
       ),
     );

@@ -119,8 +119,39 @@ class _RegisterWorkerState extends State<RegisterWorker> {
       ],
     );
   }
+Widget buildDropdown({
+  required TextEditingController controller,
+  required String label,
+  required IconData icon,
+  required String? Function(String?) validator,
+  required List<String> items,
+}) {
+  return DropdownButtonFormField<String>(
+    value: controller.text.isEmpty ? null : controller.text,
+    decoration: InputDecoration(
+      prefixIcon: Icon(icon, color: Colors.green),
+      labelText: label,
+      labelStyle: TextStyle(
+        fontSize: 18,
+        color: Colors.green,
+      ),
+      border: InputBorder.none,
+    ),
+    onChanged: (String? newValue) {
+      controller.text = newValue ?? '';
+    },
+    items: items.map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    validator: validator,
+  );
+}
 
   @override
+  
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -132,6 +163,7 @@ class _RegisterWorkerState extends State<RegisterWorker> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  
                   const SizedBox(height: 20),
                   const SizedBox(height: 20),
                   Container(
@@ -259,17 +291,19 @@ class _RegisterWorkerState extends State<RegisterWorker> {
                               ),
                             ),
                           ),
-                          buildTextField(
-                            controller: GenderController,
-                            label: 'Gender',
-                            icon: Icons.person_2_outlined,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select your gender';
-                              }
-                              return null;
-                            },
-                          ),
+                         buildDropdown(
+  controller: GenderController,
+  label: 'Gender',
+  icon: Icons.person_2_outlined,
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select your gender';
+    }
+    return null;
+  },
+  items: <String>['Male', 'Female', 'Other'], // Modify with your list of gender options
+),
+
                           buildTextField(
                             controller: PhoneController,
                             label: 'Phone Number',

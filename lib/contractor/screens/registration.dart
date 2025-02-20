@@ -276,27 +276,38 @@ class _RegisterContractorState extends State<RegisterContractor> {
 
                           // Gender Field
                           _buildInputContainer(
-                            TextFormField(
-                              controller: GenderController,
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.person_2_outlined,
-                                    color: Colors.green),
-                                labelText: 'Gender',
-                                labelStyle: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.green,
-                                ),
-                                border: InputBorder.none,
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select your gender';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-
+  DropdownButtonFormField<String>(
+    value: GenderController.text.isEmpty ? null : GenderController.text,
+    decoration: InputDecoration(
+      prefixIcon: Icon(
+        Icons.person_2_outlined,
+        color: Colors.green,
+      ),
+      labelText: 'Gender',
+      labelStyle: TextStyle(
+        fontSize: 18,
+        color: Colors.green,
+      ),
+      border: InputBorder.none,
+    ),
+    onChanged: (String? newValue) {
+      GenderController.text = newValue ?? '';
+    },
+    items: <String>['Male', 'Female', 'Other'] // Replace with your list of gender options
+        .map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please select your gender';
+      }
+      return null;
+    },
+  ),
+),
                           // Phone Number Field
                           _buildInputContainer(
                             TextFormField(
@@ -660,11 +671,24 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                             return null;
                           },
                         ),
-                        buildTextField(
-                          controller: ExpertiseController,
-                          label: 'Expertise/Specialization',
-                          icon: Icons.star_border,
-                        ),
+                       DropdownButtonFormField<String>(
+  value: ExpertiseController.text.isEmpty ? null : ExpertiseController.text,
+  decoration: InputDecoration(
+    labelText: 'Expertise/Specialization',
+    icon: Icon(Icons.star_border),
+  ),
+  onChanged: (String? newValue) {
+    ExpertiseController.text = newValue ?? '';
+  },
+  items: <String>['Expertise 1', 'Expertise 2', 'Expertise 3'] // Replace with your list of options
+      .map<DropdownMenuItem<String>>((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList(),
+)
+
                       ],
                     ),
                   ),
@@ -704,11 +728,6 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                           title: "Company Reg. Certificate:",
                           onPressed: selectCompRegFile,
                           isSelected: CompRegFile != null,
-                        ),
-                        buildUploadRow(
-                          title: "Proof of address:",
-                          onPressed: selectAddressProofFile,
-                          isSelected: AddressProofFile != null,
                         ),
                       ],
                     ),

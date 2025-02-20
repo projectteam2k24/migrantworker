@@ -49,6 +49,72 @@ class _MyContractorState extends State<MyContractor> {
     return {};
   }
 
+  Future<void> exchangeContractor() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User not logged in');
+      }
+
+      var workerSnapshot = await FirebaseFirestore.instance
+          .collection('Worker')
+          .doc(user.uid)
+          .get();
+
+      if (!workerSnapshot.exists) {
+        throw Exception('Worker data not found');
+      }
+
+      String workerName = workerSnapshot.data()?['name'] ?? 'Unknown Worker';
+      String contractorId = workerSnapshot.data()?['assigned'] ?? 'Unknown Worker';
+
+      await FirebaseFirestore.instance.collection('contractorNoti').add({
+        'workerId': user.uid,
+        'contractorId': contractorId,
+        'message': "The $workerName wants to leave from your team",
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Request sent to contractor successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Error sending exchange request: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to send request'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void showExchangeDialog(String contractorId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exchange Contractor'),
+        content: const Text('Are you sure you want to leave this contractor?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              exchangeContractor();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -91,6 +157,7 @@ class _MyContractorState extends State<MyContractor> {
             }
 
             var contractorData = snapshot.data!;
+            String contractorId = contractorData['id'] ?? '';
 
             return SingleChildScrollView(
               child: Padding(
@@ -186,6 +253,22 @@ class _MyContractorState extends State<MyContractor> {
                         child: const Text('Report Contractor'),
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => showExchangeDialog(contractorId),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        child: const Text('Exchange Contractor'),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -217,21 +300,8 @@ class _MyContractorState extends State<MyContractor> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.green,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[700],
-            ),
-          ),
+          Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.green)),
+          Text(value, style: TextStyle(fontSize: 16, color: Colors.grey[700])),
         ],
       ),
     );
