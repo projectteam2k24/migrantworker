@@ -60,42 +60,53 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
 
   Future<void> _fetchNotifications(String contractorId) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      // Fetching contractorNoti notifications
+      final contractorNotiSnapshot = await FirebaseFirestore.instance
           .collection('contractorNoti')
           .where('contractorId', isEqualTo: contractorId)
           .get();
 
+      // Fetching ContractorRequests notifications
+      final contractorRequestsSnapshot = await FirebaseFirestore.instance
+          .collection('ContractorRequests')
+          .where('contractorId', isEqualTo: contractorId)
+          .get();
+
       setState(() {
-        notifications = snapshot.docs.map((doc) {
-          final data = doc.data();
-          data['id'] = doc.id;
-          return data;
-        }).toList();
+        notifications = [
+          ...contractorNotiSnapshot.docs.map((doc) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            data['source'] = 'contractorNoti';
+            return data;
+          }).toList(),
+          ...contractorRequestsSnapshot.docs.map((doc) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            data['source'] = 'ContractorRequests';
+            return data;
+          }).toList(),
+        ];
       });
     } catch (e) {
       print("Error fetching notifications: $e");
     }
   }
 
-  Future<void> _handleAccept(String workerId, String notificationId) async {
+  Future<void> _handleAccept(String workerId, String notificationId, String source) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('assignments')
-          .doc(workerId)
-          .update({
-        'contractorId': null,
-      });
-      await FirebaseFirestore.instance
-          .collection('Worker')
-          .doc(workerId)
-          .update({
-        'assigned': null,
+      // Update assigned field in Worker collection
+      await FirebaseFirestore.instance.collection('Worker').doc(workerId).update({
+        'assigned': contractorId,
       });
 
-      await FirebaseFirestore.instance
-          .collection('contractorNoti')
-          .doc(notificationId)
-          .delete();
+      // Update contractorId in assignments collection
+      await FirebaseFirestore.instance.collection('assignments').doc(workerId).update({
+        'contractorId': contractorId,
+      });
+
+      // Delete the notification from the respective collection
+      await FirebaseFirestore.instance.collection(source).doc(notificationId).delete();
 
       setState(() {
         notifications.removeWhere((noti) => noti['id'] == notificationId);
@@ -105,12 +116,9 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
     }
   }
 
-  Future<void> _handleReject(String notificationId) async {
+  Future<void> _handleReject(String notificationId, String source) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('contractorNoti')
-          .doc(notificationId)
-          .delete();
+      await FirebaseFirestore.instance.collection(source).doc(notificationId).delete();
 
       setState(() {
         notifications.removeWhere((noti) => noti['id'] == notificationId);
@@ -242,7 +250,7 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
         final notification = notifications[index];
         final workerId = notification['workerId'];
         final notificationId = notification['id'];
-        final status = notification['status'];
+        final source = notification['source'];
         final timestamp = notification['timestamp'] ?? Timestamp.now();
 
         return Card(
@@ -250,9 +258,7 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
           elevation: 2.0,
           child: ListTile(
             title: Text(
-              status == 'accepted'
-                  ? 'Worker has joined your team.'
-                  : 'Worker has rejected the job request.',
+              'Worker Request',
               style:
                   const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
             ),
@@ -261,12 +267,12 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ElevatedButton(
-                  onPressed: () => _handleAccept(workerId, notificationId),
+                  onPressed: () => _handleAccept(workerId, notificationId, source),
                   child: const Text("Accept"),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () => _handleReject(notificationId),
+                  onPressed: () => _handleReject(notificationId, source),
                   child: const Text("Reject"),
                 ),
               ],
