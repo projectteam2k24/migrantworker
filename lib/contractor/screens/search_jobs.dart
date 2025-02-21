@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:migrantworker/contractor/screens/job_details.dart';
-import 'package:migrantworker/contractor/screens/homepage.dart'; // Adjust import path if necessary
+import 'package:migrantworker/contractor/screens/homepage.dart';
 
 class SearchJobPage extends StatefulWidget {
   const SearchJobPage({super.key});
@@ -13,6 +13,8 @@ class SearchJobPage extends StatefulWidget {
 
 class _SearchJobPageState extends State<SearchJobPage> {
   String _selectedDateFilter = "Today";
+  String jobTypeQuery = "";
+  String locationQuery = "";
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +25,11 @@ class _SearchJobPageState extends State<SearchJobPage> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // Left arrow icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const ContractorHome()), // Navigate to ContractorHome page
+              MaterialPageRoute(builder: (context) => const ContractorHome()),
             );
           },
         ),
@@ -51,7 +52,7 @@ class _SearchJobPageState extends State<SearchJobPage> {
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: "Search the job type",
+                      hintText: "Search Job Type",
                       filled: true,
                       fillColor: Colors.green.withOpacity(0.1),
                       border: OutlineInputBorder(
@@ -59,22 +60,22 @@ class _SearchJobPageState extends State<SearchJobPage> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        jobTypeQuery = value.toLowerCase();
+                      });
+                    },
                   ),
                 ),
                 SizedBox(width: widthFactor * 0.02),
                 ElevatedButton(
-                  onPressed: () {
-                    // Add search functionality here
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     backgroundColor: Colors.green,
                     padding: EdgeInsets.all(widthFactor * 0.03),
                   ),
-                  child: const Icon(
-                    Icons.search,
-                    color: Colors.white,
-                  ),
+                  child: const Icon(Icons.search, color: Colors.white),
                 ),
               ],
             ),
@@ -94,22 +95,22 @@ class _SearchJobPageState extends State<SearchJobPage> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        locationQuery = value.toLowerCase();
+                      });
+                    },
                   ),
                 ),
                 SizedBox(width: widthFactor * 0.02),
                 ElevatedButton(
-                  onPressed: () {
-                    // Add search functionality here
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     backgroundColor: Colors.green,
                     padding: EdgeInsets.all(widthFactor * 0.03),
                   ),
-                  child: const Icon(
-                    Icons.search,
-                    color: Colors.white,
-                  ),
+                  child: const Icon(Icons.search, color: Colors.white),
                 ),
               ],
             ),
@@ -132,36 +133,17 @@ class _SearchJobPageState extends State<SearchJobPage> {
                     color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(widthFactor * 0.03),
                   ),
-                  child: DropdownButton<String>(
-                    value: _selectedDateFilter,
-                    items: [
-                      "Today",
-                      "This Week",
-                      "This Month",
-                      "Last 3 Months",
-                      "Last 6 Months"
-                    ]
-                        .map((date) => DropdownMenuItem<String>(
-                              value: date,
-                              child: Text(date),
-                            ))
-                        .toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedDateFilter = newValue!;
-                      });
-                    },
-                    underline: Container(),
-                    dropdownColor: Colors.white, // Set dropdown color
-                  ),
                 ),
               ],
             ),
             SizedBox(height: heightFactor * 0.02),
 
-            // Fetching and displaying job cards
-            const Expanded(
-              child: JobCardList(),
+            // Job Card List with Search Filters
+            Expanded(
+              child: JobCardList(
+                jobTypeQuery: jobTypeQuery,
+                locationQuery: locationQuery,
+              ),
             ),
           ],
         ),
@@ -170,8 +152,13 @@ class _SearchJobPageState extends State<SearchJobPage> {
   }
 }
 
+// Job Listing Component with Filters
 class JobCardList extends StatelessWidget {
-  const JobCardList({super.key});
+  final String jobTypeQuery;
+  final String locationQuery;
+
+  const JobCardList(
+      {super.key, required this.jobTypeQuery, required this.locationQuery});
 
   @override
   Widget build(BuildContext context) {
@@ -189,19 +176,31 @@ class JobCardList extends StatelessWidget {
           return Center(child: Text("Error: ${snapshot.error}"));
         }
 
-        final jobs = snapshot.data!.docs;
+        final jobs = snapshot.data!.docs.where((doc) {
+          final job = doc.data() as Map<String, dynamic>;
+          final jobType = (job['jobType'] ?? "").toString().toLowerCase();
+          final location = (job['town'] ?? "").toString().toLowerCase();
+
+          return jobType.contains(jobTypeQuery) &&
+              location.contains(locationQuery);
+        }).toList();
+
+        if (jobs.isEmpty) {
+          return const Center(child: Text("No matching jobs found"));
+        }
+
         return ListView.builder(
           itemCount: jobs.length,
           itemBuilder: (context, index) {
             final job = jobs[index].data() as Map<String, dynamic>;
             final imageUrls = job['images'] ?? [];
-             final jobId = jobs[index].id;
+            final jobId = jobs[index].id;
 
             return GestureDetector(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return JobDetailsPage(job: job, jobId: jobId,);
+                    return JobDetailsPage(job: job, jobId: jobId);
                   },
                 ));
               },
@@ -218,108 +217,19 @@ class JobCardList extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Stack(
-                  children: [
-                    // Image Carousel
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                      child: CarouselSlider(
-                        options: CarouselOptions(
-                          height: heightFactor * 0.3,
-                          autoPlay: true,
-                          enlargeCenterPage: true,
-                          viewportFraction: 1.0,
-                        ),
-                        items: imageUrls.map<Widget>((imageUrl) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(widthFactor * 0.03),
-                                topRight: Radius.circular(widthFactor * 0.03),
-                              ),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                    height: heightFactor * 0.15,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.black.withOpacity(1.0),
-                                          Colors.transparent,
-                                        ],
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: heightFactor * 0.02,
-                                  left: widthFactor * 0.04,
-                                  right: widthFactor * 0.04,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        job['jobType'] ?? "Untitled Job",
-                                        style: TextStyle(
-                                          fontSize: widthFactor * 0.05,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: heightFactor * 0.005),
-                                      Text(
-                                        job['propertyDescription'] ??
-                                            "No description available",
-                                        style: TextStyle(
-                                          fontSize: widthFactor * 0.04,
-                                          color: Colors.white.withOpacity(0.9),
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Location: ${job['district'] ?? 'Unknown'}",
-                                            style: TextStyle(
-                                              fontSize: widthFactor * 0.035,
-                                              color: Colors.white.withOpacity(0.8),
-                                            ),
-                                          ),
-                                          SizedBox(width: widthFactor * 0.02),
-                                          Text(
-                                            "Plot Size: ${job['plotSize']} sqft",
-                                            style: TextStyle(
-                                              fontSize: widthFactor * 0.035,
-                                              color: Colors.white.withOpacity(0.8),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(widthFactor * 0.03),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: heightFactor * 0.3,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      viewportFraction: 1.0,
                     ),
-                  ],
+                    items: imageUrls.map<Widget>((imageUrl) {
+                      return Image.network(imageUrl, fit: BoxFit.cover);
+                    }).toList(),
+                  ),
                 ),
               ),
             );
