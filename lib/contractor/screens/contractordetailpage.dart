@@ -73,23 +73,30 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
   Future<void> _sendRequestToContractor() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await FirebaseFirestore.instance
-          .collection('ContractorRequests')
-          .add({
-        'workerId': user.uid,
-        'contractorId': widget.contractorId,
-        'workerName': contractorData['name'],
-        'status': 'pending',
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+      final workerDoc = await FirebaseFirestore.instance
+          .collection('Worker')
+          .doc(user.uid)
+          .get();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Request sent successfully!')),
-      );
+      if (workerDoc.exists) {
+        String workerName = workerDoc.data()?['name'] ?? 'Unknown Worker';
 
-      setState(() {
-        canSendRequest = false; // Disable the button after sending request
-      });
+        await FirebaseFirestore.instance.collection('ContractorRequests').add({
+          'workerId': user.uid,
+          'contractorId': widget.contractorId,
+          'workerName': workerName,
+          'message': '$workerName wants to join your team',
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Request sent successfully!')),
+        );
+
+        setState(() {
+          canSendRequest = false; // Disable the button after sending request
+        });
+      }
     }
   }
 
@@ -159,11 +166,12 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
                   onPressed: canSendRequest ? _sendRequestToContractor : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    minimumSize: Size(MediaQuery.of(context).size.width / 2, 48),
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width / 2, 48),
                     textStyle: const TextStyle(fontSize: 16),
                   ),
                   child: Text(
-                    canSendRequest ? 'Send Request' : 'Send Request',
+                    canSendRequest ? 'Send Request' : 'Request Sent',
                   ),
                 ),
               ),
@@ -248,7 +256,10 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Company: ${contractorData['companyName']}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700])),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[700])),
             const SizedBox(height: 16),
             Text('Experience: ${contractorData['experience']}',
                 style: TextStyle(fontSize: 16, color: Colors.grey[700])),

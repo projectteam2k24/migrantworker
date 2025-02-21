@@ -65,7 +65,7 @@ class _FeedbackViewPageState extends State<FeedbackViewPage> {
                   style: TextStyle(color: Colors.red),
                 ),
               );
-              print(currentUserUid);
+
             }
 
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
