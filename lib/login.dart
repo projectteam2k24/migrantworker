@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/admin/homepage.dart';
+import 'package:migrantworker/forgotpassword.dart';
 import 'package:migrantworker/selectuser.dart';
 import 'package:migrantworker/services/login_service_fire.dart';
 
@@ -282,12 +283,15 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                'Forgot Password ?',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 146, 148, 146)),
-                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ForgotPasswordScreen()),
+                                );
+                              },
+                              child: Text("Forgot Password?"),
                             ),
                             TextButton(
                               onPressed: () {
