@@ -59,12 +59,13 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
       final workerDoc = await FirebaseFirestore.instance
           .collection('Worker')
           .doc(user.uid)
-          .get();
+          .get(const GetOptions(source: Source.server));
 
       if (workerDoc.exists) {
         setState(() {
           isWorker = true;
-          canSendRequest = workerDoc.data()?['assigned'] == null;
+          canSendRequest = workerDoc.data()?.containsKey('assigned') == true &&
+              workerDoc.data()?['assigned'] == null;
         });
       }
     }
@@ -120,6 +121,50 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     );
   }
 
+  Widget buildProfileSection() {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 50,
+          backgroundImage: widget.profilePictureUrl != null
+              ? NetworkImage(widget.profilePictureUrl!)
+              : null,
+          child: widget.profilePictureUrl == null
+              ? const Icon(Icons.person, size: 50)
+              : null,
+        ),
+        const SizedBox(height: 12),
+        Text(widget.name,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(widget.jobType,
+            style: const TextStyle(fontSize: 16, color: Colors.grey)),
+      ],
+    );
+  }
+
+  Widget buildInfoCard(
+      IconData icon, String title, String value, VoidCallback? onTap) {
+    return Card(
+      child: ListTile(
+        leading: Icon(icon, color: Colors.green),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(value),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget buildCompanyDetailsCard() {
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.business, color: Colors.blue),
+        title: const Text('Company Name',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(widget.companyName),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +185,6 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
             buildInfoCard(Icons.email, 'Email', contractorData['email'], () {}),
             buildCompanyDetailsCard(),
             const SizedBox(height: 24),
-
             Container(
               color: Colors.red[50],
               padding: const EdgeInsets.all(16.0),
@@ -154,10 +198,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
                 child: const Text('Report Contractor'),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Show Send Request Button only for Workers with assigned == null
             if (isWorker)
               Container(
                 color: Colors.blue[50],
@@ -175,97 +216,6 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
                   ),
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildProfileSection() {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 75,
-          backgroundColor: Colors.green[200],
-          backgroundImage: contractorData['profilePicture'] != null &&
-                  contractorData['profilePicture']!.isNotEmpty
-              ? NetworkImage(contractorData['profilePicture']!)
-              : null,
-          child: contractorData['profilePicture'] == null ||
-                  contractorData['profilePicture']!.isEmpty
-              ? const Icon(Icons.person, size: 75, color: Colors.white)
-              : null,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          contractorData['name'] ?? 'No name provided',
-          style: const TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Colors.green,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          contractorData['jobType'] ?? 'No job type provided',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildInfoCard(
-      IconData icon, String title, String content, Function() onTap) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Colors.white,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.green[600], size: 28),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  content.isNotEmpty ? content : 'No $title provided',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCompanyDetailsCard() {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Company: ${contractorData['companyName']}',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[700])),
-            const SizedBox(height: 16),
-            Text('Experience: ${contractorData['experience']}',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700])),
-            const SizedBox(height: 16),
-            Text('Skills: ${contractorData['skills']}',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700])),
           ],
         ),
       ),
