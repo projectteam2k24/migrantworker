@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migrantworker/admin/contractorlist.dart';
+import 'package:migrantworker/admin/joblist.dart';
 import 'package:migrantworker/admin/jobproviderlist.dart';
 import 'package:migrantworker/admin/viewreports.dart';
 import 'package:migrantworker/admin/workerlist.dart';
@@ -16,18 +17,17 @@ class AdminModuleApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green, // Green theme
+        primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        scaffoldBackgroundColor: const Color(0xFFE8F5E9), // Light green background
+        scaffoldBackgroundColor: const Color(0xFFE8F5E9),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.green, // Green app bar background
-          foregroundColor: Colors.white, // White text in the app bar
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.green, // Green bottom navigation bar
-          selectedItemColor: Colors.white, // White selected icon color
-          unselectedItemColor:
-              Colors.white60, // Lighter white for unselected icons
+          backgroundColor: Colors.green,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white60,
         ),
       ),
       home: const AdminScreen(),
@@ -47,7 +47,7 @@ class _AdminScreenState extends State<AdminScreen> {
 
   static const List<Widget> _pages = <Widget>[
     HomeScreen(),
-    ViewReportScreen(), // Updated to use the imported ViewReportScreen
+    ViewReportScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -98,7 +98,7 @@ class HomeScreen extends StatelessWidget {
           _buildRoleCard(
             context,
             'Contractor',
-            Icons.person, // Replaced with a person icon
+            Icons.person,
             'Experienced in handling large projects',
             () {
               Navigator.push(context, MaterialPageRoute(
@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
           _buildRoleCard(
             context,
             'Worker',
-            Icons.person, // Replaced with a person icon
+            Icons.build,
             'Skilled in various labor tasks',
             () {
               Navigator.push(context, MaterialPageRoute(
@@ -124,12 +124,25 @@ class HomeScreen extends StatelessWidget {
           _buildRoleCard(
             context,
             'Job Provider',
-            Icons.person, // Replaced with a person icon
+            Icons.business,
             'Connecting skilled workers with opportunities',
             () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
                   return const JobProviderListScreen();
+                },
+              ));
+            },
+          ),
+          _buildRoleCard(
+            context,
+            'Jobs',
+            Icons.work,
+            'View available job listings',
+            () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return const JobListScreen();
                 },
               ));
             },
@@ -169,7 +182,7 @@ class HomeScreen extends StatelessWidget {
               Icon(
                 icon,
                 size: 80,
-                color: Colors.green.shade700, // Icon color
+                color: Colors.green.shade700,
               ),
               const SizedBox(height: 12),
               Text(

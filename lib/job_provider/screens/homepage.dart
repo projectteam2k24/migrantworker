@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:migrantworker/contractor/screens/contractordetailpage.dart';
+import 'package:migrantworker/job_provider/screens/aichat.dart';
 import 'package:migrantworker/job_provider/screens/edit_profile.dart';
 import 'package:migrantworker/job_provider/screens/myjob.dart';
 import 'package:migrantworker/job_provider/screens/notification.dart';
@@ -31,7 +32,9 @@ class _JobProviderHomeState extends State<JobProviderHome> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return const ContractorSearchPage(query: '',);
+              return const ContractorSearchPage(
+                query: '',
+              );
             },
           ),
         );
@@ -433,7 +436,8 @@ class _ProfileMenuState extends State<ProfileMenu> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
         final snapshot = await FirebaseFirestore.instance
-            .collection('Job Provider') // Replace with your Firestore collection name
+            .collection(
+                'Job Provider') // Replace with your Firestore collection name
             .doc(userId)
             .get();
 
@@ -584,11 +588,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     title: const Text('Chat with AI'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(
-                      //   builder: (context) {
-                      //     return ChatbotScreen();
-                      //   },
-                      // ));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return AiChatPage();
+                        },
+                      ));
                     },
                   ),
                   ListTile(
