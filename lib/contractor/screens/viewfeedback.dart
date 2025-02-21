@@ -65,7 +65,6 @@ class _FeedbackViewPageState extends State<FeedbackViewPage> {
                   style: TextStyle(color: Colors.red),
                 ),
               );
-
             }
 
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -144,37 +143,6 @@ class _FeedbackViewPageState extends State<FeedbackViewPage> {
                               const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        // Confirm deletion before proceeding
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Delete Feedback'),
-                              content: const Text(
-                                  'Are you sure you want to delete this feedback?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    _deleteFeedback(feedback.id);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
                     ),
                   ),
                 );

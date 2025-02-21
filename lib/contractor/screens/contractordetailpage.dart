@@ -64,8 +64,7 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
       if (workerDoc.exists) {
         setState(() {
           isWorker = true;
-          canSendRequest = workerDoc.data()?.containsKey('assigned') == true &&
-              workerDoc.data()?['assigned'] == null;
+          canSendRequest = workerDoc.data()?['assigned'] == null;
         });
       }
     }
@@ -108,6 +107,70 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
     } else {
       throw 'Could not launch $phone';
     }
+  }
+
+  Widget buildFeedbackSection(String contractorUid) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('feedbacks')
+          .where('contractorUid',
+              isEqualTo: contractorUid) // Using contractor's UID
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text(
+              'Failed to load feedback. Please try again later.',
+              style: TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text(
+              'No feedback available.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
+        }
+
+        final feedbacks = snapshot.data!.docs;
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: feedbacks.length,
+          itemBuilder: (context, index) {
+            final feedback = feedbacks[index];
+            final data = feedback.data() as Map<String, dynamic>;
+
+            return Card(
+              elevation: 3,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.green.shade700,
+                  backgroundImage: data['profileImage'] != null
+                      ? NetworkImage(data['profileImage'])
+                      : null,
+                ),
+                title: Text(data['jobProviderName'] ?? 'Anonymous'),
+                subtitle: Text(data['message'] ?? 'No feedback provided.'),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _navigateToReportPage() {
@@ -185,6 +248,9 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
             buildInfoCard(Icons.email, 'Email', contractorData['email'], () {}),
             buildCompanyDetailsCard(),
             const SizedBox(height: 24),
+            buildFeedbackSection(widget.contractorId),
+            const SizedBox(height: 16),
+            // Report Contractor Button
             Container(
               color: Colors.red[50],
               padding: const EdgeInsets.all(16.0),
@@ -199,6 +265,8 @@ class _ContractorAddetailPageState extends State<ContractorAddetailPage> {
               ),
             ),
             const SizedBox(height: 16),
+
+            // Send Request Button (Only for Workers)
             if (isWorker)
               Container(
                 color: Colors.blue[50],

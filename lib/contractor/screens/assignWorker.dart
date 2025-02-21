@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AssignWorkerPage extends StatefulWidget {
   final String jobId;
+  final String contractorId; // Pass the contractor ID
 
-  const AssignWorkerPage({super.key, required this.jobId});
+  const AssignWorkerPage({super.key, required this.jobId, required this.contractorId});
 
   @override
   _AssignWorkerPageState createState() => _AssignWorkerPageState();
@@ -13,8 +14,7 @@ class AssignWorkerPage extends StatefulWidget {
 class _AssignWorkerPageState extends State<AssignWorkerPage> {
   bool isLoading = true;
   List<Map<String, dynamic>> workers = [];
-  Map<String, bool> assignedStatus =
-      {}; // Track the assignment status of workers
+  Map<String, bool> assignedStatus = {}; // Track the assignment status of workers
 
   @override
   void initState() {
@@ -23,18 +23,19 @@ class _AssignWorkerPageState extends State<AssignWorkerPage> {
     _monitorJobProgress();
   }
 
-  // Fetch all workers
+  // Fetch only workers assigned to the current contractor
   Future<void> _fetchWorkers() async {
     try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('Worker').get();
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Worker')
+          .where('assigned', isEqualTo: widget.contractorId) // Filter by contractor ID
+          .get();
 
       setState(() {
         workers = snapshot.docs.map((doc) {
           final data = doc.data();
           data['id'] = doc.id; // Include the document ID as the worker's UID
-          assignedStatus[doc.id] =
-              data['isAssigned'] ?? false; // Initialize status
+          assignedStatus[doc.id] = data['isAssigned'] ?? false; // Initialize status
           return data;
         }).toList();
         isLoading = false;
@@ -57,8 +58,7 @@ class _AssignWorkerPageState extends State<AssignWorkerPage> {
         return;
       }
 
-      final workerRef =
-          FirebaseFirestore.instance.collection('Worker').doc(workerId);
+      final workerRef = FirebaseFirestore.instance.collection('Worker').doc(workerId);
 
       // Update the 'isAssigned' field to true
       await workerRef.update({'isAssigned': true});
@@ -158,8 +158,7 @@ class _AssignWorkerPageState extends State<AssignWorkerPage> {
                     bool isAssigned = assignedStatus[workerId] ?? false;
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                       child: Card(
                         elevation: 3,
                         shape: RoundedRectangleBorder(
@@ -214,12 +213,9 @@ class _AssignWorkerPageState extends State<AssignWorkerPage> {
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
-                                  onPressed: isAssigned
-                                      ? null
-                                      : () => _assignWorker(workerId),
+                                  onPressed: isAssigned ? null : () => _assignWorker(workerId),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        isAssigned ? Colors.grey : Colors.green,
+                                    backgroundColor: isAssigned ? Colors.grey : Colors.green,
                                   ),
                                   child: Text(
                                     isAssigned ? 'On Duty' : 'Assign',

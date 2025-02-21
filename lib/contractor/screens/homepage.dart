@@ -154,15 +154,37 @@ class _ContractorHomeState extends State<ContractorHome> {
                     ],
                   ),
                   SizedBox(height: heightFactor * 0.02),
-                  TextField(
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search, color: Colors.green),
-                      hintText: "What are you looking for?",
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      border: OutlineInputBorder(
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to Search Page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SearchJobPage()),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: widthFactor * 0.04,
+                          vertical: heightFactor * 0.015),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                        borderSide: BorderSide.none,
+                        border:
+                            Border.all(color: Colors.grey.shade400, width: 1),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.search, color: Colors.green),
+                          SizedBox(width: widthFactor * 0.02),
+                          Text(
+                            "What are you looking for?",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: widthFactor * 0.04,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
