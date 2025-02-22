@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,25 +18,19 @@ class AdminModuleApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green, // Green theme
+        primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        scaffoldBackgroundColor: const Color(0xFFE8F5E9), // Light green background
+        scaffoldBackgroundColor: const Color(0xFFE8F5E9),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF2C6B2F), // Dark green app bar background
-          foregroundColor: Colors.white, // White text in the app bar
-          elevation: 4, // Add elevation for better shadow effect
-          centerTitle: true, // Center the title in the AppBar
+          backgroundColor: Color(0xFF2C6B2F),
+          foregroundColor: Colors.white,
+          elevation: 4,
+          centerTitle: true,
           titleTextStyle: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5, // For a more spacious title
+            letterSpacing: 1.5,
           ),
-        ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.green, // Green bottom navigation bar
-          selectedItemColor: Colors.white, // White selected icon color
-          unselectedItemColor:
-              Colors.white60, // Lighter white for unselected icons
         ),
       ),
       home: const ContractorListScreen(),
@@ -45,19 +41,31 @@ class AdminModuleApp extends StatelessWidget {
 class ContractorListScreen extends StatelessWidget {
   const ContractorListScreen({super.key});
 
+  // Function to open document URLs
+  void _openDocument(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      Fluttertoast.showToast(
+        msg: "Could not open document",
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contractor List'),
-      ),
+      appBar: AppBar(title: const Text('Contractor List')),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('Contractor').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong'));
           }
@@ -70,22 +78,23 @@ class ContractorListScreen extends StatelessWidget {
               final contractorData =
                   contractors[index].data() as Map<String, dynamic>;
 
-              // Extract data
+              // Extract data safely
               final name = contractorData['name'] ?? 'N/A';
               final companyName = contractorData['companyName'] ?? 'N/A';
-              final address = contractorData['address'] ?? 'N/A';
               final phone = contractorData['phone'] ?? 'N/A';
               final email = contractorData['email'] ?? 'N/A';
               final skill = contractorData['skill'] ?? 'N/A';
               final role = contractorData['role'] ?? 'N/A';
-              final profilePicture = contractorData['profilePicture'] ?? 'N/A';
+              final profilePicture = contractorData['profilePicture'] ?? '';
+              final govtID = contractorData['govtID']; // Government ID URL
+              final companyCertificate =
+                  contractorData['companyCertificate']; // Company Certificate URL
 
               return Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50, // Light green background
+                  color: Colors.green.shade50,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -95,163 +104,136 @@ class ContractorListScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile picture section
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: profilePicture.isNotEmpty
-                          ? NetworkImage(profilePicture)
-                          : const AssetImage('assets/default_profile.png')
-                              as ImageProvider,
-                      backgroundColor: Colors.green.shade100,
+                    // Profile picture
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.green.shade100,
+                          backgroundImage: (profilePicture.isNotEmpty)
+                              ? NetworkImage(profilePicture)
+                              : null,
+                          child: (profilePicture.isEmpty)
+                              ? const Icon(Icons.person, size: 30, color: Colors.white)
+                              : null,
+                        ),
+                        const SizedBox(width: 15),
+
+                        // Contractor details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade700,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Company: $companyName',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green.shade600,
+                                ),
+                              ),
+                              Divider(color: Colors.green.shade300, thickness: 1),
+                              Text(
+                                'Phone: $phone',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green.shade500,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Email: $email',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green.shade500,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Skill: $skill',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green.shade500,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Role: $role',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green.shade500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(height: 10),
 
-                    // Contractor details section
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Name and company name
-                          Text(
-                            name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade700,
-                            ),
+                    // Document Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: (govtID != null && govtID.isNotEmpty)
+                              ? () => _openDocument(govtID)
+                              : null, // Disabled if URL is null/empty
+                          icon: const Icon(Icons.account_balance),
+                          label: const Text("Govt ID"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                (govtID != null && govtID.isNotEmpty) ? Colors.blue : Colors.grey,
+                            foregroundColor: Colors.white,
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Company: $companyName',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.green.shade600,
-                            ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: (companyCertificate != null &&
+                                  companyCertificate.isNotEmpty)
+                              ? () => _openDocument(companyCertificate)
+                              : null, // Disabled if URL is null/empty
+                          icon: const Icon(Icons.business),
+                          label: const Text("Company Certificate"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: (companyCertificate != null &&
+                                    companyCertificate.isNotEmpty)
+                                ? Colors.orange
+                                : Colors.grey,
+                            foregroundColor: Colors.white,
                           ),
-                          Divider(color: Colors.green.shade300, thickness: 1),
+                        ),
+                      ],
+                    ),
 
-                          // Address and phone
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Address:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                              Text(
-                                address,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Phone:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                              Text(
-                                phone,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Email:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                              Text(
-                                email,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Skill:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                              Text(
-                                skill,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Role:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                              Text(
-                                role,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          // Delete button
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red.shade700,
-                              ),
-                              onPressed: () {
-                                // Code to delete the contractor from Firestore
-                                FirebaseFirestore.instance
-                                    .collection('Contractor')
-                                    .doc(contractors[index].id)
-                                    .delete();
-                              },
-                            ),
-                          ),
-                        ],
+                    const SizedBox(height: 10),
+
+                    // Delete button
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red.shade700),
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection('Contractor')
+                              .doc(contractors[index].id)
+                              .delete();
+                          Fluttertoast.showToast(
+                            msg: "Contractor deleted successfully",
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -261,38 +243,6 @@ class ContractorListScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class Contractor {
-  final String name;
-  final String address;
-  final String companyName;
-  final String phone;
-  final String email;
-  final String skill;
-  final String role;
-
-  Contractor({
-    required this.name,
-    required this.address,
-    required this.companyName,
-    required this.phone,
-    required this.email,
-    required this.skill,
-    required this.role,
-  });
-
-  factory Contractor.fromMap(Map<String, dynamic> data) {
-    return Contractor(
-      name: data['name'] ?? 'N/A',
-      address: data['address'] ?? 'N/A',
-      companyName: data['companyName'] ?? 'N/A',
-      phone: data['phone'] ?? 'N/A',
-      email: data['email'] ?? 'N/A',
-      skill: data['skill'] ?? 'N/A',
-      role: data['role'] ?? 'N/A',
     );
   }
 }

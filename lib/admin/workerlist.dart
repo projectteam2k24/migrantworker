@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,12 +31,6 @@ class AdminModuleApp extends StatelessWidget {
             letterSpacing: 1.5, // For a more spacious title
           ),
         ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.green, // Green bottom navigation bar
-          selectedItemColor: Colors.white, // White selected icon color
-          unselectedItemColor:
-              Colors.white60, // Lighter white for unselected icons
-        ),
       ),
       home: const WorkerListScreen(),
     );
@@ -62,27 +57,25 @@ class WorkerListScreen extends StatelessWidget {
             return const Center(child: Text('Something went wrong'));
           }
 
-          final contractors = snapshot.data?.docs ?? [];
+          final workers = snapshot.data?.docs ?? [];
 
           return ListView.builder(
-            itemCount: contractors.length,
+            itemCount: workers.length,
             itemBuilder: (context, index) {
-              final contractorData =
-                  contractors[index].data() as Map<String, dynamic>;
+              final workerData = workers[index].data() as Map<String, dynamic>;
 
-              // Extract data
-              final name = contractorData['name'] ?? 'N/A';
-              final companyName = contractorData['companyName'] ?? 'N/A';
-              final address = contractorData['address'] ?? 'N/A';
-              final phone = contractorData['phone'] ?? 'N/A';
-              final email = contractorData['email'] ?? 'N/A';
-              final skill = contractorData['skill'] ?? 'N/A';
-              final role = contractorData['role'] ?? 'N/A';
-              final profilePicture = contractorData['profilePicture'] ?? 'N/A';
+              // Extract data safely
+              final name = workerData['name'] ?? 'N/A';
+              final address = workerData['address'] ?? 'N/A';
+              final phone = workerData['phone'] ?? 'N/A';
+              final email = workerData['email'] ?? 'N/A';
+              final skill = workerData['skill'] ?? 'N/A';
+              final profilePicture = workerData['profilePicture'] ?? '';
+              final govtID = workerData['govtID'] ?? '';
+              final POACertificate = workerData['AddressProof'] ?? '';
 
               return Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
                   color: Colors.green.shade50, // Light green background
@@ -109,12 +102,12 @@ class WorkerListScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 15),
 
-                    // Contractor details section
+                    // Worker details section
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Name and company name
+                          // Name
                           Text(
                             name,
                             style: TextStyle(
@@ -125,7 +118,7 @@ class WorkerListScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Company: $companyName',
+                            'Address: $address',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.green.shade600,
@@ -133,43 +126,18 @@ class WorkerListScreen extends StatelessWidget {
                           ),
                           Divider(color: Colors.green.shade300, thickness: 1),
 
-                          // Address and phone
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Address:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                              Text(
-                                address,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
+                          // Phone and email
                           const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 'Phone:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.green.shade500),
                               ),
                               Text(
                                 phone,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.green.shade500),
                               ),
                             ],
                           ),
@@ -179,17 +147,11 @@ class WorkerListScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Email:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.green.shade500),
                               ),
                               Text(
                                 email,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.green.shade500),
                               ),
                             ],
                           ),
@@ -199,55 +161,55 @@ class WorkerListScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Skill:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.green.shade500),
                               ),
                               Text(
                                 skill,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
-                                ),
+                                style: TextStyle(fontSize: 14, color: Colors.green.shade500),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 5),
+
+                          const SizedBox(height: 10),
+
+                          // Document buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Role:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
+                              ElevatedButton.icon(
+                                onPressed: POACertificate.isNotEmpty
+                                    ? () => _openDocument(POACertificate)
+                                    : null,
+                                icon: const Icon(Icons.account_balance),
+                                label: const Text("Proof of Address"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: POACertificate.isNotEmpty ? Colors.blue : Colors.grey,
+                                  foregroundColor: Colors.white,
                                 ),
                               ),
-                              Text(
-                                role,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green.shade500,
+                              ElevatedButton.icon(
+                                onPressed: govtID.isNotEmpty
+                                    ? () => _openDocument(govtID)
+                                    : null,
+                                icon: const Icon(Icons.business),
+                                label: const Text("Govt ID"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: govtID.isNotEmpty ? Colors.orange : Colors.grey,
+                                  foregroundColor: Colors.white,
                                 ),
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 10),
-                          // Delete button
+
+                          // Delete button with confirmation
                           Align(
                             alignment: Alignment.centerRight,
                             child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red.shade700,
-                              ),
+                              icon: Icon(Icons.delete, color: Colors.red.shade700),
                               onPressed: () {
-                                // Code to delete the contractor from Firestore
-                                FirebaseFirestore.instance
-                                    .collection('Worker')
-                                    .doc(contractors[index].id)
-                                    .delete();
+                                _confirmDelete(context, workers[index].id);
                               },
                             ),
                           ),
@@ -263,36 +225,39 @@ class WorkerListScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class Contractor {
-  final String name;
-  final String address;
-  final String companyName;
-  final String phone;
-  final String email;
-  final String skill;
-  final String role;
+  // Function to open document links
+  void _openDocument(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      debugPrint("Could not launch $url");
+    }
+  }
 
-  Contractor({
-    required this.name,
-    required this.address,
-    required this.companyName,
-    required this.phone,
-    required this.email,
-    required this.skill,
-    required this.role,
-  });
-
-  factory Contractor.fromMap(Map<String, dynamic> data) {
-    return Contractor(
-      name: data['name'] ?? 'N/A',
-      address: data['address'] ?? 'N/A',
-      companyName: data['companyName'] ?? 'N/A',
-      phone: data['phone'] ?? 'N/A',
-      email: data['email'] ?? 'N/A',
-      skill: data['skill'] ?? 'N/A',
-      role: data['role'] ?? 'N/A',
+  // Function to confirm deletion
+  void _confirmDelete(BuildContext context, String workerId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Delete Worker"),
+          content: const Text("Are you sure you want to delete this worker?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                FirebaseFirestore.instance.collection('Worker').doc(workerId).delete();
+                Navigator.pop(dialogContext);
+              },
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
