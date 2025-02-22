@@ -6,7 +6,7 @@ class ContractorFirebaseAuthService {
   final firebaseAuth = FirebaseAuth.instance;
   final firestoreDatabse = FirebaseFirestore.instance;
 
-  // Registration function
+// Registration function
   Future<void> contractorReg({
     required String name,
     required String dob,
@@ -25,12 +25,6 @@ class ContractorFirebaseAuthService {
     required BuildContext context,
   }) async {
     try {
-      // Validation check for required document uploads
-      if (govtID == null || companyCertificate == null || AddressProof == null) {
-        showSnackbar(context, "All documents (Govt ID, Company Certificate, Address Proof) are required!", color: Colors.red);
-        return;
-      }
-
       final user = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -57,24 +51,13 @@ class ContractorFirebaseAuthService {
           .collection('role_tb')
           .add({'uid': user.user?.uid, 'role': 'contractor'});
 
-      showSnackbar(context, "Registration Successful", color: Colors.green);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration Successful')),
+      );
     } catch (e) {
-      showSnackbar(context, "Registration failed: ${e.toString()}", color: Colors.red);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration failed')),
+      );
     }
-  }
-
-  // Snackbar Function
-  void showSnackbar(BuildContext context, String message, {Color? color}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: color ?? Colors.green,
-        duration: const Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

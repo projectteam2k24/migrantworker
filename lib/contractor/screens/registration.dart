@@ -276,38 +276,45 @@ class _RegisterContractorState extends State<RegisterContractor> {
 
                           // Gender Field
                           _buildInputContainer(
-  DropdownButtonFormField<String>(
-    value: GenderController.text.isEmpty ? null : GenderController.text,
-    decoration: InputDecoration(
-      prefixIcon: Icon(
-        Icons.person_2_outlined,
-        color: Colors.green,
-      ),
-      labelText: 'Gender',
-      labelStyle: TextStyle(
-        fontSize: 18,
-        color: Colors.green,
-      ),
-      border: InputBorder.none,
-    ),
-    onChanged: (String? newValue) {
-      GenderController.text = newValue ?? '';
-    },
-    items: <String>['Male', 'Female', 'Other'] // Replace with your list of gender options
-        .map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please select your gender';
-      }
-      return null;
-    },
-  ),
-),
+                            DropdownButtonFormField<String>(
+                              value: GenderController.text.isEmpty
+                                  ? null
+                                  : GenderController.text,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.person_2_outlined,
+                                  color: Colors.green,
+                                ),
+                                labelText: 'Gender',
+                                labelStyle: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.green,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (String? newValue) {
+                                GenderController.text = newValue ?? '';
+                              },
+                              items: <String>[
+                                'Male',
+                                'Female',
+                                'Other'
+                              ] // Replace with your list of gender options
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select your gender';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
                           // Phone Number Field
                           _buildInputContainer(
                             TextFormField(
@@ -502,33 +509,45 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
   }
 
   // Sign-up handler that checks if the form is valid before printing the email
-  void RegisterContractorHandler() {
-    if (_formKey.currentState?.validate() ?? false) {
-      ContractorFirebaseAuthService().contractorReg(
-          name: widget.name,
-          dob: widget.dob,
-          gender: widget.gender,
-          phone: widget.phone,
-          email: widget.email,
-          password: widget.password,
-          profile: widget.profilePic,
-          companyName: CompanyController.text,
-          role: RoleController.text,
-          skill: ExpertiseController.text,
-          experience: ExcperienceController.text,
-          govtID: govtIdFile,
-          companyCertificate: CompRegFile,
-          AddressProof: AddressProofFile,
-          context: context);
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) {
-          return const ContractorHome();
-        },
-      )); // You can add further sign-up logic here, like calling an API
-    } else {
-      print('Form is invalid');
+  void RegisterContractorHandler() async {
+  if (_formKey.currentState?.validate() ?? false) {
+     if (govtIdFile == null || CompRegFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please upload all required documents."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    try {
+      await ContractorFirebaseAuthService().contractorReg(
+        name: widget.name,
+        dob: widget.dob,
+        gender: widget.gender,
+        phone: widget.phone,
+        email: widget.email,
+        password: widget.password,
+        profile: widget.profilePic,
+        companyName: CompanyController.text,
+        role: RoleController.text,
+        skill: ExpertiseController.text,
+        experience: ExcperienceController.text,
+        govtID: govtIdFile,
+        companyCertificate: CompRegFile,
+        AddressProof: AddressProofFile,
+        context: context,
+      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const ContractorHome()));
+    } catch (e) {
+      print("Firebase Registration Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration failed: $e")),
+      );
     }
   }
+}
+
 
   //
   String? govtIdFile;
@@ -671,24 +690,29 @@ class _RegisterContractor1State extends State<RegisterContractor1> {
                             return null;
                           },
                         ),
-                       DropdownButtonFormField<String>(
-  value: ExpertiseController.text.isEmpty ? null : ExpertiseController.text,
-  decoration: InputDecoration(
-    labelText: 'Expertise/Specialization',
-    icon: Icon(Icons.star_border),
-  ),
-  onChanged: (String? newValue) {
-    ExpertiseController.text = newValue ?? '';
-  },
-  items: <String>['Expertise 1', 'Expertise 2', 'Expertise 3'] // Replace with your list of options
-      .map<DropdownMenuItem<String>>((String value) {
-    return DropdownMenuItem<String>(
-      value: value,
-      child: Text(value),
-    );
-  }).toList(),
-)
-
+                        DropdownButtonFormField<String>(
+                          value: ExpertiseController.text.isEmpty
+                              ? null
+                              : ExpertiseController.text,
+                          decoration: InputDecoration(
+                            labelText: 'Expertise/Specialization',
+                            icon: Icon(Icons.star_border),
+                          ),
+                          onChanged: (String? newValue) {
+                            ExpertiseController.text = newValue ?? '';
+                          },
+                          items: <String>[
+                            'Expertise 1',
+                            'Expertise 2',
+                            'Expertise 3'
+                          ] // Replace with your list of options
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        )
                       ],
                     ),
                   ),

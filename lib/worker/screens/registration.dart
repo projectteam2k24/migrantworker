@@ -119,39 +119,39 @@ class _RegisterWorkerState extends State<RegisterWorker> {
       ],
     );
   }
-Widget buildDropdown({
-  required TextEditingController controller,
-  required String label,
-  required IconData icon,
-  required String? Function(String?) validator,
-  required List<String> items,
-}) {
-  return DropdownButtonFormField<String>(
-    value: controller.text.isEmpty ? null : controller.text,
-    decoration: InputDecoration(
-      prefixIcon: Icon(icon, color: Colors.green),
-      labelText: label,
-      labelStyle: TextStyle(
-        fontSize: 18,
-        color: Colors.green,
+
+  Widget buildDropdown({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required String? Function(String?) validator,
+    required List<String> items,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: controller.text.isEmpty ? null : controller.text,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.green),
+        labelText: label,
+        labelStyle: TextStyle(
+          fontSize: 18,
+          color: Colors.green,
+        ),
+        border: InputBorder.none,
       ),
-      border: InputBorder.none,
-    ),
-    onChanged: (String? newValue) {
-      controller.text = newValue ?? '';
-    },
-    items: items.map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-    validator: validator,
-  );
-}
+      onChanged: (String? newValue) {
+        controller.text = newValue ?? '';
+      },
+      items: items.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      validator: validator,
+    );
+  }
 
   @override
-  
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -163,7 +163,6 @@ Widget buildDropdown({
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  
                   const SizedBox(height: 20),
                   const SizedBox(height: 20),
                   Container(
@@ -285,25 +284,28 @@ Widget buildDropdown({
                                   DOBController.text =
                                       "${selectedDate!.toLocal()}"
                                           .split(' ')[0]; // YYYY-MM-DD
-                                                                },
+                                },
                                 readOnly:
                                     true, // To prevent typing in the text field
                               ),
                             ),
                           ),
-                         buildDropdown(
-  controller: GenderController,
-  label: 'Gender',
-  icon: Icons.person_2_outlined,
-  validator: (value) {
-    if (value == null || value.isEmpty) {
-      return 'Please select your gender';
-    }
-    return null;
-  },
-  items: <String>['Male', 'Female', 'Other'], // Modify with your list of gender options
-),
-
+                          buildDropdown(
+                            controller: GenderController,
+                            label: 'Gender',
+                            icon: Icons.person_2_outlined,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select your gender';
+                              }
+                              return null;
+                            },
+                            items: <String>[
+                              'Male',
+                              'Female',
+                              'Other'
+                            ], // Modify with your list of gender options
+                          ),
                           buildTextField(
                             controller: PhoneController,
                             label: 'Phone Number',
@@ -567,6 +569,15 @@ class _RegisterWorker1State extends State<RegisterWorker1> {
 // Updated RegisterWorkerHandler to handle file uploads
   Future<void> RegisterWorkerHandler() async {
     if (_formKey.currentState?.validate() ?? false) {
+      if (govtIdFile == null || AddressProofFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please upload all required documents."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
       try {
         // Upload files to Cloudinary
         String? profileUrl;
