@@ -229,24 +229,25 @@ class _WorkerProfileState extends State<WorkerProfile> {
     );
   }
 
-  Widget _buildProfileItem(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildProfileItem(String label, dynamic value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 5.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        Text(
+          value != null ? value.toString() : 'N/A',  // ✅ Ensures it's a string
+          style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildDocumentItem(String label, String status) {
     return Padding(
@@ -267,14 +268,6 @@ class _WorkerProfileState extends State<WorkerProfile> {
           ),
         ],
       ),
-    );
-  }
-
-  void _editProfilePicture() {
-    // Logic to handle profile picture update (e.g., opening a file picker or camera)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('Edit Profile Picture feature coming soon!')),
     );
   }
 }

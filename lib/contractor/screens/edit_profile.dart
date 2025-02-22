@@ -124,7 +124,7 @@ class _EditContractorProfileState extends State<EditContractorProfile> {
       print('Error uploading profile picture: $e');
     }
   }
-
+  
   // Date Picker for DOB
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? selectedDate = await showDatePicker(

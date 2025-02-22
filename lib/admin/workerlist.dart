@@ -245,7 +245,7 @@ class WorkerListScreen extends StatelessWidget {
                               onPressed: () {
                                 // Code to delete the contractor from Firestore
                                 FirebaseFirestore.instance
-                                    .collection('Contractor')
+                                    .collection('Worker')
                                     .doc(contractors[index].id)
                                     .delete();
                               },

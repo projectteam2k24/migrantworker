@@ -120,9 +120,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
           throw Exception('Failed to upload profile image');
         }
       }
-
+   if (phoneController.text.length != 10 ) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Phone numbers must be 10 digits')),
+      );
+      return;
+    }
       if (userId != null) {
-        await FirebaseFirestore.instance.collection('Job Provider').doc(userId).set({
+        await FirebaseFirestore.instance.collection('Job Provider').doc(userId).update({
           'name': fullNameController.text,
           'phone': phoneController.text,
           'address': addressController.text,

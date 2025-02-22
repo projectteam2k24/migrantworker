@@ -17,7 +17,6 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
   // Controllers for text fields
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -27,6 +26,7 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
   final TextEditingController _expertiseController = TextEditingController();
 
   // Image file for the profile picture
+  String?_selectedGender;
   File? _profileImage;
   String? _profileImageUrl;
 
@@ -55,7 +55,7 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
         setState(() {
           _fullNameController.text = data['name']?.toString() ?? '';
           _dobController.text = data['dob']?.toString() ?? '';
-          _genderController.text = data['gender']?.toString() ?? '';
+          _selectedGender= data['gender']?.toString() ?? '';
           _phoneController.text = data['phone']?.toString() ?? '';
           _emailController.text = data['email']?.toString() ?? '';
           _addressController.text = data['address']?.toString() ?? '';
@@ -165,7 +165,12 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
       );
       return;
     }
-
+  if (_phoneController.text.length != 10 || _emergencyContactNumber.text.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Phone numbers must be 10 digits')),
+      );
+      return;
+    }
     setState(() => _isSaving = true);
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -180,7 +185,7 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
         final updatedProfile = {
           'name': _fullNameController.text,
           'dob': _dobController.text,
-          'gender': _genderController.text,
+          'gender': _selectedGender,
           'phone': _phoneController.text,
           'email': _emailController.text,
           'address': _addressController.text,
@@ -263,9 +268,9 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
                     ),
                     const SizedBox(height: 20),
                     _buildDetailsCard('Personal Details', [
-                      _buildTextField('Full Name', _fullNameController),
-                      _buildTextField('Date of Birth', _dobController),
-                      _buildTextField('Gender', _genderController),
+                      _buildTextField('Name', _fullNameController),
+                     _buildDatePicker(),
+                    _buildDropdown(),
                       _buildTextField('Phone Number', _phoneController),
                       _buildTextField('Address', _addressController),
                     ]),
@@ -321,17 +326,33 @@ class _EditWorkerProfileState extends State<EditWorkerProfile> {
   Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          filled: true,
-          fillColor: Colors.grey[200],
-        ),
-      ),
+      child: TextField(controller: controller, decoration: InputDecoration(labelText: label)),
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return TextField(
+      controller: _dobController,
+      decoration: const InputDecoration(labelText: 'Date of Birth'),
+      readOnly: true,
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+            context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime.now());
+        if (pickedDate != null) {
+          setState(() {
+            _dobController.text = pickedDate.toString().split(' ')[0];
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildDropdown() {
+    return DropdownButtonFormField(
+      value: _selectedGender,
+      items: ['Male', 'Female', 'Other'].map((gender) => DropdownMenuItem(value: gender, child: Text(gender))).toList(),
+      onChanged: (value) => setState(() => _selectedGender = value as String),
+      decoration: const InputDecoration(labelText: 'Gender'),
     );
   }
 }
