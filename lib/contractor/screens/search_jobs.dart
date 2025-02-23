@@ -12,7 +12,6 @@ class SearchJobPage extends StatefulWidget {
 }
 
 class _SearchJobPageState extends State<SearchJobPage> {
-  String _selectedDateFilter = "Today";
   String jobTypeQuery = "";
   String locationQuery = "";
 
@@ -195,6 +194,8 @@ class JobCardList extends StatelessWidget {
             final job = jobs[index].data() as Map<String, dynamic>;
             final imageUrls = job['images'] ?? [];
             final jobId = jobs[index].id;
+            final jobType = job['jobType'] ?? "No Job Type";
+            final town = job['town'] ?? "No Location";
 
             return GestureDetector(
               onTap: () {
@@ -219,16 +220,66 @@ class JobCardList extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(widthFactor * 0.03),
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      height: heightFactor * 0.3,
-                      autoPlay: true,
-                      enlargeCenterPage: true,
-                      viewportFraction: 1.0,
-                    ),
-                    items: imageUrls.map<Widget>((imageUrl) {
-                      return Image.network(imageUrl, fit: BoxFit.cover);
-                    }).toList(),
+                  child: Stack(
+                    children: [
+                      // Image Carousel
+                      CarouselSlider(
+                        options: CarouselOptions(
+                          height: heightFactor * 0.3,
+                          autoPlay: true,
+                          enlargeCenterPage: true,
+                          viewportFraction: 1.0,
+                        ),
+                        items: imageUrls.map<Widget>((imageUrl) {
+                          return Image.network(
+                            imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          );
+                        }).toList(),
+                      ),
+
+                      // Job Details Overlay
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(widthFactor * 0.03),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.7),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                jobType,
+                                style: TextStyle(
+                                  fontSize: widthFactor * 0.05,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: heightFactor * 0.005),
+                              Text(
+                                town,
+                                style: TextStyle(
+                                  fontSize: widthFactor * 0.04,
+                                  color: Colors.white.withOpacity(0.8),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

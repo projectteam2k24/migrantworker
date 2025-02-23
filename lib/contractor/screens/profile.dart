@@ -162,11 +162,6 @@ class _ContractorProfileState extends State<ContractorProfile> {
                                 profileData['companyCertificate'] == null
                                     ? 'Not Uploaded'
                                     : 'Uploaded'),
-                            _buildDocumentItem(
-                                'Proof of Address',
-                                profileData['address'] == null
-                                    ? 'Not Uploaded'
-                                    : 'Uploaded'),
                           ],
                         ),
                         const SizedBox(height: 30),
