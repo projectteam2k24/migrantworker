@@ -30,8 +30,7 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
       setState(() {
         currentUserId = user.uid;
       });
-      _fetchWorkersAssignedToUser(
-          user.uid); // Fetch workers assigned to the user
+      _fetchWorkersAssignedToUser(user.uid);
     }
   }
 
@@ -40,14 +39,15 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('Worker')
-          .where('assigned',
-              isEqualTo: userId) // Filter workers assigned to current user
+          .where('assigned', isEqualTo: userId)
           .get();
 
       setState(() {
-        workers = snapshot.docs
-            .map((doc) => doc.data())
-            .toList();
+        workers = snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id; // Store worker document ID
+          return data;
+        }).toList();
         isLoading = false; // Data has been fetched, stop loading
       });
     } catch (e) {
@@ -55,6 +55,35 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
       setState(() {
         isLoading = false; // Stop loading even if there's an error
       });
+    }
+  }
+
+  // Function to unassign a worker
+  Future<void> _unassignWorker(String workerId) async {
+    try {
+      // Set the 'assigned' field of Worker collection to null
+      await FirebaseFirestore.instance.collection('Worker').doc(workerId).update({
+        'assigned': null,
+      });
+
+      // Set the 'contractorId' field of assignments collection to null
+      await FirebaseFirestore.instance.collection('assignments').doc(workerId).update({
+        'contractorId': null,
+      });
+
+      // Remove worker from the local list
+      setState(() {
+        workers.removeWhere((worker) => worker['id'] == workerId);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Worker unassigned successfully')),
+      );
+    } catch (e) {
+      print("Error unassigning worker: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to unassign worker')),
+      );
     }
   }
 
@@ -73,13 +102,9 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(
-              child:
-                  CircularProgressIndicator()) // Show loading indicator while fetching
+          ? const Center(child: CircularProgressIndicator())
           : workers.isEmpty
-              ? const Center(
-                  child: Text(
-                      'No workers assigned to you.')) // Show when no workers are fetched
+              ? const Center(child: Text('No workers assigned to you.'))
               : ListView.builder(
                   itemCount: workers.length,
                   itemBuilder: (context, index) {
@@ -137,6 +162,19 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
                                   color: Colors.black87,
                                 ),
                               ),
+                              const SizedBox(height: 10),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _unassignWorker(worker['id']);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  child: const Text('Delete'),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -147,7 +185,6 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
       floatingActionButton: Stack(
         alignment: Alignment.bottomRight,
         children: [
-          // Button for New Worker
           if (isExpanded)
             Positioned(
               bottom: 90,
@@ -166,7 +203,6 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
                 child: const Icon(Icons.person_add),
               ),
             ),
-          // Button for Existing Worker
           if (isExpanded)
             Positioned(
               bottom: 159,
@@ -185,7 +221,6 @@ class _WorkerDetailsPageState extends State<WorkerDetailsPage> {
                 child: const Icon(Icons.group),
               ),
             ),
-          // Main FAB
           Positioned(
             bottom: 20,
             right: 20,

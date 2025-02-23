@@ -19,6 +19,7 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
   bool showMessages = true;
   String? contractorId;
   List<Map<String, dynamic>> notifications = [];
+  List<Map<String, dynamic>> requests = [];
   List<Map<String, dynamic>> assignedWorkers = [];
 
   @override
@@ -36,6 +37,7 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
       });
       _fetchAssignedWorkers(contractorId!);
       _fetchNotifications(contractorId!);
+      _fetchRequests(contractorId!);
     }
   }
 
@@ -60,71 +62,83 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
 
   Future<void> _fetchNotifications(String contractorId) async {
     try {
-      // Fetching contractorNoti notifications
-      final contractorNotiSnapshot = await FirebaseFirestore.instance
+      final snapshot = await FirebaseFirestore.instance
           .collection('contractorNoti')
           .where('contractorId', isEqualTo: contractorId)
           .get();
 
-      // Fetching ContractorRequests notifications
-      final contractorRequestsSnapshot = await FirebaseFirestore.instance
-          .collection('ContractorRequests')
-          .where('contractorId', isEqualTo: contractorId)
-          .get();
-
       setState(() {
-        notifications = [
-          ...contractorNotiSnapshot.docs.map((doc) {
-            final data = doc.data();
-            data['id'] = doc.id;
-            data['source'] = 'contractorNoti';
-            return data;
-          }).toList(),
-          ...contractorRequestsSnapshot.docs.map((doc) {
-            final data = doc.data();
-            data['id'] = doc.id;
-            data['source'] = 'ContractorRequests';
-            return data;
-          }).toList(),
-        ];
+        notifications = snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id;
+          return data;
+        }).toList();
       });
     } catch (e) {
       print("Error fetching notifications: $e");
     }
   }
 
-  Future<void> _handleAccept(String workerId, String notificationId, String source) async {
+  Future<void> _fetchRequests(String contractorId) async {
     try {
-      // Update assigned field in Worker collection
-      await FirebaseFirestore.instance.collection('Worker').doc(workerId).update({
-        'assigned': contractorId,
-      });
+      final snapshot = await FirebaseFirestore.instance
+          .collection('ContractorRequests')
+          .where('contractorId', isEqualTo: contractorId)
+          .get();
 
-      // Update contractorId in assignments collection
+      setState(() {
+        requests = snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id;
+          return data;
+        }).toList();
+      });
+    } catch (e) {
+      print("Error fetching worker requests: $e");
+    }
+  }
+
+  Future<void> _handleAcceptWorker(String workerId, String notificationId) async {
+    try {
       await FirebaseFirestore.instance.collection('assignments').doc(workerId).update({
         'contractorId': contractorId,
       });
 
-      // Delete the notification from the respective collection
-      await FirebaseFirestore.instance.collection(source).doc(notificationId).delete();
+      await FirebaseFirestore.instance.collection('Worker').doc(workerId).update({
+        'assigned': contractorId,
+      });
+
+      await FirebaseFirestore.instance.collection('ContractorRequests').doc(notificationId).delete();
 
       setState(() {
-        notifications.removeWhere((noti) => noti['id'] == notificationId);
+        requests.removeWhere((req) => req['id'] == notificationId);
       });
     } catch (e) {
       print("Error accepting worker: $e");
     }
   }
 
-  Future<void> _handleReject(String notificationId, String source) async {
+  Future<void> _handleRejectWorker(String notificationId) async {
     try {
-      await FirebaseFirestore.instance.collection(source).doc(notificationId).delete();
+      await FirebaseFirestore.instance.collection('ContractorRequests').doc(notificationId).delete();
+
+      setState(() {
+        requests.removeWhere((req) => req['id'] == notificationId);
+      });
+    } catch (e) {
+      print("Error rejecting worker request: $e");
+    }
+  }
+
+  Future<void> _handleRejectNotification(String notificationId) async {
+    try {
+      await FirebaseFirestore.instance.collection('contractorNoti').doc(notificationId).delete();
 
       setState(() {
         notifications.removeWhere((noti) => noti['id'] == notificationId);
       });
     } catch (e) {
-      print("Error rejecting worker: $e");
+      print("Error rejecting notification: $e");
     }
   }
 
@@ -183,9 +197,7 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16.0),
-              child: showMessages
-                  ? _buildMessagesList()
-                  : _buildNotificationsList(),
+              child: showMessages ? _buildMessagesList() : _buildNotificationsList(),
             ),
           ),
         ],
@@ -217,8 +229,7 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
             leading: const Icon(Icons.person, color: Colors.green),
             title: Text(
               workerName,
-              style:
-                  const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
             ),
             onTap: () {
               Navigator.push(
@@ -235,51 +246,43 @@ class _ContractorNotificationHubState extends State<ContractorNotificationHub> {
   }
 
   Widget _buildNotificationsList() {
-    if (notifications.isEmpty) {
-      return const Center(
-        child: Text(
-          "No notifications available.",
-          style: TextStyle(fontSize: 18),
+    return ListView(
+      children: [
+        _buildNotificationCategory("Worker Requests", requests, _handleAcceptWorker, _handleRejectWorker),
+        _buildNotificationCategory("Notifications", notifications, null, _handleRejectNotification),
+      ],
+    );
+  }
+
+  Widget _buildNotificationCategory(String title, List<Map<String, dynamic>> items, Function(String, String)? onAccept, Function(String)? onReject) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
-      );
-    }
-
-    return ListView.builder(
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-        final workerId = notification['workerId'];
-        final notificationId = notification['id'];
-        final source = notification['source'];
-        final timestamp = notification['timestamp'] ?? Timestamp.now();
-
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          elevation: 2.0,
-          child: ListTile(
-            title: Text(
-              'Worker Request',
-              style:
-                  const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-            ),
-            subtitle: Text('Sent on: ${_formatTimestamp(timestamp)}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _handleAccept(workerId, notificationId, source),
-                  child: const Text("Accept"),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () => _handleReject(notificationId, source),
-                  child: const Text("Reject"),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+        ...items.map((item) => Card(
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              elevation: 2.0,
+              child: ListTile(
+                title: Text(item['message'] ?? "Notification"),
+                subtitle: Text('Sent on: ${_formatTimestamp(item['timestamp'] ?? Timestamp.now())}'),
+                trailing: onAccept != null
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(onPressed: () => onAccept(item['workerId'], item['id']), child: const Text("Accept")),
+                          const SizedBox(width: 8),
+                          ElevatedButton(onPressed: () => onReject!(item['id']), child: const Text("Reject")),
+                        ],
+                      )
+                    : null,
+              ),
+            )),
+      ],
     );
   }
 }
