@@ -58,6 +58,12 @@ class ViewReportScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('View Reports'),
         backgroundColor: Colors.red,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/admin_home');
+          },
+        ),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchReports(),
@@ -148,7 +154,7 @@ class ReportCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Reported User: $contractorName',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -157,7 +163,7 @@ class ReportCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Reported By: $jobProviderName',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,

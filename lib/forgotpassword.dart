@@ -54,7 +54,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<bool> _isEmailRegistered(String email) async {
-    List<String> collections = ["Contractor", "Worker", "JobProvider"];
+    List<String> collections = ["Contractor", "Worker", "Job Provider"];
 
     for (String collection in collections) {
       QuerySnapshot query = await _firestore
