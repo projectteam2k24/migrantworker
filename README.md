@@ -22,3 +22,37 @@ The application integrates a messaging system for seamless communication among a
 This mobile application is designed to streamline the recruitment, registration,  and management of migrant workers in local job markets by Connecting contractors,  workers,  and job providers on a single platform. The goal is to simplify workforce management,  from hiring and onboarding to job assignment and progress tracking,  enhancing collaboration and transparency in the process. By digitizing these key functions,  the app eliminates traditional inefficiencies and delays in workforce coordination.<BR><BR>
 Contractors can create worker profiles that include skills,  salary,  and insurance information,  assign jobs,  track progress,  and manage their workforce by adding or exchanging workers. Workers can create profiles with verified documents,  join contractor teams,  request changes,  and update personal information like residence and emergency contacts. Job providers can post jobs with specific requirements,  receive AI-generated estimates for costs,  worker numbers,  and job duration,  and request workers from contractors. They can also rate contractors and report accidents. The AI feature in particular helps job providers make informed decisions,  saving time and resources. <br><br>
 The application features messaging and notifications to ensure clear communication and job status updates,  ultimately improving workforce organization and collaboration in the local job market. Its comprehensive design makes it a vital tool for creating a structured and efficient work environment. 
+
+<h3>PROBLEM STATEMENT</h3>
+
+In local job markets,  the recruitment and management of migrant workers 
+are often inefficient,  fragmented,  and prone to miscommunication. Contractors 
+face challenges in managing their workforce,  tracking worker progress,  and 
+ensuring smooth job assignments,  while workers struggle with accessing job 
+opportunities,  updating personal information,  and building a reliable work 
+history. Job providers encounter difficulties in posting job requirements,  
+selecting suitable workers,  and ensuring timely completion of tasks,  often 
+leading to delays,  increased costs,  and lack of transparency. <BR><BR>
+Existing systems for managing migrant workers are often outdated and 
+lack integration,  leading to inefficiencies in communication,  worker tracking,  
+and job assignment. Additionally,  there is no unified platform that connects 
+contractors,  workers,  and job providers,  making it difficult for all parties to 
+collaborate effectively and manage their roles efficiently. This creates a need for a 
+digital solution that simplifies the recruitment,  registration,  and management 
+of migrant workers,  offering a more streamlined,  transparent,  and collaborative 
+approach to local job market operation. 
+
+<H3>EXISTING SYSTEM</H3>
+
+      Currently,  the recruitment and management of migrant workers rely on 
+traditional methods like manual paperwork,  phone calls,  and fragmented digital 
+systems. Contractors manage workers using spreadsheets or isolated software,  
+while workers often find jobs through informal networks. Job providers post 
+openings via local agencies or online boards,  but there is no seamless 
+connection with contractors or workers. Communication is typically handled 
+through phone calls or separate messaging apps,  leading to inefficiencies and 
+delays. <BR><BR>
+While some platforms exist for job posting or contractor management,  
+they lack integration and essential features like real-time progress tracking,  AI 
+based estimates,  and centralized worker profiles,  making the current systems 
+inefficient and prone to errors.
