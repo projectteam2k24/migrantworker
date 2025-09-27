@@ -56,7 +56,7 @@ based estimates,  and centralized worker profiles,  making the current systems
 inefficient and prone to errors. 
 
 <h3>PROPOSED SYSTEM</h3>
-**- Centralized Platform:** A unified mobile application that connects contractors,  workers,  and job providers in one platform,  simplifying recruitment,  registration,  and workforce management. <BR>
+**Centralized Platform:** A unified mobile application that connects contractors,  workers,  and job providers in one platform,  simplifying recruitment,  registration,  and workforce management. <BR>
 **- Contractor Features:** Contractors can create and manage worker profiles,  track work progress,  assign jobs,  and handle workforce updates (e.g. adding or exchanging workers). They can also receive notifications and job updates.  <BR>
 **- Worker Features:** Workers can create profiles with verified identity documents,  apply to join contractor teams,  update personal information,  and view their work history. They can request contractor changes and access travel 
 assistance. <BR>
