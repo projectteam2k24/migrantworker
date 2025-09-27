@@ -115,3 +115,48 @@ The **Worker module** allows workers to create and manage their personal profile
 ![Level 3](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level3.png)  
 ![Level 4](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level4.png)  
 
+# System Development
+
+## Front End
+
+### Dart  
+Dart is an open-source, general-purpose programming language developed by Google. First released in 2011, Dart is designed for client-side development, with a focus on building high-performance applications for web, mobile, and desktop platforms. Its syntax is similar to languages like Java and JavaScript, making it accessible to developers familiar with object-oriented programming.  
+
+Dart is compiled and can execute in both just-in-time (JIT) and ahead-of-time (AOT) modes. JIT compilation enables fast development cycles with features like hot reload, while AOT compilation enhances execution speed by producing optimized native machine code. Dart supports multiple programming paradigms, including object-oriented, functional, and reactive programming.  
+
+The language features a sound type system with optional null safety, helping developers write more reliable and efficient code. Dart’s standard library provides extensive built-in support for asynchronous programming through its Future and Stream APIs, making it well-suited for handling concurrent operations.  
+
+Dart was initially created as a JavaScript alternative for web applications but has since evolved into a versatile language powering frameworks like **Flutter**, Google’s UI toolkit for cross-platform mobile and web app development. With its structured yet flexible nature, Dart continues to gain traction in modern application development.  
+
+---
+
+### Flutter  
+Flutter is an open-source UI toolkit developed by Google for building natively compiled applications for mobile, web, and desktop from a single codebase. First released in 2017, Flutter enables developers to create visually rich and highly performant applications with a consistent user experience across multiple platforms.  
+
+Flutter uses the Dart programming language and employs an ahead-of-time (AOT) compilation process to generate optimized native code, ensuring smooth performance. Its reactive framework allows developers to build UIs declaratively using widgets, which serve as the building blocks for app interfaces. Flutter’s widget-based architecture provides extensive customization and flexibility, enabling developers to create expressive and dynamic user experiences.  
+
+A key feature of Flutter is its **hot reload capability**, which significantly speeds up the development process by allowing real-time code changes without restarting the application. Flutter also includes a rich set of pre-designed widgets that follow **Material Design** and **Cupertino** guidelines, ensuring a native-like experience on both Android and iOS.  
+
+Flutter’s layered architecture promotes fast rendering and high responsiveness, making it suitable for complex animations and modern UI designs. With its growing community, extensive ecosystem, and seamless integration with backend services, Flutter has become a popular choice for developers looking to build cross-platform applications efficiently.  
+
+---
+
+### Android Studio  
+Android Studio, developed by Google, is the official integrated development environment (IDE) for Android app development. It offers a powerful and user-friendly environment with features like an intelligent code editor, visual layout editor, and a versatile emulator for testing on various devices.  
+
+Supporting both Java and Kotlin, Android Studio provides robust debugging and profiling tools for optimizing app performance. With seamless integration of version control systems and frequent updates to align with the latest Android platform advancements, it remains a preferred choice for developers to create high-quality and innovative Android applications.  
+
+---
+
+## Back End
+
+### Firestore  
+Firestore, officially known as **Cloud Firestore**, is a flexible, scalable, and fully managed NoSQL database developed by Google as part of its Firebase platform. First introduced in 2017, Firestore is designed to store, sync, and query data for web and mobile applications in real time while offering seamless integration with other Firebase services and Google Cloud products.  
+
+Unlike traditional SQL databases, Firestore follows a **document-oriented model**, where data is stored as collections and documents rather than tables and rows. Documents, which are stored in JSON-like format, contain fields of various data types, including strings, numbers, arrays, maps, and timestamps. Collections serve as containers for documents, allowing for hierarchical data structuring that is both scalable and easy to manage.  
+
+Firestore supports **real-time synchronization**, ensuring that data updates are instantly reflected across all connected devices. It also offers **offline support**, enabling applications to read, write, and sync data even when users are offline, with automatic synchronization once connectivity is restored. Its powerful querying capabilities allow developers to filter, sort, and retrieve data efficiently using indexed queries.  
+
+As a fully managed cloud-based database, Firestore is designed to **scale automatically**, handling millions of concurrent users without requiring manual server management. It also ensures strong security through Firebase Authentication and role-based access control via Firestore Security Rules.  
+
+Firestore integrates seamlessly with Google Cloud services, making it an excellent choice for **serverless applications, real-time chat apps, collaborative platforms, and IoT solutions**. With its combination of real-time capabilities, offline functionality, and effortless scalability, Firestore is a robust and reliable choice for modern application development.  
