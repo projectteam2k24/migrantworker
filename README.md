@@ -105,4 +105,13 @@ The **Worker module** allows workers to create and manage their personal profile
 - Workers can update their **residence and emergency contacts** and view their **work history** (accessible to contractors and job providers).  
 - They can **apply to join contractor teams**, request changes, or apply for jobs posted by job providers.  
 - In-app **messaging** enables workers to communicate directly with contractors.  
-- **Notifications** keep workers updated about job assignments, changes, and status updates.  
+- **Notifications** keep workers updated about job assignments, changes, and status updates.
+
+## Data Flow Diagram
+
+![Level 0](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level0.png)  
+![Level 1](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level1.png)  
+![Level 2](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level2.png)  
+![Level 3](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level3.png)  
+![Level 4](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/level4.png)  
+
