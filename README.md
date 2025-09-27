@@ -64,7 +64,7 @@ inefficient and prone to errors.
 <B>Mobile Accessibility:</B> Easy access to all features via mobile devices,  ensuring real-time updates and task management on the go. <BR><BR>
 <B>Messaging and Notifications:</B> In-app messaging and notifications for smooth communication between all users,  keeping everyone informed of job statuses,  requests,  and updates.
 
-# 4.1 Module Description
+#  Modules
 
 ## 1. Admin  
 The **Admin module** enables administrators to oversee user activities and maintain system integrity by managing **workers, contractors, and job providers**.  
