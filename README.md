@@ -8,4 +8,5 @@ We have immense pleasure in acknowledging the service and cooperation rendered b
 We wish to express our deepest of gratitude to our guide Dr. Shijo M Joseph and Capt.(Dr.) Jithesh K (HOD) and other faculties in the Department of Computer Science whose generous support, constant encouragement and healthy criticism have been of invaluable help to us throughout the course of this project. We also express our heart full thanks to our classmates, parents and friends for providing valuable suggestions. Above all it is the grace and blessing God the almighty, which make this endeavor a success. 
 
 #**CERTIFICATION OF COMPLETION**
+
 <img src= "https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/Screenshot%202025-09-27%20162447.png" alt="certOfCompl"/>
