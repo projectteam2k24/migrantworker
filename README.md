@@ -160,3 +160,12 @@ Firestore supports **real-time synchronization**, ensuring that data updates are
 As a fully managed cloud-based database, Firestore is designed to **scale automatically**, handling millions of concurrent users without requiring manual server management. It also ensures strong security through Firebase Authentication and role-based access control via Firestore Security Rules.  
 
 Firestore integrates seamlessly with Google Cloud services, making it an excellent choice for **serverless applications, real-time chat apps, collaborative platforms, and IoT solutions**. With its combination of real-time capabilities, offline functionality, and effortless scalability, Firestore is a robust and reliable choice for modern application development.  
+
+
+## SCREENSHOTS
+
+![Level 0](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/SS1.png)  
+![Level 1](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/SS2.png)  
+![Level 2](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/SS3.png)  
+![Level 3](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/SS4.png)  
+![Level 4](https://raw.githubusercontent.com/projectteam2k24/migrantworker/refs/heads/main/SS5.png)  
