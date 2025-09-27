@@ -63,3 +63,46 @@ inefficient and prone to errors.
 <B>AI Integration:</B> AI-powered chat bot assist job providers by generating cost estimates, number of workers required,  and job duration based on job details,  improving decision-making. - Improved Transparency and Efficiency: A comprehensive solution for managing job assignments,  workforce tracking,  and collaboration,  reducing miscommunication and delays in the local job market. <BR><BR>
 <B>Mobile Accessibility:</B> Easy access to all features via mobile devices,  ensuring real-time updates and task management on the go. <BR><BR>
 <B>Messaging and Notifications:</B> In-app messaging and notifications for smooth communication between all users,  keeping everyone informed of job statuses,  requests,  and updates.
+
+# 4.1 Module Description
+
+## 1. Admin  
+The **Admin module** enables administrators to oversee user activities and maintain system integrity by managing **workers, contractors, and job providers**.  
+
+- Admins can access and review user details, ensuring compliance with platform guidelines.  
+- They have the authority to **delete accounts** in cases of fraudulent activity, misconduct, or policy violations.  
+- A **reporting system** allows admins to view and assess reports submitted by users regarding scams, fraudulent activities, and disputes.  
+- By monitoring platform interactions, the Admin module helps create a **secure and transparent environment**, ensuring smooth operations and trust among all users.  
+
+---
+
+## 2. Contractor  
+The **Contractor module** is designed to help contractors efficiently manage their workforce and job assignments.  
+
+- Contractors can create and update **worker profiles**, including details such as skills, salary, and insurance information.  
+- They can **add or remove workers** from their team and track the progress of tasks.  
+- Contractors can **assign jobs** to workers based on skills and availability, ensuring the right person is matched to the right task.  
+- They can **post updates** about ongoing jobs, keeping job providers and workers informed.  
+- **Notifications** are sent to workers about new assignments, task changes, or job status updates for seamless communication.  
+
+---
+
+## 3. Job Provider  
+The **Job Provider module** enables job providers to post job openings and request workers for specific tasks.  
+
+- Job providers can specify **requirements** such as skills, number of workers, estimated duration, and cost of the task.  
+- The system integrates **AI** to provide estimates for cost, workforce needed, and expected job duration.  
+- Job providers can view available **worker profiles**, including past work history, to make informed decisions.  
+- After job completion, job providers can **rate contractors** based on performance and quality of work.  
+- They can also **report accidents or safety issues** that occur on-site for timely follow-up by contractors.  
+
+---
+
+## 4. Worker  
+The **Worker module** allows workers to create and manage their personal profiles.  
+
+- Profiles include **personal information, identity verification, skills, and contact details**.  
+- Workers can update their **residence and emergency contacts** and view their **work history** (accessible to contractors and job providers).  
+- They can **apply to join contractor teams**, request changes, or apply for jobs posted by job providers.  
+- In-app **messaging** enables workers to communicate directly with contractors.  
+- **Notifications** keep workers updated about job assignments, changes, and status updates.  
