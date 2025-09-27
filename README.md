@@ -1,6 +1,6 @@
-# MIGRANT WORKER REGISTRATION AND LOCAL JOB MANAGEMENT SYSTEM
+# MIGRANT WORKER REGISTRATION AND LOCAL JOB MANAGEMENT
 
-A new Flutter project.
+By JAIS ROY [MG22CCSR07], AMARJITH ANAND [MG22CCSR17], VYSHNAV DAS P [MG22CCSR23] Under the guidance of Dr. SHIJO M JOSEPH, A project submitted to the Kannur University in partial fulfillment of the requirements of the B.Sc. COMPUTER SCIENCE 2024-25
 
 ## Getting Started
 
