@@ -43,9 +43,7 @@ of migrant workers,  offering a more streamlined,  transparent,  and collaborati
 approach to local job market operation. 
 
 <H3>EXISTING SYSTEM</H3>
-
-
-      Currently,  the recruitment and management of migrant workers rely on 
+Currently,  the recruitment and management of migrant workers rely on 
 traditional methods like manual paperwork,  phone calls,  and fragmented digital systems. Contractors manage workers using spreadsheets or isolated software,  
 while workers often find jobs through informal networks. Job providers post 
 openings via local agencies or online boards,  but there is no seamless 
