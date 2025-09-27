@@ -54,3 +54,27 @@ While some platforms exist for job posting or contractor management,
 they lack integration and essential features like real-time progress tracking,  AI 
 based estimates,  and centralized worker profiles,  making the current systems 
 inefficient and prone to errors.
+
+<h3>PROPOSED SYSTEM</h3>
+
+ **Centralized Platform:** A unified mobile application that connects 
+contractors,  workers,  and job providers in one platform,  simplifying 
+recruitment,  registration,  and workforce management. <BR>
+   **Contractor Features:** Contractors can create and manage worker 
+profiles,  track work progress,  assign jobs,  and handle workforce updates (e.g.,  
+adding or exchanging workers). They can also receive notifications and job 
+updates.  <BR>**Worker Features:** Workers can create profiles with verified identity 
+documents,  apply to join contractor teams,  update personal information,  and 
+view their work history. They can request contractor changes and access travel 
+assistance. <BR>**Job Provider Features**: Job providers can post job requirements,  use 
+AI-based features for cost estimates,  estimated number of workers required,  
+and estimated time for job completion. They can post jobs,  review contractors,  
+and report of accidents if any. 
+  <BR>**AI Integration:** AI-powered chat bot assist job providers by generating 
+cost estimates, number of workers required,  and job duration based on job 
+details,  improving decision-making. - Improved Transparency and Efficiency: A comprehensive solution for 
+managing job assignments,  workforce tracking,  and collaboration,  reducing 
+miscommunication and delays in the local job market. <BR>**Mobile Accessibility:** Easy access to all features via mobile devices,  
+ensuring real-time updates and task management on the go. <BR>**Messaging and Notifications:** In-app messaging and notifications for 
+smooth communication between all users,  keeping everyone informed of job 
+statuses,  requests,  and updates.
