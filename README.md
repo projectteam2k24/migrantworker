@@ -2,15 +2,9 @@
 
 **By JAIS ROY [MG22CCSR07], AMARJITH ANAND [MG22CCSR17], VYSHNAV DAS P [MG22CCSR23] Under the guidance of Dr. SHIJO M JOSEPH, A project submitted to the Kannur University in partial fulfillment of the requirements of the B.Sc. COMPUTER SCIENCE 2024-25**
 
-## Getting Started
+## ACKNOWLEDGEMENT
 
-This project is a starting point for a Flutter application.
+We have immense pleasure in acknowledging the service and cooperation rendered by umpteen people in their known-fields and ways. The success of any task accomplished lies not only hands of the accomplisher but also the guiding light offered by all those around, towards the roads to success, they did much to shape up the success. We are grateful to our college Principal Dr. Swarupa R for extending facilities required through our project ork. 
+We wish to express our deepest of gratitude to our guide Dr. Shijo M Joseph and Capt.(Dr.) Jithesh K (HOD) and other faculties in the Department of Computer Science whose generous support, constant encouragement and healthy criticism have been of invaluable help to us throughout the course of this project. We also express our heart full thanks to our classmates, parents and friends for providing valuable suggestions. Above all it is the grace and blessing God the almighty, which make this endeavor a success. 
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+(https://docs.flutter.dev/get-started/codelab)
