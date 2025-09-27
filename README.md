@@ -1,4 +1,4 @@
-# migrantworker
+# MIGRANT WORKER REGISTRATION AND LOCAL JOB MANAGEMENT SYSTEM
 
 A new Flutter project.
 
